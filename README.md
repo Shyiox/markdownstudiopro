@@ -1,21 +1,43 @@
 # Markdown Studio Pro
 
-Markdown Studio Pro is a native desktop Markdown editor. This repository is structured for platform-specific apps:
+Markdown Studio Pro is an early Markdown editor project focused on clean writing, readable documents, and a calm native desktop experience.
 
-- `macos/` - native macOS app using Swift, SwiftUI, AppKit, and WKWebView
-- `windows/` - planned Windows version
+The goal is to build a simple but polished editor for writing Markdown without visual clutter. The current repository contains the first macOS source prototype, built with Swift, SwiftUI/AppKit, and a WKWebView-based editor.
 
-## macOS
+This is not a finished app release yet. It is a working development version for testing, iteration, and feedback.
 
-The macOS app wraps the Markdown editor in a native shell with:
+## Current status
 
-- native menu bar and toolbar
+- Early macOS source prototype
+- Native macOS app shell
+- Source-first GitHub release
+- No packaged `.dmg` installer yet
+- Windows version planned separately
+
+## Platforms
+
+```text
+main
+macos/      native macOS app
+windows/    planned Windows app
+```
+
+The repository is structured for platform-specific desktop apps. The macOS version is currently active. A Windows version is planned for a later stage.
+
+## macOS prototype
+
+The macOS app wraps the Markdown editor in a native desktop shell with:
+
+- native macOS menu bar and toolbar
 - document open, save, and save as
-- support for common text-based files such as Markdown, TXT, JSON, YAML, HTML, CSS, JavaScript, Swift, Python, shell scripts, logs, CSV, and config files
+- support for Markdown and common text-based files
 - light, dark, and system appearance modes
+- table insertion modal
+- code block support
 - HTML export
+- bundled editor HTML at `macos/MarkdownStudioProMac/App/editor.html`
 
-### Build
+## Build on macOS
 
 Requirements:
 
@@ -35,13 +57,53 @@ From the command line:
 xcodebuild -project macos/MarkdownStudioProMac.xcodeproj -scheme MarkdownStudioProMac -configuration Debug build
 ```
 
-## Windows
+## Repository structure
 
-The Windows version is planned and should live in `windows/` when added.
+```text
+.
+├─ AI.md
+├─ README.md
+├─ .gitignore
+└─ macos/
+   ├─ README.md
+   ├─ MarkdownStudioProMac.xcodeproj/
+   └─ MarkdownStudioProMac/
+```
 
-## Repository Notes
+## macOS notes
 
-- Build output, DerivedData, user settings, and system files are ignored.
-- The macOS editor HTML is bundled at `macos/MarkdownStudioProMac/App/editor.html`.
-- No Node, Electron, Tauri, or Rust runtime is required for the current macOS app.
+See [macos/README.md](macos/README.md) for macOS-specific setup notes.
 
+## AI-assisted development
+
+This project uses an `AI.md` file to document project workflow, technical decisions, completed stages, and next steps.
+
+See [AI.md](AI.md) for project notes.
+
+## Known limitations
+
+- This is not a finished public app release.
+- No `.dmg` installer is provided yet.
+- Some UI details and workflows are still experimental.
+- Windows support is planned but not included yet.
+
+## Roadmap
+
+Planned next steps:
+
+- add screenshots to the GitHub page
+- continue macOS editor polish
+- improve unsaved-change handling around app termination
+- improve export and packaging workflows
+- prepare a separate Windows shell
+- add packaged macOS beta builds later
+
+## Support
+
+If you want to support the project:
+
+[PayPal: @Shyiox](https://paypal.me/Shyiox)
+
+## License
+
+This project is licensed under the MIT License.
