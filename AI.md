@@ -18,6 +18,13 @@
 
 ## Completed stages
 
+### 2026-06-12 — GitHub project page polish
+
+- Updated the root `README.md` to read more like a project landing page.
+- Clarified that Markdown Studio Pro is an early macOS source prototype, not a finished app release.
+- Documented current macOS capabilities, repository structure, known limitations, roadmap, support link, and license notes.
+- Kept `macos/README.md` as the platform-specific macOS setup page.
+
 ### 2026-06-12 — macOS source prototype prepared for GitHub
 
 - Prepared a GitHub-oriented source layout with `macos/` as the macOS platform folder.
@@ -39,7 +46,7 @@
 ## Notes for next stages
 
 - Build and run locally in Xcode with `Cmd+B` and `Cmd+R`.
-- Upload the repository contents to GitHub root, not the containing ZIP folder.
 - Keep generated macOS folders such as `__MACOSX`, `.DS_Store`, `DerivedData`, `build`, and `xcuserdata` out of Git.
 - Add screenshots after the first GitHub page is online.
 - Add a packaged `.dmg` later only when a beta app release is intended.
+- Fix or track remaining app-termination unsaved-change behavior for `Cmd+Q`.
