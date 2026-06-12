@@ -1,0 +1,67 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7A1B2C3D4E5F678901234501 /* MacEditorShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1B2C3D4E5F678901234500 /* MacEditorShellView.swift */; };
+		3D8190C371ED410CB5157B2C /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39540FF81F114ABF93943700 /* main.swift */; };
+		493FFC0862614096892B0B67 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 697C7A0B7F1F466886508521 /* AppDelegate.swift */; };
+		21C0DB3A20894EF8B215C1B2 /* EditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460C720E3AC24C8F8F1B25F9 /* EditorWindowController.swift */; };
+		65AB8364A9D641E3BAC4071B /* App in Resources */ = {isa = PBXBuildFile; fileRef = 9DD5C9CC499C4BBAB8662B4C /* App */; };
+		55682C3F63564C04BD6EEB57 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 65BE36D628ED4442961F1311 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		7A1B2C3D4E5F678901234500 /* MacEditorShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacEditorShellView.swift; sourceTree = "<group>"; };
+		9A11100DAB7F437BBB95EB4C /* Markdown Studio Pro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Markdown Studio Pro.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		39540FF81F114ABF93943700 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		697C7A0B7F1F466886508521 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		460C720E3AC24C8F8F1B25F9 /* EditorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorWindowController.swift; sourceTree = "<group>"; };
+		B861A4C2C8BD443596AD6AF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9DD5C9CC499C4BBAB8662B4C /* App */ = {isa = PBXFileReference; lastKnownFileType = folder; path = App; sourceTree = "<group>"; };
+		65BE36D628ED4442961F1311 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EC4BD21876EE41D482F32F04 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = ( ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9710416408AD4FB2831323C3 = {isa = PBXGroup; children = ( 22175C1C6EED47CD974A17C6 /* MarkdownStudioProMac */, D637CC534692418EA361A0CA /* Products */, ); sourceTree = "<group>"; };
+		D637CC534692418EA361A0CA /* Products */ = {isa = PBXGroup; children = ( 9A11100DAB7F437BBB95EB4C /* Markdown Studio Pro.app */, ); name = Products; sourceTree = "<group>"; };
+		22175C1C6EED47CD974A17C6 /* MarkdownStudioProMac */ = {isa = PBXGroup; children = ( 39540FF81F114ABF93943700 /* main.swift */, 697C7A0B7F1F466886508521 /* AppDelegate.swift */, 460C720E3AC24C8F8F1B25F9 /* EditorWindowController.swift */, 7A1B2C3D4E5F678901234500 /* MacEditorShellView.swift */, B861A4C2C8BD443596AD6AF3 /* Info.plist */, 9DD5C9CC499C4BBAB8662B4C /* App */, 65BE36D628ED4442961F1311 /* Assets.xcassets */, ); path = MarkdownStudioProMac; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		ABE20760BE6B4904819F3B20 /* MarkdownStudioProMac */ = {isa = PBXNativeTarget; buildConfigurationList = F50667C8B86B4651BE5B79AF /* Build configuration list for PBXNativeTarget */; buildPhases = ( 47D1D9C60BAB484880BDC3B8 /* Sources */, EC4BD21876EE41D482F32F04 /* Frameworks */, F2D465F877E94A62B156F170 /* Resources */, ); buildRules = ( ); dependencies = ( ); name = MarkdownStudioProMac; productName = "Markdown Studio Pro"; productReference = 9A11100DAB7F437BBB95EB4C /* Markdown Studio Pro.app */; productType = "com.apple.product-type.application"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		98EC82F1DD7F40B5A8BFF28E /* Project object */ = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 1500; LastUpgradeCheck = 1500; TargetAttributes = { ABE20760BE6B4904819F3B20 = {CreatedOnToolsVersion = 15.0; }; }; }; buildConfigurationList = 004DF8874BA64BBA9C770765 /* Build configuration list for PBXProject */; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = ( en, Base, ); mainGroup = 9710416408AD4FB2831323C3; productRefGroup = D637CC534692418EA361A0CA /* Products */; projectDirPath = ""; projectRoot = ""; targets = ( ABE20760BE6B4904819F3B20 /* MarkdownStudioProMac */, ); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F2D465F877E94A62B156F170 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = ( 65AB8364A9D641E3BAC4071B /* App in Resources */, 55682C3F63564C04BD6EEB57 /* Assets.xcassets in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		47D1D9C60BAB484880BDC3B8 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ( 3D8190C371ED410CB5157B2C /* main.swift in Sources */, 493FFC0862614096892B0B67 /* AppDelegate.swift in Sources */, 21C0DB3A20894EF8B215C1B2 /* EditorWindowController.swift in Sources */, 7A1B2C3D4E5F678901234501 /* MacEditorShellView.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D9BEB35E5500496CB3014FD4 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; GCC_NO_COMMON_BLOCKS = YES; GCC_OPTIMIZATION_LEVEL = 0; MACOSX_DEPLOYMENT_TARGET = 26.0; SDKROOT = macosx; SWIFT_VERSION = 5.0; }; name = Debug; };
+		B495718086E84F7CB0C55E4F /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; MACOSX_DEPLOYMENT_TARGET = 26.0; SDKROOT = macosx; SWIFT_VERSION = 5.0; }; name = Release; };
+		9F0A82B3A24742A48F64B839 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; COMBINE_HIDPI_IMAGES = YES; INFOPLIST_FILE = MarkdownStudioProMac/Info.plist; PRODUCT_BUNDLE_IDENTIFIER = com.markdownstudio.pro.mac; PRODUCT_NAME = "Markdown Studio Pro"; SWIFT_VERSION = 5.0; }; name = Debug; };
+		5DBE2FDFACF54C12B9BF2BDB /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; COMBINE_HIDPI_IMAGES = YES; INFOPLIST_FILE = MarkdownStudioProMac/Info.plist; PRODUCT_BUNDLE_IDENTIFIER = com.markdownstudio.pro.mac; PRODUCT_NAME = "Markdown Studio Pro"; SWIFT_VERSION = 5.0; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		004DF8874BA64BBA9C770765 /* Build configuration list for PBXProject */ = {isa = XCConfigurationList; buildConfigurations = ( D9BEB35E5500496CB3014FD4 /* Debug */, B495718086E84F7CB0C55E4F /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		F50667C8B86B4651BE5B79AF /* Build configuration list for PBXNativeTarget */ = {isa = XCConfigurationList; buildConfigurations = ( 9F0A82B3A24742A48F64B839 /* Debug */, 5DBE2FDFACF54C12B9BF2BDB /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = 98EC82F1DD7F40B5A8BFF28E /* Project object */;
+}

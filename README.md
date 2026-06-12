@@ -1,59 +1,47 @@
 # Markdown Studio Pro
 
-Markdown Studio Pro is an early Markdown editor project focused on clean writing, readable documents, and a calm native desktop experience.
+Markdown Studio Pro is a native desktop Markdown editor. This repository is structured for platform-specific apps:
 
-The current repository contains the first macOS source prototype. It is not a finished public release yet, but a working development version for testing, iteration, and feedback.
+- `macos/` - native macOS app using Swift, SwiftUI, AppKit, and WKWebView
+- `windows/` - planned Windows version
 
-## Current status
+## macOS
 
-- Early macOS source prototype
-- Built with Swift/AppKit and WKWebView
-- Can be built locally with Xcode
-- No packaged DMG installer yet
-- Windows version planned separately
+The macOS app wraps the Markdown editor in a native shell with:
 
-## Build on macOS
+- native menu bar and toolbar
+- document open, save, and save as
+- support for common text-based files such as Markdown, TXT, JSON, YAML, HTML, CSS, JavaScript, Swift, Python, shell scripts, logs, CSV, and config files
+- light, dark, and system appearance modes
+- HTML export
+
+### Build
 
 Requirements:
 
 - macOS
 - Xcode
 
-Open the Xcode project:
+Steps:
 
-```bash
-open macos/MarkdownStudioProMac.xcodeproj
+1. Open `macos/MarkdownStudioProMac.xcodeproj`.
+2. Select the `MarkdownStudioProMac` scheme.
+3. Build with `Cmd+B`.
+4. Run with `Cmd+R`.
+
+From the command line:
+
+```sh
+xcodebuild -project macos/MarkdownStudioProMac.xcodeproj -scheme MarkdownStudioProMac -configuration Debug build
 ```
 
-Then build and run from Xcode.
+## Windows
 
-## Repository structure
+The Windows version is planned and should live in `windows/` when added.
 
-```text
-.
-├─ AI.md
-├─ README.md
-├─ macos/
-│  ├─ README.md
-│  ├─ MarkdownStudioProMac.xcodeproj/
-│  └─ MarkdownStudioProMac/
-└─ .gitignore
-```
+## Repository Notes
 
-## macOS notes
+- Build output, DerivedData, user settings, and system files are ignored.
+- The macOS editor HTML is bundled at `macos/MarkdownStudioProMac/App/editor.html`.
+- No Node, Electron, Tauri, or Rust runtime is required for the current macOS app.
 
-See [macos/README.md](macos/README.md) for macOS-specific setup notes.
-
-## AI-assisted development
-
-This project uses an `AI.md` file to document project workflow, technical decisions, completed stages, and next steps.
-
-## Support
-
-If you want to support the project:
-
-[PayPal: @Shyiox](https://paypal.me/Shyiox)
-
-## License
-
-This project is licensed under the MIT License.
