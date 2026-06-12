@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+# Swift Package Manager
+.swiftpm/
+.build/
+
+# User-specific Xcode data
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Archives and app packages
+*.xcarchive
+*.dSYM
+*.app
+*.ipa
+*.dmg
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
