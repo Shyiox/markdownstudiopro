@@ -12,11 +12,19 @@
 
 - `main`: stable shared repository state.
 - `platform/mac`: macOS app development.
-- `platform/windows`: planned Windows app development.
+- `platform/windows`: Windows WinUI app development.
 - Shared editor logic should stay platform-neutral where possible.
 - Platform shells may evolve independently.
 
 ## Completed stages
+
+### 2026-06-25 - Windows WinUI source added
+
+- Added the Windows source version under `windows/`.
+- Included the cleaned `MarkdownStudioPro.WinUI` app as the single Windows shell.
+- Documented Windows build, start, and diagnostic scripts.
+- Kept Windows build artifacts out of Git and preserved the existing macOS platform folder.
+- Updated the root README so the repository now documents both macOS and Windows source versions.
 
 ### 2026-06-12 — GitHub project page polish
 
