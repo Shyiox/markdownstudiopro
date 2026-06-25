@@ -30,6 +30,16 @@ xcuserdata/
 # Logs
 *.log
 
+# .NET / WinUI
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+TestResults/
+artifacts/
+publish/
+
 # Temporary files
 *.tmp
 *.swp
