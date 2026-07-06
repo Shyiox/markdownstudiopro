@@ -8,7 +8,7 @@ The macOS app is the lead version. Windows follows the same product direction an
 
 - macOS is the lead platform and reference for product decisions.
 - Windows is a WinUI 3 app with a native shell and WebView2 editor.
-- The Windows folder has been cleaned up to the active app path at `MarkdownStudioPro.WinUI/`.
+- The Windows app lives under `windows/MarkdownStudioPro.WinUI/`.
 - Builds are source-based; no public installer package is included yet.
 
 ## Repository Structure
@@ -17,15 +17,18 @@ The macOS app is the lead version. Windows follows the same product direction an
 .
 ├─ AI.md
 ├─ README.md
-├─ README_WINUI3.md
-├─ PATCH_NOTES.md
-├─ MarkdownStudioPro.WinUI/
-│  ├─ MarkdownStudioPro.WinUI.csproj
-│  ├─ MainWindow.xaml
-│  ├─ MainWindow.xaml.cs
-│  ├─ App/
-│  │  └─ editor.html
-│  └─ Assets/
+├─ windows/
+│  ├─ README_WINUI3.md
+│  ├─ PATCH_NOTES.md
+│  ├─ build_winui3.bat
+│  ├─ start_winui3.bat
+│  └─ MarkdownStudioPro.WinUI/
+│     ├─ MarkdownStudioPro.WinUI.csproj
+│     ├─ MainWindow.xaml
+│     ├─ MainWindow.xaml.cs
+│     ├─ App/
+│     │  └─ editor.html
+│     └─ Assets/
 └─ macos/
    ├─ README.md
    ├─ MarkdownStudioProMac.xcodeproj/
@@ -48,21 +51,21 @@ The Windows version currently includes:
 Build:
 
 ```powershell
-dotnet build .\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj
+dotnet build .\windows\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj
 ```
 
 Run during development:
 
 ```powershell
-dotnet run --project .\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj
+dotnet run --project .\windows\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj
 ```
 
-Helper scripts are available in the repository root:
+Helper scripts are available in `windows/`:
 
-- `build_winui3.bat`
-- `start_winui3.bat`
-- `diagnose_winui3.bat`
-- `clean_project_artifacts.bat`
+- `windows/build_winui3.bat`
+- `windows/start_winui3.bat`
+- `windows/diagnose_winui3.bat`
+- `windows/clean_project_artifacts.bat`
 
 ## macOS App
 
