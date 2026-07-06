@@ -1,0 +1,175 @@
+﻿<Window
+    x:Class="MarkdownStudioPro.WinUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+
+    <Grid x:Name="Root" Background="#181715">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border
+            x:Name="TopBar"
+            Grid.Row="0"
+            MinHeight="58"
+            Background="#F0181715"
+            BorderBrush="#2D2B27"
+            BorderThickness="0,0,0,1">
+            <Grid Padding="18,8,14,8" ColumnSpacing="18">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel
+                    Grid.Column="0"
+                    MinWidth="160"
+                    MaxWidth="560"
+                    VerticalAlignment="Center"
+                    Spacing="3">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock
+                            x:Name="DocumentTitleText"
+                            Text="Unbenannt"
+                            Foreground="#FAF9F5"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <TextBlock
+                            x:Name="SaveStateText"
+                            Text="Gespeichert"
+                            Foreground="#A09D96"
+                            FontSize="11"
+                            TextTrimming="CharacterEllipsis" />
+                        <TextBlock
+                            x:Name="MetadataSeparatorOne"
+                            Text="·"
+                            Foreground="#5E5A52"
+                            FontSize="11" />
+                        <TextBlock
+                            x:Name="DocumentPathText"
+                            Text="Keine Datei geöffnet"
+                            Foreground="#A09D96"
+                            FontSize="11"
+                            TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </StackPanel>
+
+                <CommandBar
+                    x:Name="MainCommandBar"
+                    Grid.Column="2"
+                    DefaultLabelPosition="Collapsed"
+                    IsDynamicOverflowEnabled="True"
+                    IsTabStop="False"
+                    Height="42"
+                    MinWidth="0"
+                    Padding="0"
+                    Background="Transparent"
+                    Foreground="#FAF9F5">
+                    <CommandBar.SecondaryCommands>
+                        <AppBarButton Label="Zuletzt verwendet" Click="RecentFilesButton_Click" />
+                        <AppBarButton Label="Speichern unter" Click="SaveAsButton_Click" />
+                        <AppBarSeparator />
+                        <AppBarButton Label="Quelle bearbeiten" Click="ShowSourceButton_Click" />
+                        <AppBarButton Label="Fokusmodus" Click="FocusModeButton_Click" />
+                        <AppBarSeparator />
+                        <AppBarButton Label="Theme: Hell" Click="ThemeLightButton_Click" />
+                        <AppBarButton Label="Theme: Dunkel" Click="ThemeDarkButton_Click" />
+                        <AppBarButton Label="Theme: Sepia" Click="ThemeSepiaButton_Click" />
+                        <AppBarButton Label="Theme: Midnight" Click="ThemeMidnightButton_Click" />
+                    </CommandBar.SecondaryCommands>
+                    <AppBarButton Label="Neu" Click="NewButton_Click" ToolTipService.ToolTip="Neues Dokument">
+                        <AppBarButton.Icon><FontIcon Glyph="&#xE710;" /></AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarButton Label="Öffnen" Click="OpenButton_Click" ToolTipService.ToolTip="Markdown-Datei öffnen">
+                        <AppBarButton.Icon><FontIcon Glyph="&#xE8E5;" /></AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarButton Label="Speichern" Click="SaveButton_Click" ToolTipService.ToolTip="Speichern">
+                        <AppBarButton.Icon><FontIcon Glyph="&#xE74E;" /></AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarSeparator />
+                    <AppBarButton Label="Format" ToolTipService.ToolTip="Format">
+                        <AppBarButton.Icon><FontIcon Glyph="&#xE8D2;" /></AppBarButton.Icon>
+                        <AppBarButton.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Überschrift 1" Click="HeadingOneButton_Click" />
+                                <MenuFlyoutItem Text="Überschrift 2" Click="HeadingTwoButton_Click" />
+                                <MenuFlyoutItem Text="Überschrift 3" Click="HeadingThreeButton_Click" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Text="Fett" Click="BoldButton_Click" />
+                                <MenuFlyoutItem Text="Kursiv" Click="ItalicButton_Click" />
+                                <MenuFlyoutItem Text="Durchgestrichen" Click="StrikeButton_Click" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Text="Zitat" Click="QuoteButton_Click" />
+                                <MenuFlyoutItem Text="Codeblock" Click="CodeButton_Click" />
+                                <MenuFlyoutItem Text="Inline-Code" Click="InlineCodeButton_Click" />
+                            </MenuFlyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarButton Label="Einfügen" ToolTipService.ToolTip="Einfügen">
+                        <AppBarButton.Icon><FontIcon Glyph="&#xE710;" /></AppBarButton.Icon>
+                        <AppBarButton.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Tabelle" Click="TableButton_Click" />
+                                <MenuFlyoutItem Text="Aufgabenliste" Click="TaskListButton_Click" />
+                                <MenuFlyoutItem Text="Trennlinie" Click="HorizontalRuleButton_Click" />
+                                <MenuFlyoutItem Text="Link" Click="LinkButton_Click" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Text="Tab-Hilfe" Click="TabHelpButton_Click" />
+                            </MenuFlyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarButton Label="Export" ToolTipService.ToolTip="Export">
+                        <AppBarButton.Icon><FontIcon Glyph="&#xEDE1;" /></AppBarButton.Icon>
+                        <AppBarButton.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Markdown-Datei exportieren" Click="ExportMarkdownFileButton_Click" />
+                                <MenuFlyoutItem Text="Markdown kopieren" Click="CopyMarkdownButton_Click" />
+                                <MenuFlyoutItem Text="HTML exportieren" Click="ExportHtmlButton_Click" />
+                                <MenuFlyoutItem Text="PDF drucken" Click="PrintPdfButton_Click" />
+                            </MenuFlyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarSeparator />
+                    <AppBarButton Label="Suchen" Click="FindReplaceButton_Click" ToolTipService.ToolTip="Suchen und Ersetzen">
+                        <AppBarButton.Icon><FontIcon Glyph="&#xE721;" /></AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarButton Label="Palette" Click="PaletteButton_Click" ToolTipService.ToolTip="Befehlspalette">
+                        <AppBarButton.Icon><FontIcon Glyph="&#xE945;" /></AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarSeparator />
+                    <AppBarButton Label="Einstellungen" Click="SettingsButton_Click" ToolTipService.ToolTip="Einstellungen">
+                        <AppBarButton.Icon><FontIcon Glyph="&#xE713;" /></AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarButton Label="Über" Click="AboutButton_Click" ToolTipService.ToolTip="Über Markdown Studio Pro">
+                        <AppBarButton.Icon><FontIcon Glyph="&#xE946;" /></AppBarButton.Icon>
+                    </AppBarButton>
+                </CommandBar>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <controls:WebView2 x:Name="EditorWebView" />
+
+            <Border
+                x:Name="EditorLoadingOverlay"
+                Background="#181715"
+                IsHitTestVisible="False">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                    <ProgressRing IsActive="True" Width="34" Height="34" />
+                    <TextBlock
+                        x:Name="EditorLoadingText"
+                        Text="Editor wird geladen ..."
+                        Foreground="#D8D2C8"
+                        HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
+
