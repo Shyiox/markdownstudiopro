@@ -1,81 +1,115 @@
 # Markdown Studio Pro - Windows
 
-Diese Spur ist die Windows-Version von Markdown Studio Pro. Die macOS-App bleibt die Lead-Version; Windows folgt ihr funktional und visuell so weit wie sinnvoll mit WinUI 3, Fluent-UI und WebView2.
+Die Windows-Version von Markdown Studio Pro ist eine eigenständige **WinUI-3-App mit WebView2-Editor**. Die Oberfläche ist auf ruhiges Schreiben ausgelegt: native Windows-Shell außen, Markdown-Editor innen, ohne doppelte Web-Menüleisten oder zusätzliche Seitenleisten.
 
-```text
-MarkdownStudioPro.WinUI/    Windows-App: WinUI 3 Shell + WebView2 Editor
-```
+## Aktueller Stand
 
-## Stand
+- Native WinUI-3-Shell mit Editorial-Pro-Toolbar
+- WebView2-basierter Markdown-Editor
+- Themes: **Hell** und **Dunkel**
+- Dateiaktionen: Neu, Öffnen, Speichern, Speichern unter und zuletzt verwendet
+- Start mit Markdown-Dateipfad, auch mit Leerzeichen und Umlauten
+- Speicherstatus: **Gespeichert**, **Ungespeichert**, **Speichert...**
+- Auto-Save für bereits gespeicherte Dokumente
+- Schutz vor Datenverlust beim Schließen oder Ersetzen eines ungespeicherten Dokuments
+- Drag & Drop für `.md`, `.markdown` und `.txt` mit sichtbarer Drop-Fläche
+- Fenstergröße und Fensterposition werden gespeichert
+- Optionales Wiederöffnen des zuletzt verwendeten Dokuments
+- Einstellungen mit Live-Vorschau für Theme, Editorbreite, Schriftgröße und Zeilenhöhe
+- Rechtschreibprüfung, Fokusmodus und Wortziel
+- Statusleiste mit Wort-/Zeichenstatistik und Auswahlstatistik
+- Quelle bearbeiten, Suchen & Ersetzen, Command Palette und Smart-Tab-Befehle
+- Export als Markdown und HTML
+- Drucken/PDF mit heller Papierdarstellung unabhängig vom App-Theme
+- Verbesserte Druckumbrüche für Überschriften, Tabellen, Zitate und Codeblöcke
 
-- Native WinUI-3-Shell mit kompakter CommandBar
-- WebView2-basierter Markdown-Editor ohne doppelte Web-Menuleiste
-- Dateiaktionen: Neu, Öffnen, Speichern, Speichern unter, zuletzt verwendet
-- Markdown-Start per Dateipfad/Startargument, auch mit Leerzeichen und Umlauten
-- Schreiborientierter Startzustand: Dokumenttitel ist vormarkiert und kann direkt ersetzt werden
-- Dirty-State mit Abfrage beim Schließen, auch wenn direkt nach dem Tippen geschlossen wird
-- Export: Markdown, HTML und PDF/Print-Fallback
-- Quelle bearbeiten, Suche/Ersetzen, Command Palette, Fokusmodus
-- Themes: Hell, Dunkel, Sepia, Midnight
-- Native Einstellungen für Theme, Fokusmodus, Editorbreite, Schriftgröße, Zeilenhöhe, Rechtschreibung, Auto-Save und Wortziel
-- Cleaner Über-Dialog mit Logo, Version, Kontakt und dezentem PayPal-Link
+Die vorhandene Tastatur-, Shortcut-, Smart-Tab- und Editor-`keydown`-Logik gehört zum bestätigten Baseline-Verhalten und sollte nicht nebenbei verändert werden.
 
 ## Voraussetzungen
 
-- Windows 10 19041 oder neuer
-- Microsoft Edge WebView2 Runtime
+- Windows 10 Build 19041 oder neuer
+- x64
 - .NET 8 SDK für Entwicklung und Build
-- Visual Studio mit Windows App SDK / WinUI Workload für IDE-Entwicklung
+- Microsoft Edge WebView2 Runtime
+- Optional: Visual Studio mit Windows App SDK / WinUI Tooling
 
-Die gebaute Windows-App ist self-contained für .NET und bringt die benötigte .NET Runtime im Output mit. WebView2 bleibt eine Windows-Runtime-Voraussetzung.
+Das Projekt wird für `win-x64` self-contained gebaut. Die .NET Runtime wird daher in den Build-Output aufgenommen. WebView2 bleibt eine Windows-Runtime-Voraussetzung.
 
 ## Build
+
+Im Ordner `windows`:
 
 ```bat
 build_winui3.bat
 ```
 
-Das Skript bereinigt `bin` und `obj`, führt Restore/Build für `win-x64` aus und prüft danach EXE, `editor.html` und `WebView2Loader.dll`.
+Das Skript:
+
+1. bereinigt `bin` und `obj`,
+2. führt Restore für `win-x64` aus,
+3. baut die Debug-Version,
+4. prüft EXE, `App/editor.html` und `WebView2Loader.dll`.
+
+Direkt mit `dotnet`:
+
+```powershell
+dotnet build .\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj -c Debug -r win-x64
+```
 
 ## Start
+
+Nach erfolgreichem Build:
 
 ```bat
 start_winui3.bat
 ```
 
-Direkter Start der Debug-Ausgabe:
+Direkter Pfad der Debug-Ausgabe:
 
 ```text
 MarkdownStudioPro.WinUI\bin\Debug\net8.0-windows10.0.19041.0\win-x64\Markdown Studio Pro.exe
 ```
 
-Eine Markdown-Datei kann auch als Argument übergeben werden:
+Datei direkt mitgeben:
 
 ```bat
 "MarkdownStudioPro.WinUI\bin\Debug\net8.0-windows10.0.19041.0\win-x64\Markdown Studio Pro.exe" "C:\Pfad\Dokument.md"
 ```
 
-## Aufraeumen
+Ein explizit übergebener Dateipfad hat Vorrang vor der optionalen Wiederherstellung des zuletzt geöffneten Dokuments.
+
+## Diagnose
+
+```bat
+diagnose_winui3.bat
+```
+
+Die Diagnose prüft Projektdateien, Output, WebView2 Runtime, `WebView2Loader.dll`, relevante NuGet-Pakete und vorhandene Startup-Logs.
+
+## Aufräumen
 
 ```bat
 clean_project_artifacts.bat
 ```
 
-Entfernt Build-Artefakte und lokale WebView2-Profile aus dem Projektordner. Danach bei Bedarf neu bauen.
+Entfernt Build-Artefakte und lokale WebView2-Profile aus dem Projektordner.
 
-## Testcheck
+## Manueller Smoke-Test
 
-Vor einem Commit mindestens ausführen:
+Vor einer Veröffentlichung mindestens prüfen:
 
-```bat
-dotnet build MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj
-```
-
-Manuell prüfen:
-
-- Start ohne Datei: Titel vormarkiert, Tab springt in den Schreibbereich
-- Datei öffnen per Menü und per Startargument
-- Schreiben und direkt schließen: Dialog "Änderungen sichern?" erscheint
-- Themes Hell, Dunkel, Sepia und Midnight
-- Über-Dialog in hellem und dunklem Theme
-- Export/Quelle/Suche bei Bedarf
+- Start ohne Datei
+- Datei per Menü öffnen
+- `.md`, `.markdown` und `.txt` per Drag & Drop öffnen
+- ungespeicherte Änderungen beim Öffnen/Schließen abfangen
+- Speichern und Speichern unter
+- Auto-Save bei bereits gespeicherter Datei
+- Hell/Dunkel
+- Editorbreite, Schriftgröße und Zeilenhöhe live ändern und per Abbrechen zurücksetzen
+- Fenster verschieben/vergrößern und nach Neustart wiederherstellen
+- optionales Wiederöffnen des letzten Dokuments an/aus
+- Suchen & Ersetzen
+- Smart-Tab-Hilfe und bestehende Smart-Tab-Ausführung
+- Markdown-/HTML-Export
+- Druckvorschau im Darkmode: Dokumentblatt bleibt weiß
+- längeres Dokument auf saubere Seitenumbrüche prüfen
