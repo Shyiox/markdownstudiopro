@@ -3,14 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Markdown Studio Pro</title>
+<title>Markdown Studio Pro V4</title>
 <style>
 :root {
   color-scheme: light;
-  /* Design tokens */
+  /* V4 Design Tokens – erweitert für Next Level */
   --primary:#cc785c;
   --primary-active:#a9583e;
   --accent:#cc785c;
+  --link:#8b3f2d;
+  --code-fg:#5f2d21;
+  --code-bg:#fff0e6;
+  --code-border:#d9a48d;
+  --quote-bg:#f1e6dc;
+  --quote-fg:#2f2a25;
 
   /* Backgrounds & Surfaces */
   --bg:#faf9f5;
@@ -19,12 +25,27 @@
   --paper-stroke:#e6dfd8;
   --surface:#ffffff;
   --surface-2:#f8f5f0;
+  --surface-dark:#23211e;
+  --surface-dark-soft:#2a2824;
 
   /* Text */
   --text:#141413;
   --muted:#6c6a64;
   --muted-2:#8e8b82;
   --on-dark:#faf9f5;
+
+  /* Dialog surfaces: explicit contrast-safe palette */
+  --dialog-backdrop:rgba(20,20,19,.28);
+  --dialog-surface:#fffdf8;
+  --dialog-border:#d8d0c7;
+  --dialog-text:#141413;
+  --dialog-muted:#625d57;
+  --dialog-control-bg:#fffaf4;
+  --dialog-control-border:#cfc6bd;
+  --dialog-primary-bg:#a65c43;
+  --dialog-primary-text:#ffffff;
+  --dialog-hover:#f2ebe4;
+  --dialog-focus:#a65c43;
 
   /* Feedback */
   --success:#5db872;
@@ -51,13 +72,37 @@
 /* Dark overrides */
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg:#181715;
-  --bg-2:#1f1e1b;
-  --text:#faf9f5;
-  --muted:#a09d96;
-  --muted-2:#8e8b82;
-  --paper:#fffdf8;
-  --paper-stroke:rgba(250,249,245,.12);
+  --primary:#d28a6d;
+  --primary-active:#c7795b;
+  --accent:#d28a6d;
+  --link:#e0a085;
+  --code-fg:#f0c2ae;
+  --code-bg:#2c211e;
+  --code-border:#60423a;
+  --quote-bg:#232326;
+  --quote-fg:#e9e6e0;
+  --bg:#121315;
+  --bg-2:#18191b;
+  --text:#f2f0ec;
+  --muted:#b5b1aa;
+  --muted-2:#8f8c86;
+  --paper:#1b1c1f;
+  --paper-stroke:#34363a;
+  --surface:#1b1c1f;
+  --surface-2:#25262a;
+  --surface-dark:#0e0f11;
+  --surface-dark-soft:#151619;
+  --dialog-backdrop:rgba(7,8,10,.66);
+  --dialog-surface:#1b1c1f;
+  --dialog-border:#3a3c41;
+  --dialog-text:#f2f0ec;
+  --dialog-muted:#b5b1aa;
+  --dialog-control-bg:#151619;
+  --dialog-control-border:#45474d;
+  --dialog-primary-bg:#d28a6d;
+  --dialog-primary-text:#1b1c1f;
+  --dialog-hover:#25262a;
+  --dialog-focus:#d28a6d;
 }
 
 /* === BASE + LAYOUT === */
@@ -66,9 +111,13 @@ html{min-height:100%;max-width:100%;overflow-x:hidden;scrollbar-width:thin;scrol
 body{margin:0;min-height:100%;max-width:100%;overflow-x:hidden;overflow-y:auto;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body::-webkit-scrollbar{width:9px;height:9px}body::-webkit-scrollbar-track{background:transparent}body::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--primary) 22%,transparent);border:2px solid transparent;background-clip:content-box;border-radius:999px}body::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--primary) 42%,transparent);background-clip:content-box}
 button,input{font:inherit}.icon{width:18px;height:18px;display:block;flex:0 0 auto;color:var(--primary);fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:none}
-.app-shell{min-height:100vh;max-width:100vw;overflow-x:hidden;display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"main"}
+.app-shell{min-height:100vh;max-width:100vw;overflow-x:hidden;display:grid;grid-template-columns:52px 0 minmax(0,1fr);grid-template-areas:"rail tools main";transition:grid-template-columns 180ms var(--ease-out)}
+body.tools-open .app-shell{grid-template-columns:52px 230px minmax(0,1fr)}
 
 /* === FOCUS MODE (Phase 1) – wird per JS auf body gesetzt === */
+body.focus-mode .rail,
+body.focus-mode .tools { display: none !important; }
+body.focus-mode .app-shell { grid-template-columns: 0 0 minmax(0,1fr) !important; }
 body.focus-mode .editor-frame { padding-top: 32px; padding-bottom: 140px; }
 body.focus-mode .document {
   max-width: 820px;
@@ -79,12 +128,12 @@ body.focus-mode .document {
 }
 body.focus-mode .document:focus { box-shadow: 0 30px 90px rgba(0,0,0,.22), 0 0 0 3px color-mix(in srgb,var(--primary) 12%,transparent); }
 
-.icon-button,.cmd-button{border-radius:8px;border:1px solid var(--paper-stroke);background:transparent;color:var(--text);cursor:pointer;transition:background 160ms var(--ease-out),border-color 160ms var(--ease-out),transform 140ms var(--ease-spring), box-shadow 160ms var(--ease-out)}.icon-button{height:34px;display:grid;place-items:center}.icon-button:hover,.cmd-button:hover{background:color-mix(in srgb,var(--primary) 9%,transparent);border-color:color-mix(in srgb,var(--primary) 30%,var(--paper-stroke)); box-shadow:0 2px 8px rgba(0,0,0,.06)}.icon-button:active,.cmd-button:active{transform:scale(.96)}.icon-button .icon,.cmd-button .icon{filter:none;color:var(--primary)}
-.main{grid-area:main;min-width:0;max-width:100%;overflow-x:hidden;min-height:100vh;display:grid;grid-template-rows:1fr}
-.cmd-button{min-height:34px;padding:0 12px;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:650;white-space:nowrap}
-.cmd-button.primary{background:var(--primary);border-color:var(--primary);color:white}
-.cmd-button.primary img{filter:var(--icon-light-filter)}
-.cmd-button.primary .icon{filter:none;color:white}
+.rail{grid-area:rail;position:fixed;left:0;top:0;bottom:0;width:52px;height:100vh;background:var(--surface-dark);border-right:1px solid rgba(250,249,245,.12);display:flex;flex-direction:column;align-items:center;gap:7px;padding:8px 8px 10px;z-index:65}.rail .brand{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;background:#efe9de;border:1px solid var(--primary)}.rail .brand img,.rail .brand .icon{width:20px;height:20px;filter:none;color:var(--primary)}.rail button{width:34px;height:34px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--on-dark);display:grid;place-items:center;cursor:pointer;transition:background 140ms var(--ease-out),border-color 140ms var(--ease-out),transform 120ms var(--ease-out)}.rail button:hover,.rail button[aria-pressed="true"]{background:color-mix(in srgb,var(--primary) 18%,transparent);border-color:color-mix(in srgb,var(--primary) 34%,transparent)}.rail button:active{transform:scale(.97)}.rail button img,.rail button .icon{width:19px;height:19px;filter:none;color:var(--on-dark)}
+.rail button[data-command="toggleFocus"][aria-pressed="true"] { background: color-mix(in srgb, var(--primary) 28%, transparent); }
+.tools{grid-area:tools;position:sticky;top:0;height:100vh;overflow:hidden;background:var(--bg-2);border-right:1px solid var(--paper-stroke);opacity:0;pointer-events:none;transform:translateX(-8px);transition:opacity 160ms var(--ease-out),transform 160ms var(--ease-out)}body.tools-open .tools{opacity:1;pointer-events:auto;transform:translateX(0);overflow:auto}.tools-inner{padding:18px 14px}.tools-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:13px;border-bottom:1px solid var(--paper-stroke);font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:650}.tool-collapse{border:0;background:transparent;color:var(--primary);cursor:pointer;padding:4px 0}.tool-section{padding:14px 0;border-bottom:1px solid var(--paper-stroke)}.tool-section:last-child{border-bottom:0}.tool-title{display:flex;align-items:center;gap:8px;font-weight:650;font-size:12px;margin-bottom:9px;color:var(--text)}[data-theme="dark"] .tools{background:var(--surface-dark-soft);border-color:rgba(250,249,245,.10)}[data-theme="dark"] .tool-section,[data-theme="dark"] .tools-head{border-color:rgba(250,249,245,.10)}
+.format-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.icon-button,.select-button,.menu-action,.cmd-button{border-radius:8px;border:1px solid var(--paper-stroke);background:transparent;color:var(--text);cursor:pointer;transition:background 160ms var(--ease-out),border-color 160ms var(--ease-out),transform 140ms var(--ease-spring), box-shadow 160ms var(--ease-out)}.icon-button{height:34px;display:grid;place-items:center}.icon-button:hover,.select-button:hover,.cmd-button:hover,.menu-action:hover{background:color-mix(in srgb,var(--primary) 9%,transparent);border-color:color-mix(in srgb,var(--primary) 30%,var(--paper-stroke)); box-shadow:0 2px 8px rgba(0,0,0,.06)}.icon-button:active,.select-button:active,.cmd-button:active,.menu-action:active{transform:scale(.96)}.select-button{width:100%;min-height:36px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;text-align:left;font-size:12px}.select-button img,.icon-button img,.cmd-button img,.menu-action img{filter:var(--icon-accent-filter)}.select-button .icon,.icon-button .icon,.cmd-button .icon,.menu-action .icon{filter:none;color:var(--primary)}.stat-row{display:flex;flex-wrap:wrap;gap:12px}.stat strong{font-size:14px}.stat span{font-size:10px;color:var(--muted);display:block;text-transform:uppercase;letter-spacing:.06em}.outline{display:grid;gap:5px;max-height:220px;overflow:auto}.outline button{border:0;background:transparent;color:var(--muted);text-align:left;padding:4px 0;cursor:pointer;font-size:12px}.outline button:hover{color:var(--primary)}
+.main{grid-area:main;min-width:0;max-width:100%;overflow-x:hidden;min-height:100vh;display:grid;grid-template-rows:1fr}.topbar{display:none;position:fixed;left:50%;bottom:18px;top:auto;transform:translateX(-50%);z-index:55;background:color-mix(in srgb,var(--paper) 86%,transparent);border:1px solid rgba(230,223,216,.78);border-radius:999px;padding:8px;display:none;align-items:center;justify-content:center;gap:8px;box-shadow:0 18px 52px rgba(37,35,32,.20);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.topbar::before{content:"";position:absolute;inset:1px;border-radius:999px;pointer-events:none;border:1px solid rgba(255,255,255,.55)}.cmd-button{min-height:34px;padding:0 12px;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:650;white-space:nowrap}.cmd-button.primary{background:var(--primary);border-color:var(--primary);color:white}.cmd-button.primary img{filter:var(--icon-light-filter)}.cmd-button.primary .icon{filter:none;color:white}[data-theme="dark"] .topbar{background:rgba(24,23,21,.86);border-color:rgba(250,249,245,.12);box-shadow:0 18px 58px rgba(0,0,0,.42)}[data-theme="dark"] .topbar::before{border-color:rgba(250,249,245,.08)}
+.theme-switch{position:relative;display:inline-block;width:60px;height:34px;cursor:pointer}.theme-switch input{opacity:0;width:0;height:0;position:absolute}.slider{position:absolute;inset:0;background:#efe9de;border:1px solid var(--paper-stroke);border-radius:999px;overflow:hidden;transition:background 180ms var(--ease-out),border-color 180ms var(--ease-out)}.sun-moon{position:absolute;height:26px;width:26px;left:4px;bottom:3px;border-radius:999px;background:#e8a55a;transition:transform 220ms var(--ease-out),background 180ms var(--ease-out)}.theme-switch input:checked+.slider{background:var(--surface-dark);border-color:color-mix(in srgb,var(--primary) 42%,transparent)}.theme-switch input:checked+.slider .sun-moon{transform:translateX(26px);background:var(--on-dark)}.moon-dot{opacity:0;background:var(--muted-2);border-radius:50%;position:absolute}.theme-switch input:checked+.slider .moon-dot{opacity:1}.moon-dot:nth-child(1){left:10px;top:3px;width:6px;height:6px}.moon-dot:nth-child(2){left:3px;top:10px;width:9px;height:9px}.moon-dot:nth-child(3){left:16px;top:17px;width:4px;height:4px}.rail-theme-switch{width:34px;height:34px;border-radius:8px;display:block;flex:0 0 auto}.rail-theme-switch .slider{border-radius:8px;background:rgba(250,249,245,.08);border-color:rgba(250,249,245,.12)}.rail-theme-switch .sun-moon{width:20px;height:20px;left:6px;bottom:6px}.rail-theme-switch input:checked+.slider .sun-moon{transform:none;background:#faf9f5}.rail-theme-switch input:checked+.slider{background:color-mix(in srgb,var(--primary) 18%,transparent);border-color:color-mix(in srgb,var(--primary) 34%,transparent)}.rail-theme-switch:active .slider{transform:scale(.97)}.rail-theme-switch .slider{transition:background 180ms var(--ease-out),border-color 180ms var(--ease-out),transform 120ms var(--ease-out)}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 /* === EDITOR PAPER (das visuelle Herz – Phase 1: mehr Depth, bessere Fokus-States, Premium-Gefühl) === */
 .editor-frame{background:var(--bg);padding:22px 30px 110px;min-height:calc(100vh - 55px);min-width:0;max-width:100%;overflow-x:hidden}
 .document{
@@ -123,10 +172,10 @@ body.focus-mode .document{
   box-shadow: 0 40px 120px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.9);
 }
 
-/* === STATUSBAR === */
+/* === STATUSBAR (V4 Phase 1) – subtil in Normalansicht, deutlicher im Fokus-Modus === */
 .statusbar{
   position: fixed;
-  left: 0;
+  left: 52px;
   right: 0;
   bottom: 0;
   z-index: 40;
@@ -142,6 +191,7 @@ body.focus-mode .document{
   -webkit-backdrop-filter: blur(8px);
   transition: left .18s var(--ease-out), background .2s var(--ease-out);
 }
+body.tools-open .statusbar{ left: 282px; }
 body.focus-mode .statusbar{
   left: 0;
   background: color-mix(in srgb, var(--bg) 96%, transparent);
@@ -154,57 +204,51 @@ body.focus-mode .statusbar{
 .status-sep{ opacity: .5; }
 .save-state{ padding: 1px 7px; border-radius: 999px; font-weight: 600; letter-spacing: .02em; }
 .save-state.dirty{ background: color-mix(in srgb, var(--primary) 14%, transparent); color: var(--primary); }
+.save-state.saving{ background: color-mix(in srgb, var(--muted) 10%, transparent); color: var(--muted); }
 .focus-hint{ font-size: 11px; opacity: .7; }
 [data-theme="dark"] .statusbar{ background: color-mix(in srgb, var(--bg) 88%, transparent); }
 
-/* === THEMES === */
-[data-theme="sepia"] {
-  --bg: #f4f0e6;
-  --bg-2: #e8e0d1;
-  --paper: #f9f4e9;
-  --paper-stroke: #d4c9b5;
-  --text: #3a2f1f;
-  --muted: #6b5f4d;
-  --primary: #8c6642;
-}
-[data-theme="midnight"] {
-  --bg: #0f1115;
-  --bg-2: #161a21;
-  --paper: #1c212a;
-  --paper-stroke: #2a303c;
-  --text: #e6e8ee;
-  --muted: #8a8f9a;
-  --primary: #6ea8ff;
-  --surface-dark: #0a0c10;
-}
-[data-theme="clean"] {
-  --bg: #ffffff;
-  --bg-2: #f7f7f7;
-  --paper: #ffffff;
-  --paper-stroke: #e5e5e5;
-  --text: #222222;
-  --muted: #666666;
-  --primary: #2563eb;
-}
-
+/* Light and Dark are the only supported themes. */
 /* Bessere Tabellen Styles */
-.document table { border-collapse: collapse; width:100%; margin:1rem 0; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
-.document th, .document td { border:1px solid var(--paper-stroke); padding:8px 10px; min-width:0; overflow-wrap:anywhere; }
-.document th { background: color-mix(in srgb, var(--primary) 8%, var(--paper)); font-weight:600; text-align:left; }
-.document tr:hover td { background: color-mix(in srgb, var(--primary) 4%, transparent); }
-.document td:focus-within, .document th:focus-within { outline: 2px solid var(--primary); outline-offset:-2px; }
+.document table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width:100%;
+  margin:1rem 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  border: 1px solid var(--paper-stroke);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.document th, .document td {
+  border-right:1px solid var(--paper-stroke);
+  border-bottom:1px solid var(--paper-stroke);
+  padding:8px 10px;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.document th:last-child, .document td:last-child { border-right: 0; }
+.document tr:last-child td { border-bottom: 0; }
+.document th { background: color-mix(in srgb, var(--primary) 10%, var(--paper)); font-weight:600; text-align:left; }
+.document tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--primary) 2%, transparent); }
+.document tr:hover td { background: color-mix(in srgb, var(--primary) 5%, transparent); }
+.document td:focus-within, .document th:focus-within { outline: 2px solid var(--primary); outline-offset:-2px; position: relative; z-index: 1; }
 
-.document h1{font-size:2.2rem;line-height:1.1;margin:1.2rem 0 .8rem;letter-spacing:-.04em}.document h2{font-size:1.45rem;margin:1.7rem 0 .7rem;letter-spacing:-.02em}.document h3{font-size:1.15rem;margin:1.3rem 0 .5rem}.document p{margin:.68rem 0}.document a{color:var(--primary)}.document blockquote{margin:1rem 0;padding:.55rem 1rem;border-left:4px solid var(--primary);background:#f5f0e8;border-radius:0 12px 12px 0;color:#3d3d3a}.document code{background:#f5f0e8;border:1px solid #e6dfd8;border-radius:7px;padding:.12rem .34rem;font-family:"Cascadia Code",Consolas,monospace;font-size:.92em}.document code:not(pre code){position:relative;display:inline-flex;align-items:center;max-width:100%;color:#7c3f2f;background:#fff4ea;border-color:#e7c7b8;font-weight:650;line-height:1.42;cursor:text;vertical-align:baseline}.document code:not(pre code):hover{background:#ffece0;border-color:#d9a48d;color:#5f2d21}.document code:not(pre code).copied{background:#edf8f3;border-color:#9ccdbb;color:#245d4a}.document pre{position:relative;background:#1f1e1b;color:#faf9f5;border:1px solid rgba(250,249,245,.10);border-radius:14px;padding:18px;overflow:auto;max-width:100%;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;cursor:text}.document pre.copied{border-color:rgba(155,209,190,.55);box-shadow:0 0 0 2px rgba(155,209,190,.16)}.document pre code{background:transparent;border:0;color:inherit;padding:0;white-space:inherit;overflow-wrap:inherit;word-break:inherit;cursor:text}.document table{border-collapse:collapse;width:100%;max-width:100%;min-width:0;margin:1rem 0;table-layout:fixed}.document th,.document td{border:1px solid #e6dfd8;padding:8px 10px;min-width:0;overflow-wrap:anywhere;word-break:break-word}.document th{background:#f5f0e8;text-align:left}.document hr{border:0;height:1px;background:color-mix(in srgb,#252523 28%,#e6dfd8 72%);margin:34px 0}.document .page-break{display:flex;align-items:center;gap:14px;margin:46px -8px 44px;color:#6c6a64;font-size:.76rem;font-weight:650;letter-spacing:.11em;text-transform:uppercase;user-select:none;pointer-events:none}.document .page-break:before,.document .page-break:after{content:"";height:1px;flex:1;background:color-mix(in srgb,#252523 16%,#e6dfd8 84%)}.document .dochead{border-bottom:1px solid #e6dfd8;margin-bottom:1.5rem;padding-bottom:1rem}
-.document .dochead .label,.document .dochead .tags{font-size:.72rem;letter-spacing:.11em;color:#6c6a64;font-weight:400;text-align:center}
-.document .dochead .label{text-transform:uppercase}
-.document .dochead h1{margin:.2rem 0 .25rem;text-align:center}
-.document .dochead p{color:#6c6a64;margin:0;text-align:center}
-.document > h1:first-child{text-align:center}
-.document > h1:first-child + hr{margin-top:1rem}.document p:empty,.document p:has(>br:only-child){min-height:1.5em}.document hr + p:empty,.document hr + p:has(>br:only-child){min-height:2.2em;margin-top:-.35rem;padding-top:.35rem}.task-checkbox{margin-right:.5rem}
-.toast-stack{position:fixed;right:18px;bottom:86px;z-index:60;display:grid;gap:8px}.toast{background:rgba(24,23,21,.94);color:#faf9f5;border:1px solid rgba(250,249,245,.12);border-radius:14px;padding:10px 12px;min-width:220px;box-shadow:0 14px 34px rgba(0,0,0,.3)}.toast strong{display:block;font-size:13px}.toast span{display:block;font-size:12px;color:#d8d2c8;margin-top:2px}.tab-suggest,.command-menu{position:fixed;z-index:50;display:none;border:1px solid rgba(204,120,92,.3);background:rgba(24,23,21,.96);color:#faf9f5;border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.35)}.tab-suggest{padding:8px 10px;gap:8px;align-items:center}.tab-suggest[data-visible="true"]{display:flex}.tab-suggest kbd{background:rgba(204,120,92,.16);border:1px solid rgba(204,120,92,.26);border-radius:8px;padding:3px 7px}.command-menu{width:min(390px,calc(100vw - 36px));max-height:340px;overflow:auto;padding:8px}.command-menu[data-visible="true"]{display:block}.command-header{padding:6px 7px 8px;color:#a09d96;font-size:11px;text-transform:uppercase;letter-spacing:.06em}.command-item{width:100%;border:1px solid transparent;border-radius:12px;background:transparent;color:inherit;text-align:left;padding:9px 10px;display:grid;grid-template-columns:1fr auto;gap:8px;cursor:pointer}.command-item[aria-selected="true"],.command-item:hover{background:rgba(204,120,92,.14);border-color:rgba(204,120,92,.3)}.command-item strong{display:block}.command-item span{font-size:12px;color:#d8d2c8}.command-item code{color:#fff4ee;background:rgba(204,120,92,.14);border-radius:8px;padding:3px 6px}.help-backdrop{position:fixed;inset:0;background:rgba(24,23,21,.56);z-index:70;display:grid;place-items:center;padding:24px}.help-backdrop[hidden]{display:none}.help-modal{width:min(820px,calc(100vw - 48px));max-height:calc(100vh - 48px);overflow:auto;background:#181715;color:#faf9f5;border:1px solid rgba(250,249,245,.12);border-radius:24px;padding:22px;box-shadow:0 34px 120px rgba(0,0,0,.58)}.help-head{display:flex;justify-content:space-between;gap:16px}.snippet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}.snippet-card{border:1px solid rgba(250,249,245,.12);border-radius:16px;background:transparent;color:inherit;padding:12px;text-align:left;cursor:pointer}.snippet-card:hover{background:rgba(204,120,92,.12)}
-@media(max-width:900px){.app-shell{grid-template-columns:1fr;grid-template-areas:"main"}.document{width:100%;padding:34px 24px 96px}.editor-frame{padding:10px 10px 92px}.snippet-grid{grid-template-columns:1fr}.toast-stack{right:10px;bottom:86px}}
+.document h1{font-size:2.2rem;line-height:1.1;margin:1.2rem 0 .8rem;letter-spacing:-.04em}.document h2{font-size:1.45rem;margin:1.7rem 0 .7rem;letter-spacing:-.02em}.document h3{font-size:1.15rem;margin:1.3rem 0 .5rem}.document p{margin:.68rem 0}.document a{color:var(--primary)}.document blockquote{margin:1rem 0;padding:.55rem 1rem;border-left:4px solid var(--primary);background:#f5f0e8;border-radius:0 12px 12px 0;color:#3d3d3a}.document code{background:#f5f0e8;border:1px solid #e6dfd8;border-radius:7px;padding:.12rem .34rem;font-family:"Cascadia Code",Consolas,monospace;font-size:.92em}.document code:not(pre code){position:relative;display:inline-flex;align-items:center;max-width:100%;color:#7c3f2f;background:#fff4ea;border-color:#e7c7b8;font-weight:650;line-height:1.42;cursor:text;vertical-align:baseline}.document code:not(pre code):hover{background:#ffece0;border-color:#d9a48d;color:#5f2d21}.document code:not(pre code).copied{background:#edf8f3;border-color:#9ccdbb;color:#245d4a}.document pre{position:relative;background:#1f1e1b;color:#faf9f5;border:1px solid rgba(250,249,245,.10);border-radius:14px;padding:18px;overflow:auto;max-width:100%;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;cursor:text}.document pre.copied{border-color:rgba(155,209,190,.55);box-shadow:0 0 0 2px rgba(155,209,190,.16)}.document pre code{background:transparent;border:0;color:inherit;padding:0;white-space:inherit;overflow-wrap:inherit;word-break:inherit;cursor:text}.document table{border-collapse:collapse;width:100%;max-width:100%;min-width:0;margin:1rem 0;table-layout:fixed}.document th,.document td{border:1px solid #e6dfd8;padding:8px 10px;min-width:0;overflow-wrap:anywhere;word-break:break-word}.document th{background:#f5f0e8;text-align:left}
+[data-theme="dark"] .document th {
+  background: color-mix(in srgb, var(--primary) 24%, #2a2622);
+  color: #faf9f5;
+  border-color: color-mix(in srgb, var(--primary) 38%, rgba(250,249,245,.18));
+}
+[data-theme="dark"] .document td {
+  border-color: rgba(250,249,245,.18);
+}
+.document hr{border:0;height:1px;background:color-mix(in srgb,#252523 28%,#e6dfd8 72%);margin:34px 0}.document .page-break{display:flex;align-items:center;gap:14px;margin:46px -8px 44px;color:#6c6a64;font-size:.76rem;font-weight:650;letter-spacing:.11em;text-transform:uppercase;user-select:none;pointer-events:none}.document .page-break:before,.document .page-break:after{content:"";height:1px;flex:1;background:color-mix(in srgb,#252523 16%,#e6dfd8 84%)}.document .dochead{border-bottom:1px solid #e6dfd8;margin-bottom:1.5rem;padding-bottom:1rem}.document .dochead .label{display:none}.document .dochead .tags{font-size:.72rem;letter-spacing:.11em;color:#6c6a64;font-weight:400;text-align:center}.document .dochead h1{margin:.2rem 0 .25rem;text-align:center}.document .dochead p{color:#6c6a64;margin:0;text-align:center}.document p:empty,.document p:has(>br:only-child){min-height:1.5em}.document hr + p:empty,.document hr + p:has(>br:only-child){min-height:2.2em;margin-top:-.35rem;padding-top:.35rem}.task-checkbox{margin-right:.5rem}
+.menu-backdrop{position:fixed;inset:0;z-index:58;background:transparent}.menu-backdrop[hidden],.menu-sheet[hidden]{display:none}.menu-sheet{position:fixed;z-index:70;left:66px;top:10px;width:min(760px,calc(100vw - 112px));max-height:calc(100vh - 96px);overflow:auto;border:1px solid var(--paper-stroke);border-radius:22px;background:color-mix(in srgb,var(--bg-2) 96%,transparent);box-shadow:0 24px 80px rgba(0,0,0,.24);padding:12px}.menu-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--paper-stroke);padding:4px 4px 12px;margin-bottom:12px}.menu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.menu-section{border:1px solid var(--paper-stroke);border-radius:16px;padding:10px}.menu-section h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.menu-list{display:grid;gap:6px}.menu-action{min-height:38px;display:flex;align-items:center;gap:9px;padding:8px 10px;text-align:left}.menu-action strong{display:block;font-size:12.5px}.menu-action span span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.toast-stack{position:fixed;right:18px;bottom:86px;z-index:60;display:grid;gap:8px}.toast{background:rgba(24,23,21,.94);color:#faf9f5;border:1px solid rgba(250,249,245,.12);border-radius:14px;padding:10px 12px;min-width:220px;box-shadow:0 14px 34px rgba(0,0,0,.3)}.toast strong{display:block;font-size:13px}.toast span{display:block;font-size:12px;color:#d8d2c8;margin-top:2px}.apple-hud{position:fixed;left:50%;top:18%;z-index:120;display:flex;align-items:center;gap:9px;min-height:38px;padding:9px 14px;border-radius:999px;background:rgba(246,246,248,.78);color:#1d1d1f;border:1px solid rgba(60,60,67,.16);box-shadow:0 18px 48px rgba(0,0,0,.16),0 1px 0 rgba(255,255,255,.65) inset;backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);font-size:13px;font-weight:650;letter-spacing:-.01em;pointer-events:none;transform:translate(-50%,-8px) scale(.96);opacity:0;animation:appleHudIn 170ms var(--ease-out) forwards,appleHudOut 220ms var(--ease-out) 980ms forwards}.apple-hud::before{content:"";width:17px;height:17px;border-radius:50%;background:linear-gradient(180deg,#34c759,#24a447);box-shadow:0 0 0 1px rgba(0,0,0,.08) inset}.apple-hud::after{content:"";position:absolute;left:20px;top:17px;width:7px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg)}@keyframes appleHudIn{to{opacity:1;transform:translate(-50%,0) scale(1)}}@keyframes appleHudOut{to{opacity:0;transform:translate(-50%,-6px) scale(.98)}}[data-theme="dark"] .apple-hud{background:rgba(42,42,45,.76);color:#f4f4f2;border-color:rgba(244,244,242,.14);box-shadow:0 18px 54px rgba(0,0,0,.38),0 1px 0 rgba(255,255,255,.08) inset}.tab-suggest,.command-menu{position:fixed;z-index:50;display:none;border:1px solid rgba(204,120,92,.3);background:rgba(24,23,21,.96);color:#faf9f5;border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.35)}.tab-suggest{padding:8px 10px;gap:8px;align-items:center}.tab-suggest[data-visible="true"]{display:flex}.tab-suggest kbd{background:rgba(204,120,92,.16);border:1px solid rgba(204,120,92,.26);border-radius:8px;padding:3px 7px}.command-menu{width:min(390px,calc(100vw - 36px));max-height:340px;overflow:auto;padding:8px}.command-menu[data-visible="true"]{display:block}.command-header{padding:6px 7px 8px;color:#a09d96;font-size:11px;text-transform:uppercase;letter-spacing:.06em}.command-item{width:100%;border:1px solid transparent;border-radius:12px;background:transparent;color:inherit;text-align:left;padding:9px 10px;display:grid;grid-template-columns:1fr auto;gap:8px;cursor:pointer}.command-item[aria-selected="true"],.command-item:hover{background:rgba(204,120,92,.14);border-color:rgba(204,120,92,.3)}.command-item strong{display:block}.command-item span{font-size:12px;color:#d8d2c8}.command-item code{color:#fff4ee;background:rgba(204,120,92,.14);border-radius:8px;padding:3px 6px}.help-backdrop,.table-backdrop{position:fixed;inset:0;background:var(--dialog-backdrop);z-index:70;display:grid;place-items:center;padding:24px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}.table-backdrop{z-index:75}.help-backdrop[hidden],.table-backdrop[hidden]{display:none}.help-modal,.table-modal{overflow:auto;background:var(--dialog-surface);color:var(--dialog-text);border:1px solid var(--dialog-border);box-shadow:0 24px 72px rgba(0,0,0,.28);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}.help-modal{width:min(820px,calc(100vw - 48px));max-height:calc(100vh - 48px);border-radius:18px;padding:20px}.table-modal{width:min(460px,calc(100vw - 32px));border-radius:16px;padding:20px}.help-head,.dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}.dialog-heading{min-width:0}.dialog-heading h2,.table-modal h2{margin:0;font-size:1.08rem;line-height:1.25;letter-spacing:-.015em;color:var(--dialog-text)}.dialog-description,.table-modal p{margin:5px 0 0;color:var(--dialog-muted);font-size:13px;line-height:1.45}.dialog-close{width:34px;height:34px;flex:0 0 auto;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--dialog-muted);display:grid;place-items:center;cursor:pointer;transition:background 140ms var(--ease-out),border-color 140ms var(--ease-out),color 140ms var(--ease-out)}.dialog-close:hover{background:var(--dialog-hover);border-color:var(--dialog-control-border);color:var(--dialog-text)}.dialog-close:focus-visible{outline:2px solid var(--dialog-focus);outline-offset:2px}.dialog-close .icon{color:currentColor}.table-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 14px}.table-field{display:grid;gap:7px}.table-field label{font-size:12px;font-weight:600;letter-spacing:0;color:var(--dialog-muted)}.table-input{width:100%;border:1px solid var(--dialog-control-border);border-radius:8px;background:var(--dialog-control-bg);color:var(--dialog-text);padding:10px 12px;font-size:15px;outline:none;transition:border-color 140ms var(--ease-out),box-shadow 140ms var(--ease-out),background 140ms var(--ease-out)}.table-input:focus{border-color:var(--dialog-focus);box-shadow:0 0 0 3px color-mix(in srgb,var(--dialog-focus) 18%,transparent)}.table-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.dialog-button{min-height:36px;min-width:100px;border:1px solid var(--dialog-control-border);border-radius:8px;background:transparent;color:var(--dialog-text);padding:0 14px;font-size:12.5px;font-weight:650;cursor:pointer;transition:background 140ms var(--ease-out),border-color 140ms var(--ease-out),transform 100ms var(--ease-out)}.dialog-button:hover{background:var(--dialog-hover);border-color:color-mix(in srgb,var(--dialog-focus) 34%,var(--dialog-control-border))}.dialog-button:active{transform:translateY(1px)}.dialog-button:focus-visible{outline:2px solid var(--dialog-focus);outline-offset:2px}.dialog-button.primary{background:var(--dialog-primary-bg);border-color:var(--dialog-primary-bg);color:var(--dialog-primary-text)}.dialog-button.primary:hover{background:color-mix(in srgb,var(--dialog-primary-bg) 88%,var(--dialog-text));border-color:color-mix(in srgb,var(--dialog-primary-bg) 88%,var(--dialog-text))}.table-error{min-height:18px;color:var(--danger);font-size:12px;opacity:0}.table-error[data-visible="true"]{opacity:1}.help-modal .menu-action,.help-modal .cmd-button{color:var(--dialog-text);border-color:var(--dialog-control-border)}.help-modal .menu-action span span,.help-modal label,.help-modal #findStatus{color:var(--dialog-muted)!important}.help-modal .menu-action:hover,.help-modal .cmd-button:hover{background:var(--dialog-hover);border-color:color-mix(in srgb,var(--dialog-focus) 34%,var(--dialog-control-border))}.help-modal .cmd-button.primary{background:var(--dialog-primary-bg);border-color:var(--dialog-primary-bg);color:var(--dialog-primary-text)}.help-modal input[type="text"]{background:var(--dialog-control-bg)!important;border-color:var(--dialog-control-border)!important;color:var(--dialog-text)!important}.help-modal input[type="text"]:focus{outline:2px solid var(--dialog-focus);outline-offset:1px}.snippet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}.snippet-card{border:1px solid var(--dialog-control-border);border-radius:12px;background:transparent;color:var(--dialog-text);padding:12px;text-align:left;cursor:pointer}.snippet-card:hover{background:var(--dialog-hover)}
+[data-theme="dark"] .document{background:var(--paper);color:var(--text);border-color:var(--paper-stroke);box-shadow:0 24px 80px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.04)}[data-theme="dark"] .document pre{background:var(--surface-dark);color:var(--text);border-color:var(--paper-stroke)}[data-theme="dark"] .document code:not(pre code){background:var(--code-bg);color:var(--code-fg);border-color:var(--code-border)}[data-theme="dark"] .document blockquote{background:var(--quote-bg);color:var(--quote-fg)}[data-theme="dark"] .document th{background:color-mix(in srgb,var(--primary) 14%,var(--paper));color:var(--text);border-color:var(--paper-stroke)}[data-theme="dark"] .document td{background:color-mix(in srgb,var(--paper) 96%,white 4%);border-color:var(--paper-stroke)}[data-theme="dark"] .menu-sheet,[data-theme="dark"] .help-modal,[data-theme="dark"] .command-menu{background:var(--dialog-surface);color:var(--dialog-text);border-color:var(--dialog-border)}[data-theme="dark"] .tab-suggest,[data-theme="dark"] .toast{background:var(--surface-dark);color:var(--text);border-color:var(--paper-stroke)}
+@media(max-width:900px){.app-shell,.app-shell.tools-open{grid-template-columns:1fr;grid-template-areas:"main"}.rail,.tools{display:none}.topbar{display:flex;left:10px;right:10px;bottom:10px;transform:none;justify-content:flex-start;overflow-x:auto;max-width:calc(100vw - 20px);border-radius:18px}.topbar::before{border-radius:17px}.document{width:100%;padding:34px 24px 96px}.editor-frame{padding:10px 10px 92px}.menu-sheet{left:10px;top:64px;width:calc(100vw - 20px)}.menu-grid,.snippet-grid{grid-template-columns:1fr}.toast-stack{right:10px;bottom:86px}.table-modal{width:calc(100vw - 28px)}.table-grid{grid-template-columns:1fr}}
 
-/* === COMMAND PALETTE (Ctrl+K) === */
+/* === COMMAND PALETTE V4 (Ctrl+K) - Premium Glass Look === */
 .command-menu{
   position:fixed;
   top: 18vh;
@@ -306,36 +350,391 @@ body.focus-mode .statusbar{
   background: rgba(255,255,255,0.12);
   color: #ccc;
 }
-
-/* Modal/List cleanup: quiet list rows, neutral theme control, reliable title divider */
-.document > h1:first-child{
-  text-align:center;
-  margin-bottom:0;
+</style>
+<style id="msp-windows-shell-overrides">
+:root{
+  --windows-editor-max:900px;
+  --windows-editor-font-size:16px;
+  --windows-editor-line-height:1.68;
+  --w-editorial-bg:#f1eee8;
+  --w-editorial-paper:#fffdf8;
+  --w-editorial-rule:#d8cfc4;
+  --w-editorial-accent:#b96b52;
 }
-.document > h1:first-child::after{
+body.windows-native-shell[data-theme="light"]{
+  --w-editorial-bg:#f1eee8;
+  --w-editorial-paper:#fffdf8;
+  --w-editorial-rule:#d8cfc4;
+  --w-editorial-accent:#b96b52;
+  --w-app-bg:var(--w-editorial-bg);
+  --w-frame-bg:#f1eee8;
+  --w-paper:var(--w-editorial-paper);
+  --w-paper-border:#e3d9cf;
+  --w-text:#1f1d1a;
+  --w-muted:#756e66;
+  --w-line:var(--w-editorial-rule);
+  --w-link:#8b4d3a;
+  --w-inline-code:#6d3d2f;
+  --w-inline-code-bg:#f7ebe5;
+  --w-inline-code-border:#dfb7a8;
+  --w-pre-bg:#1b1b1d;
+  --w-pre-text:#f8f6f2;
+  --w-pre-border:#343238;
+  --w-quote-bg:#f5efea;
+  --w-quote-text:#2d2925;
+  --w-quote-border:var(--w-editorial-accent);
+  --w-table-head:#f2ebe4;
+  --w-table-cell:var(--w-editorial-paper);
+  --w-table-border:#ddd2c8;
+  --w-selection-bg:#b96b52;
+  --w-selection-text:#ffffff;
+  --w-shadow:0 24px 66px rgba(73,58,45,.11),0 2px 10px rgba(73,58,45,.05),inset 0 1px 0 rgba(255,255,255,.85);
+}
+body.windows-native-shell[data-theme="dark"]{
+  --w-editorial-bg:#121315;
+  --w-editorial-paper:#1b1c1f;
+  --w-editorial-rule:#38393d;
+  --w-editorial-accent:#d28a6d;
+  --w-app-bg:var(--w-editorial-bg);
+  --w-frame-bg:#121315;
+  --w-paper:var(--w-editorial-paper);
+  --w-paper-border:#34363a;
+  --w-text:#f2f0ec;
+  --w-muted:#b5b1aa;
+  --w-line:var(--w-editorial-rule);
+  --w-link:#e0a085;
+  --w-inline-code:#f0c2ae;
+  --w-inline-code-bg:#2c211e;
+  --w-inline-code-border:#60423a;
+  --w-pre-bg:#0e0f11;
+  --w-pre-text:#f7f6f3;
+  --w-pre-border:#303238;
+  --w-quote-bg:#232326;
+  --w-quote-text:#e9e6e0;
+  --w-quote-border:var(--w-editorial-accent);
+  --w-table-head:#232427;
+  --w-table-cell:var(--w-editorial-paper);
+  --w-table-border:#3a3c41;
+  --w-selection-bg:#b96b52;
+  --w-selection-text:#ffffff;
+  --w-shadow:0 26px 72px rgba(0,0,0,.36),0 2px 12px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.03);
+}
+body.windows-native-shell .rail,
+body.windows-native-shell .tools,
+body.windows-native-shell .topbar,
+body.windows-native-shell .menu-sheet,
+body.windows-native-shell .menu-backdrop{
+  display:none !important;
+}
+body.windows-native-shell .app-shell,
+body.windows-native-shell .app-shell.tools-open{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  grid-template-areas:"main" !important;
+  min-height:100vh;
+  background:var(--w-app-bg);
+}
+body.windows-native-shell .main{
+  min-height:100vh;
+  background:var(--w-app-bg);
+}
+body.windows-native-shell .editor-frame{
+  min-height:calc(100vh - 32px);
+  padding:34px 34px 70px !important;
+  background:var(--w-frame-bg) !important;
+}
+body.windows-native-shell .document{
+  width:min(var(--windows-editor-max),100%) !important;
+  max-width:100%;
+  min-height:calc(100vh - 174px);
+  margin:0 auto;
+  padding:58px 66px 90px !important;
+  border-radius:12px !important;
+  background:var(--w-paper) !important;
+  border:1px solid var(--w-paper-border) !important;
+  box-shadow:var(--w-shadow) !important;
+  font-size:var(--windows-editor-font-size) !important;
+  line-height:var(--windows-editor-line-height) !important;
+  color:var(--w-text) !important;
+  caret-color:var(--w-text);
+  transition:box-shadow 180ms ease,border-color 180ms ease,transform 180ms ease;
+}
+body.windows-native-shell .document :where(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th){
+  color:var(--w-text) !important;
+}
+body.windows-native-shell .document a{
+  color:var(--w-link) !important;
+  text-decoration-color:color-mix(in srgb,var(--w-link) 58%,transparent);
+  text-underline-offset:.18em;
+}
+body.windows-native-shell .document code:not(pre code){
+  color:var(--w-inline-code) !important;
+  background:var(--w-inline-code-bg) !important;
+  border-color:var(--w-inline-code-border) !important;
+}
+body.windows-native-shell .document pre{
+  color:var(--w-pre-text) !important;
+  background:var(--w-pre-bg) !important;
+  border-color:var(--w-pre-border) !important;
+}
+body.windows-native-shell .document pre code{
+  color:inherit !important;
+}
+body.windows-native-shell .document blockquote{
+  color:var(--w-quote-text) !important;
+  background:var(--w-quote-bg) !important;
+  border-left-color:var(--w-quote-border) !important;
+}
+body.windows-native-shell .document th{
+  color:var(--w-text) !important;
+  background:var(--w-table-head) !important;
+  border-color:var(--w-table-border) !important;
+}
+body.windows-native-shell .document td{
+  color:var(--w-text) !important;
+  background:var(--w-table-cell) !important;
+  border-color:var(--w-table-border) !important;
+}
+body.windows-native-shell .document ::selection{
+  color:var(--w-selection-text) !important;
+  background:var(--w-selection-bg);
+}
+body.windows-native-shell .document:focus{
+  border-color:color-mix(in srgb,var(--w-editorial-accent) 48%,var(--w-paper-border)) !important;
+  box-shadow:var(--w-shadow),0 0 0 2px color-mix(in srgb,var(--w-editorial-accent) 13%,transparent) !important;
+}
+body.windows-native-shell .document > h1:first-child{
+  margin:.05rem 0 1.45rem !important;
+  font-size:2.12rem;
+  line-height:1.12;
+  letter-spacing:-.035em;
+  font-weight:650;
+  text-align:center;
+}
+body.windows-native-shell .document > h1:first-child::after{
   content:"";
   display:block;
-  width:100%;
   height:1px;
-  margin:18px auto 0;
-  background:color-mix(in srgb,#252523 18%,#e6dfd8 82%);
+  width:min(62%,560px);
+  margin:20px auto 0;
+  background:var(--w-editorial-rule) !important;
+  opacity:1;
 }
-.document > h1:first-child + hr{
-  display:none;
+body.windows-native-shell.focus-mode .editor-frame{
+  padding-top:40px !important;
 }
-.document > h1:first-child::after{
-  width:min(78%, 720px);
-  margin:24px auto 0;
-  background:color-mix(in srgb,#252523 12%,#e6dfd8 88%);
+body.windows-native-shell.focus-mode .document{
+  max-width:min(820px,100%) !important;
+  box-shadow:0 34px 90px rgba(0,0,0,.24),0 0 0 2px color-mix(in srgb,var(--w-editorial-accent) 12%,transparent) !important;
+}
+body.windows-native-shell .statusbar{
+  left:0 !important;
+  min-height:32px;
+  padding:6px 18px;
+  font-size:11.5px;
+  color:var(--w-muted);
+  background:color-mix(in srgb,var(--w-app-bg) 94%,transparent);
+  border-top:1px solid var(--w-paper-border);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+body.windows-native-shell .statusbar .status-sep{
+  opacity:.35;
+}
+body.windows-native-shell .statusbar .save-state{
+  font-weight:550;
+  letter-spacing:0;
+}
+@media(max-width:900px){
+  body.windows-native-shell .editor-frame{padding:16px 14px 58px !important}
+  body.windows-native-shell .document{padding:40px 28px 76px !important;border-radius:10px !important}
+  body.windows-native-shell .document > h1:first-child{font-size:1.85rem}
 }
 
-/* WinUI shell owns the command surface. Keep only the document and editor status bar here. */
-.editor-frame{min-height:calc(100vh - 34px);padding:22px 30px 56px}
-.document{min-height:calc(100vh - 112px);padding-bottom:76px}
-@media(max-width:900px){.editor-frame{padding:10px 10px 56px}.document{padding:34px 24px 76px}}
+
+/* === FINAL VISUAL + PRINT POLISH (Windows) === */
+/* Suchen & Ersetzen: nur den Editor weichzeichnen, ohne dunklen Schleier. */
+#findReplaceBackdrop{
+  background:transparent;
+  backdrop-filter:blur(11px);
+  -webkit-backdrop-filter:blur(11px);
+}
+
+/* Smart-Tab-Hilfe: ruhige einspaltige Befehlsliste statt Kartenraster. */
+#helpBackdrop .help-modal{
+  width:min(640px,calc(100vw - 48px));
+}
+#helpBackdrop .snippet-grid{
+  grid-template-columns:1fr;
+  gap:0;
+  margin-top:16px;
+  border-top:1px solid var(--dialog-control-border);
+}
+#helpBackdrop .snippet-card{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-areas:"title command" "desc command";
+  align-items:center;
+  column-gap:18px;
+  row-gap:2px;
+  padding:11px 6px;
+  border:0;
+  border-bottom:1px solid var(--dialog-control-border);
+  border-radius:0;
+  background:transparent;
+  color:var(--dialog-text);
+  text-align:left;
+}
+#helpBackdrop .snippet-card strong{
+  grid-area:title;
+  font-size:13px;
+  line-height:1.35;
+  font-weight:650;
+}
+#helpBackdrop .snippet-card p{
+  grid-area:desc;
+  margin:0;
+  color:var(--dialog-muted);
+  font-size:11.5px;
+  line-height:1.4;
+}
+#helpBackdrop .snippet-card code{
+  grid-area:command;
+  align-self:center;
+  min-width:48px;
+  padding:4px 8px;
+  border:1px solid var(--dialog-control-border);
+  border-radius:7px;
+  background:var(--dialog-control-bg);
+  color:var(--dialog-text);
+  font-size:11.5px;
+  font-weight:650;
+  text-align:center;
+  white-space:nowrap;
+}
+#helpBackdrop .snippet-card:hover{
+  background:color-mix(in srgb,var(--dialog-hover) 72%,transparent);
+}
+
+/* Drucken ist papierbasiert: Vorschau und Ausgabe bleiben immer hell. */
+@page{margin:16mm 17mm 18mm}
+@media print{
+  html,body{
+    color-scheme:light !important;
+    background:#fff !important;
+    color:#141413 !important;
+  }
+  body.windows-native-shell .app-shell,
+  body.windows-native-shell .main,
+  body.windows-native-shell .editor-frame{
+    display:block !important;
+    min-height:0 !important;
+    background:#fff !important;
+  }
+  body.windows-native-shell .editor-frame{
+    padding:0 !important;
+    overflow:visible !important;
+  }
+  body.windows-native-shell .document{
+    width:auto !important;
+    max-width:none !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    background:#fff !important;
+    color:#141413 !important;
+    caret-color:auto !important;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  body.windows-native-shell .document :where(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th){
+    color:#141413 !important;
+  }
+  body.windows-native-shell .document a{
+    color:#8b3f2d !important;
+    text-decoration-color:#b57866 !important;
+  }
+  body.windows-native-shell .document code:not(pre code){
+    color:#5f2d21 !important;
+    background:#fff0e6 !important;
+    border-color:#d9a48d !important;
+  }
+  body.windows-native-shell .document pre{
+    color:#1f1d1b !important;
+    background:#f5f0e8 !important;
+    border-color:#d8d0c7 !important;
+  }
+  body.windows-native-shell .document pre code{
+    color:inherit !important;
+  }
+  body.windows-native-shell .document blockquote{
+    color:#2f2a25 !important;
+    background:#f7f2ec !important;
+    border-left-color:#cc785c !important;
+  }
+  body.windows-native-shell .document th{
+    color:#141413 !important;
+    background:#efe9de !important;
+    border-color:#d8d0c7 !important;
+  }
+  body.windows-native-shell .document td{
+    color:#141413 !important;
+    background:#fff !important;
+    border-color:#d8d0c7 !important;
+  }
+  body.windows-native-shell .document > h1:first-child::after{
+    background:#d8d0c7 !important;
+  }
+
+  body.windows-native-shell .statusbar,
+  .tab-suggest,.command-menu,.help-backdrop,.table-backdrop,.toast-stack{
+    display:none !important;
+  }
+
+  .document h1,.document h2,.document h3,.document h4,.document h5,.document h6{
+    break-after:avoid-page;
+    page-break-after:avoid;
+  }
+  .document p,.document li{
+    orphans:3;
+    widows:3;
+  }
+  .document pre,.document blockquote,.document table,.document figure{
+    break-inside:avoid-page;
+    page-break-inside:avoid;
+  }
+  .document .dochead,.document tr,.document img{
+    break-inside:avoid-page;
+    page-break-inside:avoid;
+  }
+  .document thead{
+    display:table-header-group;
+  }
+  .document .page-break{
+    display:block !important;
+    height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    break-before:page;
+    page-break-before:always;
+    color:transparent !important;
+  }
+  .document .page-break span,
+  .document .page-break::before,
+  .document .page-break::after{
+    display:none !important;
+  }
+}
+
 </style>
 </head>
-<body data-theme="dark">
+<body data-theme="dark" class="tools-collapsed">
 <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
 <symbol id="icon-markdown" viewBox="0 0 24 24">
 <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10" />
@@ -411,23 +810,66 @@ body.focus-mode .statusbar{
 </symbol>
 </svg>
 <div class="app-shell">
+  <aside class="rail" aria-label="Schnellzugriff">
+    <div class="brand" title="Markdown Studio Pro"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-markdown"></use></svg></div>
+    <button type="button" data-menu-panel="all" title="Menü"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-menu"></use></svg></button>
+    <label class="theme-switch rail-theme-switch" title="Tag/Nacht wechseln"><input id="themeInput" type="checkbox"><span class="slider"><span class="sun-moon"><span class="moon-dot"></span><span class="moon-dot"></span><span class="moon-dot"></span></span></span><span class="sr-only" id="themeLabel">Dark</span></label>
+    <button type="button" data-command="toggleTools" aria-pressed="false" title="Werkzeuge ausklappen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-wand"></use></svg></button>
+    <button type="button" data-command="toggleFocus" aria-pressed="false" title="Fokus-Modus (F11)"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-focus"></use></svg></button>
+    <button type="button" data-command="new" title="Neu"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-file"></use></svg></button>
+    <button type="button" data-command="open" title="Öffnen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-folder"></use></svg></button>
+    <button type="button" data-command="save" title="Speichern"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-save"></use></svg></button>
+    <button type="button" data-command="copyMarkdown" title="Als Markdown kopieren"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg></button>
+    <button type="button" data-command="exportHtml" title="HTML exportieren"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-export"></use></svg></button>
+    <button type="button" data-command="showSource" title="Quelle anzeigen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg></button>
+  </aside>
+  <aside class="tools" aria-label="Werkzeuge">
+    <div class="tools-inner">
+      <div class="tools-head"><span>Werkzeuge</span><button id="toolsCollapse" class="tool-collapse" data-command="toggleTools" type="button">Ausklappen</button></div>
+      <section class="tool-section"><div class="tool-title">Format</div><div class="format-grid">
+        <button class="icon-button" data-format="h1" title="H1"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-h1"></use></svg></button><button class="icon-button" data-format="h2" title="H2"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-h2"></use></svg></button><button class="icon-button" data-format="bold" title="Fett"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-bold"></use></svg></button><button class="icon-button" data-format="italic" title="Kursiv"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-italic"></use></svg></button><button class="icon-button" data-format="strike" title="Durch"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-strike"></use></svg></button><button class="icon-button" data-format="quote" title="Zitat"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-quote"></use></svg></button><button class="icon-button" data-format="code" title="Code"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg></button><button class="icon-button" data-format="table" title="Tabelle"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-table"></use></svg></button>
+      </div></section>
+      <section class="tool-section"><div class="tool-title">Einfügen</div><button class="select-button" data-format="table"><span>Tabelle</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-table"></use></svg></button><button class="select-button" data-format="task"><span>Aufgabenliste</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-checkbox"></use></svg></button><button class="select-button" data-format="hr"><span>Trennlinie</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-hr"></use></svg></button><button class="select-button" data-command="showTabHelp"><span>Tab-Befehle</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-help"></use></svg></button><button class="select-button" data-command="palette"><span>Befehlspalette</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-focus"></use></svg></button></section>
+      <section class="tool-section"><div class="tool-title">Tabelle</div>
+        <button class="select-button" data-command="addTableRow"><span>Zeile hinzufügen</span></button>
+        <button class="select-button" data-command="addTableCol"><span>Spalte hinzufügen</span></button>
+        <button class="select-button" data-command="delTableRow"><span>Zeile löschen</span></button>
+        <button class="select-button" data-command="delTableCol"><span>Spalte löschen</span></button>
+      </section>
+      <section class="tool-section"><div class="tool-title">Dokument</div><div class="stat-row"><div class="stat"><strong id="wordCount">0</strong><span>Wörter</span></div><div class="stat"><strong id="charCount">0</strong><span>Zeichen</span></div><div class="stat"><strong id="headingCount">0</strong><span>Titel</span></div></div></section>
+      <section class="tool-section"><div class="tool-title">Struktur</div><div id="outline" class="outline"></div></section>
+      <section class="tool-section"><div class="tool-title">Ausgabe</div><button class="select-button" data-command="copyMarkdown"><span>Als Markdown kopieren</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg></button><button class="select-button" data-command="exportHtml"><span>HTML exportieren</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-export"></use></svg></button></section>
+    </div>
+  </aside>
   <main class="main">
+    <header class="topbar">
+      <button class="cmd-button" type="button" data-menu-panel="all"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-menu"></use></svg>Menü</button>
+      <button class="cmd-button primary" type="button" data-command="copyMarkdown"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg>Als MD kopieren</button>
+    </header>
     <section class="editor-frame"><article id="editor" class="document" contenteditable="true" spellcheck="false" aria-label="Markdown Dokument"></article></section>
     <div id="statusbar" class="statusbar" aria-live="polite">
       <div class="status-left">
         <span id="statusWords">0 Wörter</span>
-        <span class="status-sep">•</span>
+        <span class="status-sep">|</span>
         <span id="statusChars">0 Zeichen</span>
-        <span class="status-sep">•</span>
+        <span class="status-sep">|</span>
         <span id="statusReadTime">~0 min</span>
+        <span id="statusSelectionSep" class="status-sep" hidden>|</span>
+        <span id="statusSelection" hidden>Auswahl: 0 Wörter | 0 Zeichen</span>
       </div>
       <div class="status-right">
         <span id="statusSaveState" class="save-state">Gespeichert</span>
-        <span id="statusFocusHint" class="focus-hint" style="display:none">Fokus-Modus • F11 zum Verlassen</span>
+        <span id="statusAutoSave" style="margin-left:8px;font-size:11px;color:var(--primary);"></span>
+        <span id="statusFocusHint" class="focus-hint" style="display:none">Fokus-Modus | F11 zum Verlassen</span>
       </div>
     </div>
   </main>
 </div>
+<div id="menuBackdrop" class="menu-backdrop" hidden></div>
+<section id="menuSheet" class="menu-sheet" hidden aria-label="Menü"><div class="menu-head"><div><strong id="menuTitle">Menü</strong><div id="menuSubtitle" style="font-size:12px;color:var(--muted);margin-top:2px">Aktionen gebündelt</div></div><button class="icon-button" data-command="closeMenu" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button></div><div class="menu-grid"><section class="menu-section"><h3>Datei</h3><div class="menu-list"><button class="menu-action" data-command="new"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-file"></use></svg><span><strong>Neu</strong><span>Leeres Dokument</span></span></button><button class="menu-action" data-command="open"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-folder"></use></svg><span><strong>Öffnen</strong><span>Textdatei laden</span></span></button><button class="menu-action" data-command="save"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-save"></use></svg><span><strong>Speichern</strong><span>Aktualisieren</span></span></button><button class="menu-action" data-command="saveAs"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-save"></use></svg><span><strong>Speichern unter</strong><span>Neue Datei</span></span></button>
+<button class="menu-action" data-command="openRecent"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-folder"></use></svg><span><strong>Zuletzt verwendet</strong><span>Letzte Dateien</span></span></button></div></section>
+<section class="menu-section"><h3>Zuletzt verwendet</h3><div id="recentList" style="display:grid;gap:4px;max-height:140px;overflow:auto"></div></section><section class="menu-section"><h3>Einfügen</h3><div class="menu-list"><button class="menu-action" data-format="table"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-table"></use></svg><span><strong>Tabelle</strong><span>Direkt editierbar</span></span></button>
+<button class="menu-action" data-command="addTableRow"><span><strong>Zeile +</strong></span></button><button class="menu-action" data-command="addTableCol"><span><strong>Spalte +</strong></span></button><button class="menu-action" data-command="delTableRow"><span><strong>Zeile -</strong></span></button><button class="menu-action" data-command="delTableCol"><span><strong>Spalte -</strong></span></button><button class="menu-action" data-format="task"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-checkbox"></use></svg><span><strong>Aufgaben</strong><span>Checkboxen</span></span></button><button class="menu-action" data-format="quote"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-quote"></use></svg><span><strong>Zitat</strong><span>Blockquote</span></span></button><button class="menu-action" data-format="code"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg><span><strong>Code</strong><span>Codeblock</span></span></button><button class="menu-action" data-command="findReplace"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg><span><strong>Suchen &amp; Ersetzen</strong><span>Strg+F</span></span></button></div></section><section class="menu-section"><h3>Ausgabe</h3><div class="menu-list"><button class="menu-action" data-command="copyMarkdown"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg><span><strong>Markdown kopieren</strong><span>Zwischenablage</span></span></button><button class="menu-action" data-command="exportHtml"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-export"></use></svg><span><strong>HTML exportieren</strong><span>HTML-Datei</span></span></button><button class="menu-action" data-command="showSource"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg><span><strong>Quelle anzeigen</strong><span>Markdown-Text</span></span></button><button class="menu-action" data-command="showTabHelp"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-help"></use></svg><span><strong>Tab-Hilfe</strong><span>Snippets</span></span></button></div></section></div></section>
 <div id="toasts" class="toast-stack" aria-live="polite"></div>
 <div id="tabSuggest" class="tab-suggest"><kbd>Tab</kbd><span id="tabSuggestText"></span></div>
 <div id="commandMenu" class="command-menu" role="listbox" aria-label="Befehlspalette">
@@ -437,15 +879,44 @@ body.focus-mode .statusbar{
   <div id="commandPaletteList" class="command-palette-list"></div>
 </div>
 
+<div id="tableBackdrop" class="table-backdrop" hidden>
+  <section id="tableDialog" class="table-modal" role="dialog" aria-modal="true" aria-labelledby="tableTitle">
+    <div class="dialog-head">
+      <div class="dialog-heading">
+        <h2 id="tableTitle">Tabelle einfügen</h2>
+        <p>Wähle die Anzahl der Spalten und Zeilen.</p>
+      </div>
+      <button id="tableClose" type="button" class="dialog-close" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
+    </div>
+    <form id="tableForm" autocomplete="off">
+      <div class="table-grid">
+        <div class="table-field">
+          <label for="tableCols">Spalten</label>
+          <input id="tableCols" class="table-input" type="number" min="1" max="12" step="1" value="2" inputmode="numeric">
+        </div>
+        <div class="table-field">
+          <label for="tableRows">Zeilen</label>
+          <input id="tableRows" class="table-input" type="number" min="1" max="50" step="1" value="2" inputmode="numeric">
+        </div>
+      </div>
+      <div id="tableError" class="table-error" aria-live="polite"></div>
+      <div class="table-actions">
+        <button id="tableCancel" class="dialog-button" type="button">Abbrechen</button>
+        <button id="tableInsert" class="dialog-button primary" type="submit">Einfügen</button>
+      </div>
+    </form>
+  </section>
+</div>
+
 <!-- Export Chooser (bessere Exportdialoge) -->
 <div id="exportBackdrop" class="help-backdrop" hidden>
   <section class="help-modal" role="dialog" aria-modal="true" style="max-width:420px">
     <div class="help-head">
-      <div>
-        <div style="color:var(--primary);font-size:12px;text-transform:uppercase;letter-spacing:.08em">Export</div>
-        <h2 style="margin:4px 0 0">Wie möchtest du exportieren?</h2>
+      <div class="dialog-heading">
+        <h2>Exportieren</h2>
+        <p class="dialog-description">Wähle ein Format für dein Dokument.</p>
       </div>
-      <button class="icon-button" id="exportClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
+      <button class="dialog-close" id="exportClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
     </div>
     <div style="display:grid;gap:8px;padding:4px 0 12px">
       <button class="menu-action" data-export="md" style="width:100%"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span><strong>Markdown (.md)</strong><span>Reiner Text mit Formatierung</span></span></button>
@@ -459,21 +930,21 @@ body.focus-mode .statusbar{
 <div id="findReplaceBackdrop" class="help-backdrop" hidden>
   <section class="help-modal" role="dialog" aria-modal="true" style="max-width:480px">
     <div class="help-head">
-      <div>
-        <div style="color:var(--primary);font-size:12px;text-transform:uppercase;letter-spacing:.08em">Suchen &amp; Ersetzen</div>
-        <h2 style="margin:2px 0 0;font-size:1.1rem">Find &amp; Replace</h2>
+      <div class="dialog-heading">
+        <h2>Suchen und Ersetzen</h2>
+        <p class="dialog-description">Suche im aktuellen Dokument und ersetze Treffer gezielt.</p>
       </div>
-      <button class="icon-button" id="findClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
+      <button class="dialog-close" id="findClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
     </div>
 
     <div style="display:grid;gap:10px;padding:8px 4px">
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:2px">Suchen nach</label>
-        <input id="findInput" type="text" style="width:100%;background:var(--bg-2);border:1px solid var(--paper-stroke);border-radius:8px;padding:6px 10px;color:var(--text);font-size:14px" placeholder="Text suchen...">
+        <label style="font-size:12px;color:var(--dialog-muted);display:block;margin-bottom:4px;font-weight:600">Suchen nach</label>
+        <input id="findInput" type="text" style="width:100%;background:var(--dialog-control-bg);border:1px solid var(--dialog-control-border);border-radius:8px;padding:8px 10px;color:var(--dialog-text);font-size:14px" placeholder="Text suchen...">
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:2px">Ersetzen durch</label>
-        <input id="replaceInput" type="text" style="width:100%;background:var(--bg-2);border:1px solid var(--paper-stroke);border-radius:8px;padding:6px 10px;color:var(--text);font-size:14px" placeholder="Ersetzungstext">
+        <label style="font-size:12px;color:var(--dialog-muted);display:block;margin-bottom:4px;font-weight:600">Ersetzen durch</label>
+        <input id="replaceInput" type="text" style="width:100%;background:var(--dialog-control-bg);border:1px solid var(--dialog-control-border);border-radius:8px;padding:8px 10px;color:var(--dialog-text);font-size:14px" placeholder="Ersetzungstext">
       </div>
 
       <div style="display:flex;gap:12px;align-items:center;font-size:12px">
@@ -495,22 +966,37 @@ body.focus-mode .statusbar{
     </div>
   </section>
 </div>
-<div id="helpBackdrop" class="help-backdrop" hidden><section class="help-modal" role="dialog" aria-modal="true"><div class="help-head"><div><div style="color:var(--primary);font-size:12px;text-transform:uppercase;letter-spacing:.08em">Smart-Tab</div><h2>Befehle schreiben, Tab drücken</h2><p style="color:#d8d2c8">Schreibe einen Begriff in eine leere Zeile und drücke Tab. Mit <code>help</code> öffnest du Vorschläge.</p></div><button class="icon-button" id="helpClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button></div><div id="helpSnippets" class="snippet-grid"></div></section></div>
+<div id="helpBackdrop" class="help-backdrop" hidden><section class="help-modal" role="dialog" aria-modal="true"><div class="help-head"><div class="dialog-heading"><h2>Smart-Tab-Befehle</h2><p class="dialog-description">Schreibe einen Begriff in eine leere Zeile und drücke Tab. Mit <code>help</code> öffnest du Vorschläge.</p></div><button class="dialog-close" id="helpClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button></div><div id="helpSnippets" class="snippet-grid"></div></section></div>
 <script>
 const editor = document.getElementById('editor');
+const outline = document.getElementById('outline');
+const wordCount = document.getElementById('wordCount');
+const charCount = document.getElementById('charCount');
+const headingCount = document.getElementById('headingCount');
 const toasts = document.getElementById('toasts');
 const tabSuggest = document.getElementById('tabSuggest');
 const tabSuggestText = document.getElementById('tabSuggestText');
-const commandMenu = document.getElementById('commandMenu');
+const commandMenu = document.getElementById('commandMenu'); // TODO V4: wird für echte Command Palette wiederverwendet
 const helpBackdrop = document.getElementById('helpBackdrop');
 const helpClose = document.getElementById('helpClose');
 const helpSnippets = document.getElementById('helpSnippets');
+const menuSheet = document.getElementById('menuSheet');
+const menuBackdrop = document.getElementById('menuBackdrop');
+const tableBackdrop = document.getElementById('tableBackdrop');
+const tableColsInput = document.getElementById('tableCols');
+const tableRowsInput = document.getElementById('tableRows');
+const tableError = document.getElementById('tableError');
+const tableCancel = document.getElementById('tableCancel');
+const tableInsert = document.getElementById('tableInsert');
+const themeInput = document.getElementById('themeInput');
 let suppressChange = false;
 let changeTimer = 0;
 let savedRange = null;
+let pendingTableBlock = null;
+// let commandState = { items: [], index: 0, context: null }; // V3 dead code - für spätere Palette
 
 /* ============================================================
-   STRUCTURE & CONSTANTS
+   V4 NEXT LEVEL – STRUKTUR & KONSTANTEN
    Ziel: Lesbarkeit + Erweiterbarkeit ohne den Live-Editing-Core
    (liveShortcuts, liveInlineMarkdown, Caret-Handling, Paste) anzufassen.
    Jede Änderung am Core wird mit der vollen Test-Matrix validiert.
@@ -521,8 +1007,9 @@ const CONST = {
   COMMANDS: {
     NEW: 'new', OPEN: 'open', SAVE: 'save', SAVE_AS: 'saveAs',
     COPY_MD: 'copyMarkdown', EXPORT_HTML: 'exportHtml', SHOW_SOURCE: 'showSource',
-    TOGGLE_THEME: 'toggleTheme', TOGGLE_FOCUS: 'toggleFocus',
-    SHOW_TAB_HELP: 'showTabHelp'
+    TOGGLE_THEME: 'toggleTheme', TOGGLE_TOOLS: 'toggleTools',
+    TOGGLE_FOCUS: 'toggleFocus',
+    SHOW_TAB_HELP: 'showTabHelp', CLOSE_MENU: 'closeMenu'
   },
   // Format actions (Toolbar + Shortcuts)
   FORMATS: {
@@ -538,7 +1025,7 @@ const CONST = {
 };
 
 const snippets = [
- {keys:['tabelle','table','tab'], label:'Tabelle einfügen', description:'3 Spalten, 2 Zeilen', html:'<table><thead><tr><th>Spalte 1</th><th>Spalte 2</th><th>Spalte 3</th></tr></thead><tbody><tr><td>Wert</td><td>Wert</td><td>Wert</td></tr><tr><td>Wert</td><td>Wert</td><td>Wert</td></tr></tbody></table><p><br></p>', focus:'th'},
+ {keys:['tabelle','table','tab'], label:'Tabelle einfügen', description:'2 Spalten, 2 Zeilen', html:'<table><thead><tr><th>Spalte 1</th><th>Spalte 2</th></tr></thead><tbody><tr><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td></tr></tbody></table><p><br></p>', focus:'th'},
  {keys:['CODE'], exactOnly:true, label:'Codebox einfügen', description:'Codeblock mit neuer Zeile darunter', html:'<pre><code>code</code></pre><p><br></p>', focus:'code'},
  {keys:['todo','aufgabe','check','checkliste'], label:'Aufgabenliste', description:'Checkbox-Liste', html:'<ul><li><input type="checkbox" class="task-checkbox"> Aufgabe</li><li><input type="checkbox" class="task-checkbox"> Aufgabe</li></ul><p><br></p>', focus:'li'},
  {keys:['liste','list','bullet'], label:'Liste', description:'Bullet-Liste', html:'<ul><li>Listenpunkt</li></ul><p><br></p>', focus:'li'},
@@ -554,13 +1041,13 @@ const snippets = [
 function post(type, payload={}){ if(window.chrome?.webview) chrome.webview.postMessage({type,...payload}); }
 function escapeHtml(v){ return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 const CARET_BOUNDARY='\u200b';
-function cleanCaretBoundaries(value){ return String(value ?? '').replace(/\u200b/g,'').replace(/\u00a0/g,' '); }
+function cleanCaretBoundaries(value){ return String(value ?? '').replace(/\u200b/g,''); }
 function inlineMarkdown(text){ return escapeHtml(text).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>').replace(/~~([^~]+)~~/g,'<s>$1</s>').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>'); }
-// Legacy inlineMarkdownNoCode helper removed during editor cleanup.
+// inlineMarkdownNoCode wurde in V3 nicht mehr verwendet – entfernt in V4 Hygiene
 function parseFrontMatter(lines){ if(lines[0] !== '---') return null; const data={tags:[]}; let i=1, listKey=null; for(;i<lines.length;i++){ const line=lines[i]; if(line.trim()==='---') break; const item=line.match(/^\s*-\s+["']?(.*?)["']?\s*$/); if(item && listKey==='tags'){ data.tags.push(item[1].trim()); continue; } const m=line.match(/^([A-Za-z0-9_-]+):\s*["']?(.*?)["']?\s*$/); if(m){ const key=m[1].toLowerCase(); const value=m[2].trim(); listKey=value ? null : key; if(key==='tags') data.tags=value ? value.split(/[|,]/).map(x=>x.trim()).filter(Boolean) : []; else data[key]=value; } else listKey=null; } return i < lines.length ? {data, end:i+1} : null; }
 
 /* === Markdown Parse (MD → rich DOM) – Kernstück, vorsichtig erweitern! === */
-function markdownToHtml(md){ try { const lines=String(md ?? '').replace(/\r\n?/g,'\n').split('\n'); let i=0, out=[]; const fm=parseFrontMatter(lines); if(fm){ i=fm.end; const fmTitle=String(fm.data.title||'Dokument'); const date=fm.data.created||fm.data.date||new Date().toISOString().slice(0,10); const tags=Array.isArray(fm.data.tags)?fm.data.tags.filter(Boolean):[]; while(i<lines.length && !lines[i].trim()) i++; if(lines[i] && lines[i].match(/^#\s+(.+)$/) && lines[i].replace(/^#\s+/,'').trim()===fmTitle.trim()) i++; out.push(`<header class="dochead" data-title="${escapeHtml(fm.data.title||'')}" data-subtitle="${escapeHtml(fm.data.subtitle||'')}" data-author="${escapeHtml(fm.data.author||'Markdown Studio')}" data-date="${escapeHtml(date)}" data-tags="${escapeHtml(tags.join('|'))}"><div class="label" contenteditable="false">METADATEN | ${escapeHtml(fm.data.author||'Markdown Studio')} &middot; ${escapeHtml(date)}</div><h1 contenteditable="true">${escapeHtml(fmTitle)}</h1>${tags.length?`<div class="tags" contenteditable="false">${escapeHtml(tags.join(' | '))}</div>`:''}${fm.data.subtitle?`<p contenteditable="false">${escapeHtml(fm.data.subtitle)}</p>`:''}</header>`); }
+function markdownToHtml(md){ try { const lines=String(md ?? '').replace(/\r\n?/g,'\n').split('\n'); let i=0, out=[]; const fm=parseFrontMatter(lines); if(fm){ i=fm.end; const fmTitle=String(fm.data.title||'Dokument'); const date=fm.data.created||fm.data.date||new Date().toISOString().slice(0,10); const tags=Array.isArray(fm.data.tags)?fm.data.tags.filter(Boolean):[]; while(i<lines.length && !lines[i].trim()) i++; if(lines[i] && lines[i].match(/^#\s+(.+)$/) && lines[i].replace(/^#\s+/,'').trim()===fmTitle.trim()) i++; out.push(`<header class="dochead" data-title="${escapeHtml(fm.data.title||'')}" data-subtitle="${escapeHtml(fm.data.subtitle||'')}" data-author="${escapeHtml(fm.data.author||'Markdown Studio')}" data-date="${escapeHtml(date)}" data-tags="${escapeHtml(tags.join('|'))}"><h1 contenteditable="true">${escapeHtml(fmTitle)}</h1>${tags.length?`<div class="tags" contenteditable="false">${escapeHtml(tags.join(' | '))}</div>`:''}${fm.data.subtitle?`<p contenteditable="false">${escapeHtml(fm.data.subtitle)}</p>`:''}</header>`); }
 function closeParagraph(buf){ if(buf.length){ out.push(`<p>${inlineMarkdown(buf.join(' '))}</p>`); buf.length=0; }}
 let p=[]; while(i<lines.length){ let line=lines[i]; const oneLineCode=line.match(/^\s*```\s*([\s\S]*?)\s*```\s*$/); if(oneLineCode){ closeParagraph(p); out.push(`<pre><code>${escapeHtml(oneLineCode[1])}</code></pre>`); i++; continue; } if(/^\s*```/.test(line)){
   closeParagraph(p);
@@ -624,6 +1111,48 @@ function placeCaretAfterNode(node, scroll=false){ const r=document.createRange()
 function selectContents(el){ const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r); editor.focus(); }
 function scrollCaretIntoView(){ requestAnimationFrame(()=>{ try{ const sel=getSelection(); if(!sel.rangeCount || !sel.isCollapsed) return; const range=sel.getRangeAt(0).cloneRange(); const marker=document.createElement('span'); marker.textContent='\u200b'; marker.setAttribute('data-caret-scroll-marker',''); marker.style.cssText='display:inline-block;width:1px;height:1em;overflow:hidden;'; range.insertNode(marker); marker.scrollIntoView({block:'nearest',inline:'nearest',behavior:'auto'}); const parent=marker.parentNode; const next=marker.nextSibling; marker.remove(); if(parent?.isConnected){ const r=document.createRange(); if(next) r.setStartBefore(next); else { r.selectNodeContents(parent); r.collapse(false); } sel.removeAllRanges(); sel.addRange(r); editor.focus(); } }catch{} }); }
 function codeBlockFromSelection(){ const sel=getSelection(); if(!sel.rangeCount) return null; let n=sel.anchorNode; if(n.nodeType===3) n=n.parentElement; return n?.closest?.('pre') || null; }
+function codeEditableFromPre(pre){ return pre?.querySelector?.('code') || pre || null; }
+function placeCaretInTextNode(node, offset, scroll=false){ const r=document.createRange(); r.setStart(node, Math.max(0, Math.min(offset, node.nodeValue?.length || 0))); r.collapse(true); const s=getSelection(); s.removeAllRanges(); s.addRange(r); editor.focus(); if(scroll) scrollCaretIntoView(); }
+function codeRangeInfo(pre){
+ const target=codeEditableFromPre(pre);
+ const sel=getSelection();
+ if(!target || !sel.rangeCount) return null;
+ const range=sel.getRangeAt(0);
+ if(!target.contains(range.startContainer) || !target.contains(range.endContainer)) return null;
+ return {target, range};
+}
+function codeTextBeforeCaret(target, range){
+ const before=range.cloneRange();
+ before.selectNodeContents(target);
+ before.setEnd(range.startContainer, range.startOffset);
+ return before.toString();
+}
+function codeTextAfterCaret(target, range){
+ const after=range.cloneRange();
+ after.selectNodeContents(target);
+ after.setStart(range.endContainer, range.endOffset);
+ return after.toString();
+}
+function insertTextIntoCodeBlock(pre, text, scroll=true){
+ const info=codeRangeInfo(pre);
+ if(!info) return false;
+ const {target, range}=info;
+ const insertValue=String(text ?? '').replace(/\r\n?/g,'\n');
+ const caretOffset=codeTextBeforeCaret(target, range).length + insertValue.length;
+ range.deleteContents();
+ const node=document.createTextNode(insertValue);
+ range.insertNode(node);
+ target.normalize();
+ const caretRange=rangeFromTextOffsets(target, caretOffset, caretOffset);
+ const sel=getSelection();
+ sel.removeAllRanges();
+ sel.addRange(caretRange);
+ editor.focus();
+ if(scroll) scrollCaretIntoView();
+ rememberSelection();
+ emitChange();
+ return true;
+}
 function inlineCodeFromSelection(){ const sel=getSelection(); if(!sel.rangeCount) return null; const range=sel.getRangeAt(0); const nodes=[sel.anchorNode, sel.focusNode, range.startContainer, range.endContainer].filter(Boolean); for(const raw of nodes){ let n=raw.nodeType===3 ? raw.parentElement : raw; const code=n?.matches?.('code') ? n : n?.closest?.('code'); if(code && editor.contains(code) && !code.closest('pre')) return code; } const full=range.commonAncestorContainer.nodeType===1 ? range.commonAncestorContainer : range.commonAncestorContainer.parentElement; const selectedCode=full?.matches?.('code') ? full : full?.querySelector?.('code'); if(selectedCode && editor.contains(selectedCode) && !selectedCode.closest('pre') && range.intersectsNode(selectedCode)) return selectedCode; let before=range.startContainer; if(sel.isCollapsed && before?.nodeType===3 && range.startOffset===0) before=before.previousSibling; else if(sel.isCollapsed && before?.nodeType===1) before=before.childNodes[Math.max(0,range.startOffset-1)] || before.previousSibling; const prevCode=before?.nodeType===1 && before.matches?.('code') ? before : null; return prevCode && editor.contains(prevCode) && !prevCode.closest('pre') ? prevCode : null; }
 function exitInlineCode(code, scroll=false){
  if(!code || !editor.contains(code) || code.closest('pre')) return false;
@@ -632,29 +1161,25 @@ function exitInlineCode(code, scroll=false){
 function insertParagraphAfter(node){ let p=node.nextElementSibling; if(!p || !['P','DIV'].includes(p.tagName)){ p=document.createElement('p'); p.innerHTML='<br>'; node.after(p); } return p; }
 
 function docHead(){ return editor.querySelector('.dochead'); }
-function titleElement(){
- const head=docHead();
- if(head) return head.querySelector('h1');
- const first=Array.from(editor.children).find(el=>!el.classList.contains('page-break'));
- return first?.tagName==='H1' ? first : editor.querySelector('h1');
-}
-function isTitleElement(el){ const title=titleElement(); return !!title && el===title; }
-function bodyBlocks(){ return Array.from(editor.children).filter(el=>!el.classList.contains('dochead') && !isTitleElement(el)); }
-function firstBodyBlock(create=true){ let block=bodyBlocks().find(el=>!el.classList.contains('page-break')); if(block || !create) return block || null; block=document.createElement('p'); block.innerHTML='<br>'; const head=docHead(); const title=titleElement(); if(head) head.after(block); else if(title) title.after(block); else editor.appendChild(block); return block; }
+function titleBlock(){ const headTitle=editor.querySelector('.dochead h1'); if(headTitle) return headTitle; const first=editor.firstElementChild; return first?.tagName==='H1' ? first : null; }
+function bodyBlocks(){ const title=titleBlock(); return Array.from(editor.children).filter(el=>!el.classList.contains('dochead') && el!==title); }
+function firstBodyBlock(create=true){ let block=bodyBlocks().find(el=>!el.classList.contains('page-break')); if(block || !create) return block || null; block=document.createElement('p'); block.innerHTML='<br>'; const title=titleBlock(); const head=docHead(); if(title && title.parentElement===editor) title.after(block); else if(head) head.after(block); else editor.appendChild(block); return block; }
 function focusBodyStart(){ const block=firstBodyBlock(true); placeCaret(block,true); return true; }
-function titleBlockFromSelection(){ const sel=getSelection(); if(!sel.rangeCount) return null; let n=sel.anchorNode; if(n.nodeType===3) n=n.parentElement; const h=n?.matches?.('h1') ? n : n?.closest?.('h1'); return h && editor.contains(h) && isTitleElement(h) ? h : null; }
-function focusInitialTitle(){ const title=titleElement(); if(title){ selectContents(title); return true; } focusBodyStart(); return false; }
+function titleBlockFromSelection(){ const sel=getSelection(); if(!sel.rangeCount) return null; let n=sel.anchorNode; if(n.nodeType===3) n=n.parentElement; const h=n?.matches?.('h1') ? n : n?.closest?.('h1'); const title=titleBlock(); return h && title && h===title && editor.contains(h) ? h : null; }
+function titleBlockFromEvent(e){ const h=e.target?.closest?.('h1'); const title=titleBlock(); return h && title && h===title && editor.contains(h) ? h : null; }
+function focusTitleForDirectEdit(e){ const h=titleBlockFromEvent(e); if(!h) return false; h.setAttribute('contenteditable','true'); savedRange=null; return false; }
+function focusInitialTitle(){ const title=titleBlock(); if(title){ selectContents(title); return true; } focusBodyStart(); return false; }
 function resetBodyToEmptyParagraph(){ bodyBlocks().forEach(el=>el.remove()); const p=document.createElement('p'); p.innerHTML='<br>'; const head=docHead(); if(head) head.after(p); else editor.appendChild(p); placeCaret(p,true); hydrateTasks(); hydrateCopyTargets(); updateAssist(); emitChange(); return true; }
 function bodyText(){ return cleanCaretBoundaries(bodyBlocks().map(el=>el.innerText || el.textContent || '').join('\n')).replace(/\u00a0/g,' ').trim(); }
 function selectionTouchesBody(){ const sel=getSelection(); if(!sel.rangeCount) return false; if(titleBlockFromSelection()) return false; const blocks=bodyBlocks(); if(!blocks.length) return false; const range=sel.getRangeAt(0); return blocks.some(block=>range.intersectsNode(block)); }
 function handleEditorSelectAll(e){ const key=e.key.toLowerCase(); if(!(e.ctrlKey||e.metaKey) || key!=='a') return false; if(codeBlockFromSelection() || !selectionTouchesBody()) return false; const blocks=bodyBlocks(); if(!blocks.length) return false; e.preventDefault(); const r=document.createRange(); r.setStartBefore(blocks[0]); r.setEndAfter(blocks[blocks.length-1]); const s=getSelection(); s.removeAllRanges(); s.addRange(r); editor.focus(); return true; }
 function handleBodySelectionDelete(e){ if(!['Backspace','Delete'].includes(e.key) || e.ctrlKey || e.metaKey || e.altKey) return false; const sel=getSelection(); if(!sel.rangeCount || sel.isCollapsed) return false; const selected=cleanCaretBoundaries(sel.toString()).replace(/\u00a0/g,' ').trim(); const body=bodyText(); if(!body || selected !== body) return false; e.preventDefault(); return resetBodyToEmptyParagraph(); }
 function handleTitleTab(e){ if(e.key!=='Tab'||e.shiftKey||e.ctrlKey||e.metaKey||e.altKey) return false; if(!titleBlockFromSelection()) return false; e.preventDefault(); focusBodyStart(); return true; }
-function captureTitleTab(e){ if(handleTitleTab(e)){ e.stopImmediatePropagation(); return true; } return false; }
 
 function replaceWithRule(block){ const hr=document.createElement('hr'); const p=document.createElement('p'); p.innerHTML='<br>'; block.replaceWith(hr,p); placeCaret(p); emitChange(); }
 function currentBlock(){ const sel=getSelection(); if(!sel.rangeCount) return null; let n=sel.anchorNode; if(n.nodeType===3) n=n.parentElement; return n?.closest('p,div,h1,h2,h3,h4,h5,h6,li,blockquote,td,th,pre') || null; }
 function insertHtml(html, focus='p,li,td,th,code,h1'){
+ restoreSelection();
  const block=currentBlock() || editor.lastElementChild;
  const t=document.createElement('template');
  t.innerHTML=html.trim();
@@ -778,7 +1303,7 @@ function runFormat(fmt){
  else if(fmt==='quote') insertHtml('<blockquote><p>Zitat</p></blockquote><p><br></p>','p');
  else if(fmt==='code') insertHtml('<pre><code>code</code></pre><p><br></p>','code');
  else if(fmt==='inlineCode') insertInlineCodeAtSelection();
- else if(fmt==='table') insertTablePrompt();
+ else if(fmt==='table') return insertTablePrompt();
  else if(fmt==='task') insertHtml(snippets[2].html,'li');
  else if(fmt==='hr') insertHtml('<hr><p><br></p>','p');
  else if(fmt==='link'){
@@ -832,35 +1357,66 @@ function handleQuoteExit(e){
 }
 function runCommand(cmd){
   const c = CONST.COMMANDS;
+  // Schließe Menü bei den meisten Aktionen (außer lokalen UI-Toggles)
+  if (![c.TOGGLE_TOOLS, c.TOGGLE_THEME, c.CLOSE_MENU, 'showTabHelp'].includes(cmd)) closeMenu(false);
 
   if (cmd === c.NEW)           post('new', {markdown: toMarkdown()});
   else if (cmd === c.OPEN)     post('open', {markdown: toMarkdown()});
-  else if (cmd === c.SAVE)     { post('save', {markdown: toMarkdown()}); markClean(); }
-  else if (cmd === c.SAVE_AS)  { post('saveAs', {markdown: toMarkdown()}); markClean(); }
+  else if (cmd === c.SAVE)     post('save', {markdown: toMarkdown()});
+  else if (cmd === c.SAVE_AS)  post('saveAs', {markdown: toMarkdown()});
   else if (cmd === c.COPY_MD)  post('copyMarkdown', {markdown: toMarkdown()});
+  else if (cmd === 'exportMarkdownFile') post('exportMarkdownFile', {markdown: toMarkdown()});
   else if (cmd === c.EXPORT_HTML) showExportDialog();
+  else if (cmd === 'printPdf') printForPdf();
   else if (cmd === c.SHOW_SOURCE) post('showSource', {markdown: toMarkdown()});
   else if (cmd === c.TOGGLE_THEME) toggleTheme();
-  else if (cmd === 'applyThemeLight') { applyTheme('light'); post('updateSetting', { key: 'theme', value: 'light' }); }
-  else if (cmd === 'applyThemeDark') { applyTheme('dark'); post('updateSetting', { key: 'theme', value: 'dark' }); }
-  else if (cmd === 'applyThemeSepia') { applyTheme('sepia'); post('updateSetting', { key: 'theme', value: 'sepia' }); }
-  else if (cmd === 'applyThemeMidnight') { applyTheme('midnight'); post('updateSetting', { key: 'theme', value: 'midnight' }); }
-  else if (cmd === 'applyThemeClean') { applyTheme('clean'); post('updateSetting', { key: 'theme', value: 'clean' }); }
+  else if (cmd === c.TOGGLE_TOOLS) toggleTools();
   else if (cmd === c.TOGGLE_FOCUS) toggleFocusMode();
   else if (cmd === 'showTabHelp')  showHelp();
   else if (cmd === 'palette')      showCommandPalette();
+  else if (cmd === 'openRecent')   post('openRecent');
   else if (cmd === 'addTableRow')  addTableRow();
   else if (cmd === 'addTableCol')  addTableColumn();
   else if (cmd === 'delTableRow')  deleteTableRow();
   else if (cmd === 'delTableCol')  deleteTableColumn();
+  else if (cmd === 'toggleAutoSave') toggleAutoSave();
+  else if (cmd === 'setWordGoal') setWordGoal();
   else if (cmd === 'findReplace') showFindReplace();
+  else if (cmd === c.CLOSE_MENU)   closeMenu(true);
 }
-function emitChange(){ if(suppressChange) return; clearTimeout(changeTimer); changeTimer=setTimeout(()=>{ updateAll(); markDirty(); post('changed',{markdown:toMarkdown()}); },120); }
-let statusDirty = false;
-function markDirty(){ statusDirty = true; updateStatusBar(); }
-function markClean(){ statusDirty = false; updateStatusBar(); }
+function documentStats(){
+ const text=cleanCaretBoundaries(editor.innerText||'');
+ const words=(text.trim().match(/\S+/g)||[]).length;
+ return { words, chars:text.length };
+}
+function selectionStatsFromText(value){
+ const text=cleanCaretBoundaries(value).replace(/\u00a0/g,' ');
+ return { words:(text.trim().match(/\S+/g)||[]).length, chars:text.length };
+}
+function currentSelectionStats(){
+ const sel=getSelection();
+ if(!sel || !sel.rangeCount || sel.isCollapsed) return null;
+ const range=sel.getRangeAt(0);
+ if(!editorOwnsRange(range)) return null;
+ return selectionStatsFromText(sel.toString());
+}
+function emitChange(){ if(suppressChange) return; clearTimeout(changeTimer); changeTimer=setTimeout(()=>{ updateAll(); markDirty(); const markdown=toMarkdown(); post('changed',{markdown, stats:documentStats()}); },120); }
+let statusSaveState = 'saved';
+function applySaveState(state){
+ if(!['saved','unsaved','saving'].includes(state)) return;
+ statusSaveState = state;
+ updateStatusBar();
+}
+function markDirty(){ applySaveState('unsaved'); }
+function markClean(){ applySaveState('saved'); }
 
 function updateAll(){
+  const text=cleanCaretBoundaries(editor.innerText||'');
+  wordCount.textContent=(text.trim().match(/\S+/g)||[]).length;
+  charCount.textContent=text.length;
+  const heads=Array.from(editor.querySelectorAll('h1,h2,h3'));
+  headingCount.textContent=heads.length;
+  outline.innerHTML=heads.map((h,i)=>`<button type="button" data-index="${i}">${escapeHtml(cleanCaretBoundaries(h.innerText))}</button>`).join('') || '<button type="button">Keine Überschriften</button>';
   updateStatusBar();
   addCodeLabels();
 }
@@ -869,37 +1425,60 @@ function updateStatusBar(){
   const wEl = document.getElementById('statusWords');
   const cEl = document.getElementById('statusChars');
   const readEl = document.getElementById('statusReadTime');
+  const selectionSep = document.getElementById('statusSelectionSep');
+  const selectionEl = document.getElementById('statusSelection');
   const saveEl = document.getElementById('statusSaveState');
   const focusHint = document.getElementById('statusFocusHint');
   if (!wEl || !cEl || !saveEl) return;
 
-  const text = bodyText();
-  const words = text.match(/\S+/g)?.length ?? 0;
-  const chars = text.length;
-  wEl.textContent = words + ' Wörter';
+  const words = wordCount ? wordCount.textContent : '0';
+  const chars = charCount ? charCount.textContent : '0';
+  const wNum = parseInt(words) || 0;
+  if (targetWordCount > 0) {
+    const pct = Math.min(100, Math.round((wNum / targetWordCount) * 100));
+    wEl.textContent = `${words} / ${targetWordCount} Wörter (${pct}%)`;
+  } else {
+    wEl.textContent = words + ' Wörter';
+  }
   cEl.textContent = chars + ' Zeichen';
 
   if (readEl) {
-    const mins = Math.max(1, Math.round(words / 200));
+    const w = parseInt(words) || 0;
+    const mins = Math.max(1, Math.round(w / 200));
     readEl.textContent = '~' + mins + ' min';
   }
 
-  if (statusDirty) {
-    saveEl.textContent = 'Ungespeichert';
-    saveEl.classList.add('dirty');
-  } else {
-    saveEl.textContent = 'Gespeichert';
-    saveEl.classList.remove('dirty');
+  const selectionStats = currentSelectionStats();
+  const hasSelection = selectionStats !== null;
+  if (selectionSep) selectionSep.hidden = !hasSelection;
+  if (selectionEl) {
+    selectionEl.hidden = !hasSelection;
+    if (hasSelection) {
+      selectionEl.textContent = `Auswahl: ${selectionStats.words} Wörter | ${selectionStats.chars} Zeichen`;
+    }
   }
+
+  saveEl.textContent = statusSaveState === 'saving'
+    ? 'Speichert…'
+    : statusSaveState === 'unsaved' ? 'Ungespeichert' : 'Gespeichert';
+  saveEl.classList.toggle('dirty', statusSaveState === 'unsaved');
+  saveEl.classList.toggle('saving', statusSaveState === 'saving');
 
   if (focusHint) {
     const inFocus = document.body.classList.contains('focus-mode');
     focusHint.style.display = inFocus ? 'inline' : 'none';
   }
 
+  // Auto-Save indicator
+  const autoEl = document.getElementById('statusAutoSave');
+  if (autoEl) {
+    autoEl.textContent = autoSaveEnabledClient ? 'Auto-Save' : '';
+    autoEl.style.opacity = autoSaveEnabledClient ? '1' : '0.5';
+  }
 }
 function hydrateTasks(){ editor.querySelectorAll('.task-checkbox').forEach(cb=>{ cb.contentEditable=false; cb.onchange=emitChange; }); }
-function notify(title,message=''){ const toast=document.createElement('div'); toast.className='toast'; toast.innerHTML=`<strong>${escapeHtml(title)}</strong>${message?`<span>${escapeHtml(message)}</span>`:''}`; toasts.appendChild(toast); setTimeout(()=>toast.remove(),3200); if (/gespeichert|saved/i.test(title + ' ' + message)) { markClean(); } }
+function notify(title,message=''){ const toast=document.createElement('div'); toast.className='toast'; toast.innerHTML=`<strong>${escapeHtml(title)}</strong>${message?`<span>${escapeHtml(message)}</span>`:''}`; toasts.appendChild(toast); setTimeout(()=>toast.remove(),3200); }
+function appleFeedback(message='Kopiert'){ document.querySelectorAll('.apple-hud').forEach(el=>el.remove()); const hud=document.createElement('div'); hud.className='apple-hud'; hud.textContent=message; document.body.appendChild(hud); setTimeout(()=>hud.remove(),1300); }
 function hydrateCopyTargets(){ editor.querySelectorAll('code').forEach(code=>{ if(code.closest('pre')){ code.setAttribute('contenteditable','true'); return; } code.title='Doppelklick kopiert Inline-Code'; code.dataset.copyTarget='inline'; }); editor.querySelectorAll('pre').forEach(pre=>{ pre.setAttribute('contenteditable','true'); pre.title='Bearbeiten: normal klicken. Kopieren: Doppelklick. Strg+A im Codeblock markiert nur diesen Codeblock.'; pre.dataset.copyTarget='block'; const code=pre.querySelector('code'); if(code) code.setAttribute('contenteditable','true'); }); }
 
 function addCodeLabels() {
@@ -913,16 +1492,36 @@ function addCodeLabels() {
   });
 }
 async function copyText(text){ if(navigator.clipboard?.writeText){ try{ await navigator.clipboard.writeText(text); return true; }catch{} } const area=document.createElement('textarea'); area.value=text; area.setAttribute('readonly',''); area.style.position='fixed'; area.style.left='-9999px'; area.style.top='0'; document.body.appendChild(area); area.select(); const ok=document.execCommand('copy'); area.remove(); return ok; }
-async function copyElementText(el,label){ const text=el.matches('pre') ? ((el.querySelector('code')?.innerText) ?? el.innerText ?? '') : (el.innerText ?? el.textContent ?? ''); if(!text) return; const ok=await copyText(text); if(ok){ el.classList.add('copied'); setTimeout(()=>el.classList.remove('copied'),1200); notify(label,'In die Zwischenablage kopiert.'); } else notify('Kopieren fehlgeschlagen','Bitte manuell markieren und kopieren.'); }
+async function copyElementText(el,label, subtle=false){ const text=el.matches('pre') ? ((el.querySelector('code')?.innerText) ?? el.innerText ?? '') : (el.innerText ?? el.textContent ?? ''); if(!text) return; const ok=await copyText(text); if(ok){ el.classList.add('copied'); setTimeout(()=>el.classList.remove('copied'),1200); if(subtle) appleFeedback('Kopiert'); else notify(label,'In die Zwischenablage kopiert.'); } else notify('Kopieren fehlgeschlagen','Bitte manuell markieren und kopieren.'); }
 function removeBlockAndFocus(block){ const fallback=block.nextElementSibling || block.previousElementSibling; if(!fallback){ block.outerHTML='<p><br></p>'; placeCaret(editor.lastElementChild); } else { block.remove(); ensureTail(); placeCaret(fallback.isConnected ? fallback : editor.lastElementChild); } emitChange(); }
 function handleDeleteStructures(e){ if(!['Backspace','Delete'].includes(e.key) || e.ctrlKey || e.metaKey || e.altKey) return false; const sel=getSelection(); if(!sel.rangeCount) return false; const block=currentBlock(); const pre=block?.closest?.('pre'); if(pre && editor.contains(pre)){ const text=(pre.innerText||pre.textContent||'').replace(/\u00a0/g,''); const selected=sel.toString(); const allSelected=selected && selected.trim()===text.trim(); if(!text.trim() || text.trim()==='code' || allSelected){ e.preventDefault(); removeBlockAndFocus(pre); return true; } }
  if(e.key==='Backspace' && block?.matches?.('p,div') && !block.textContent.trim() && block.previousElementSibling?.tagName==='PRE'){ e.preventDefault(); block.previousElementSibling.remove(); ensureTail(); placeCaret(block); emitChange(); return true; }
  if(e.key==='Delete' && block?.matches?.('p,div') && !block.textContent.trim() && block.nextElementSibling?.tagName==='PRE'){ e.preventDefault(); block.nextElementSibling.remove(); ensureTail(); placeCaret(block); emitChange(); return true; }
  return false; }
-
+function positionMenu(anchor){
+  if(!anchor) return;
+  const rect=anchor.getBoundingClientRect();
+  const gap=12;
+  const margin=10;
+  const maxWidth=Math.min(760, Math.max(280, innerWidth - rect.right - gap - margin));
+  menuSheet.style.width=`min(760px, calc(100vw - ${Math.ceil(rect.right + gap + margin)}px))`;
+  const estimatedHeight=Math.min(menuSheet.offsetHeight || 420, innerHeight - margin*2);
+  const top=Math.max(margin, Math.min(rect.top, innerHeight - estimatedHeight - margin));
+  menuSheet.style.left=`${Math.ceil(rect.right + gap)}px`;
+  menuSheet.style.top=`${Math.ceil(top)}px`;
+}
+function openMenu(event){
+  const anchor=event?.currentTarget || document.querySelector('[data-menu-panel]');
+  menuSheet.hidden=false;
+  menuBackdrop.hidden=false;
+  requestAnimationFrame(()=>positionMenu(anchor));
+  // Request fresh recent files for dynamic list
+  post('getRecentFiles');
+}
+function closeMenu(restore){ menuSheet.hidden=true; menuBackdrop.hidden=true; if(restore) editor.focus(); }
 function toggleTheme(){
   const current = document.body.dataset.theme || 'dark';
-  const cycle = ['light', 'dark', 'sepia', 'midnight', 'clean'];
+  const cycle = ['light', 'dark'];
   let idx = cycle.indexOf(current);
   if (idx === -1) idx = 1;
   const next = cycle[(idx + 1) % cycle.length];
@@ -930,13 +1529,21 @@ function toggleTheme(){
   post('updateSetting', { key: 'theme', value: next });
 }
 function applyTheme(t){
+  if (t === 'clean' || t === 'sepia') t = 'light';
+  else if (t === 'midnight') t = 'dark';
+  else if (t !== 'light' && t !== 'dark') t = 'dark';
   document.body.dataset.theme = t;
   localStorage.setItem('markdownStudioTheme', t);
+  if (themeInput) themeInput.checked = (t === 'dark');
 }
+function applyTools(open,persist=true){ document.body.classList.toggle('tools-open',open); document.body.classList.toggle('tools-collapsed',!open); document.querySelectorAll('[data-command="toggleTools"]').forEach(b=>{ b.setAttribute('aria-pressed',String(open)); b.setAttribute('title',open?'Werkzeuge einklappen':'Werkzeuge ausklappen'); }); document.getElementById('toolsCollapse').textContent=open?'Einklappen':'Ausklappen'; if(persist) localStorage.setItem('markdownStudioToolsOpen',open?'true':'false'); post('updateSetting', { key: 'toolsOpen', value: open }); }
+function toggleTools(){ applyTools(!document.body.classList.contains('tools-open')); }
 
-/* === FOCUS MODE === */
+/* === FOCUS MODE (V4 Phase 1) === */
 function applyFocusMode(enabled, persist = true) {
   document.body.classList.toggle('focus-mode', enabled);
+  // Optional: auch Tools ausblenden, wenn Focus an
+  if (enabled) document.body.classList.remove('tools-open');
   document.querySelectorAll('[data-command="toggleFocus"]').forEach(b => {
     b.setAttribute('aria-pressed', String(enabled));
     b.setAttribute('title', enabled ? 'Fokus-Modus verlassen (F11)' : 'Fokus-Modus (F11)');
@@ -952,8 +1559,54 @@ function applySettings(settings) {
   if (settings.theme) {
     applyTheme(settings.theme);
   }
+  if (typeof settings.toolsOpen === 'boolean') {
+    applyTools(settings.toolsOpen, false);
+  }
   if (typeof settings.focusMode === 'boolean') {
     applyFocusMode(settings.focusMode, false);
+  }
+  // AutoSave is handled by host, we just get notified
+  if (typeof settings.autoSaveEnabled === 'boolean') {
+    autoSaveEnabledClient = settings.autoSaveEnabled;
+    updateStatusBar();
+  }
+  if (typeof settings.targetWordCount === 'number' || typeof settings.wordGoal === 'number') {
+    targetWordCount = Number(settings.targetWordCount ?? settings.wordGoal ?? 0);
+    updateStatusBar();
+  }
+  if (typeof settings.spellcheck === 'boolean') {
+    editor.setAttribute('spellcheck', settings.spellcheck ? 'true' : 'false');
+  }
+  const editorWidth = Math.max(680, Math.min(940, Number(settings.editorWidth || 900)));
+  const fontSize = Math.max(13, Math.min(22, Number(settings.fontSize || 16)));
+  const lineHeight = Math.max(1.35, Math.min(2, Number(settings.lineHeight || 1.68)));
+  document.documentElement.style.setProperty('--windows-editor-max', editorWidth + 'px');
+  document.documentElement.style.setProperty('--windows-editor-font-size', fontSize + 'px');
+  document.documentElement.style.setProperty('--windows-editor-line-height', String(lineHeight));
+}
+
+let autoSaveEnabledClient = false;
+let targetWordCount = 0;
+function toggleAutoSave() {
+  autoSaveEnabledClient = !autoSaveEnabledClient;
+  post('updateSetting', { key: 'autoSaveEnabled', value: autoSaveEnabledClient });
+  updateStatusBar();
+  notify('Auto-Speichern', autoSaveEnabledClient ? 'Aktiviert' : 'Deaktiviert');
+}
+
+function setWordGoal() {
+  const current = targetWordCount || 500;
+  const val = prompt('Wortziel (0 = deaktivieren):', current);
+  if (val === null) return;
+  const num = parseInt(val, 10);
+  if (isNaN(num) || num < 0) return;
+  targetWordCount = num;
+  post('updateSetting', { key: 'targetWordCount', value: num });
+  updateStatusBar();
+  if (num > 0) {
+    notify('Wortziel', `Ziel auf ${num} Wörter gesetzt`);
+  } else {
+    notify('Wortziel', 'Deaktiviert');
   }
 }
 
@@ -1168,6 +1821,33 @@ function replaceAll(query, replacement, caseSensitive, wholeWord) {
   return count;
 }
 
+function receiveRecentFiles(files) {
+  // Populate a dynamic recent section if present, or log for now
+  // For this patch, we update a simple list if we have a container
+  const container = document.getElementById('recentList');
+  if (!container) return;
+  container.innerHTML = '';
+  if (!files || files.length === 0) {
+    const li = document.createElement('div');
+    li.textContent = 'Keine Einträge';
+    li.style.opacity = '0.6';
+    container.appendChild(li);
+    return;
+  }
+  files.slice(0, 6).forEach(path => {
+    const item = document.createElement('button');
+    item.className = 'menu-action';
+    item.style.width = '100%';
+    item.textContent = path.split(/[\\/]/).pop() || path;
+    item.title = path;
+    item.onclick = () => {
+      closeMenu(true);
+      post('openRecentFile', { path });
+      // Fallback: the C# can handle a new message or we use existing
+    };
+    container.appendChild(item);
+  });
+}
 function toggleFocusMode() {
   applyFocusMode(!document.body.classList.contains('focus-mode'));
 }
@@ -1193,30 +1873,32 @@ function typewriterScroll() {
   });
 }
 
-/* === COMMAND PALETTE (Ctrl+K) === */
+/* === COMMAND PALETTE V4 (Ctrl+K) === */
 const paletteCommands = [
   { id: 'focus', label: 'Fokus-Modus umschalten', desc: 'Ablenkungsfrei schreiben', shortcut: 'F11', action: () => toggleFocusMode() },
   { id: 'new', label: 'Neues Dokument', desc: 'Leeres Dokument starten', action: () => runCommand(CONST.COMMANDS.NEW) },
-  { id: 'open', label: 'Öffnen', desc: '.md Datei laden', action: () => runCommand(CONST.COMMANDS.OPEN) },
+  { id: 'open', label: 'Öffnen', desc: 'Textdatei laden', action: () => runCommand(CONST.COMMANDS.OPEN) },
   { id: 'save', label: 'Speichern', desc: 'Aktuelles Dokument speichern', shortcut: 'Strg+S', action: () => runCommand(CONST.COMMANDS.SAVE) },
   { id: 'saveas', label: 'Speichern unter', desc: 'Als neue Datei speichern', action: () => runCommand(CONST.COMMANDS.SAVE_AS) },
   { id: 'copy', label: 'Als Markdown kopieren', desc: 'In die Zwischenablage', action: () => runCommand(CONST.COMMANDS.COPY_MD) },
-  { id: 'export', label: 'Exportieren...', desc: 'MD, HTML oder PDF', action: () => showExportDialog() },
+  { id: 'export', label: 'HTML exportieren', desc: 'Als .html speichern', action: () => runCommand(CONST.COMMANDS.EXPORT_HTML) },
   { id: 'source', label: 'Markdown-Quelle anzeigen', desc: 'Rohtext im Dialog', action: () => runCommand(CONST.COMMANDS.SHOW_SOURCE) },
   { id: 'theme', label: 'Theme wechseln', desc: 'Hell / Dunkel umschalten', action: () => toggleTheme() },
-  { id: 'help', label: 'Tab-Hilfe anzeigen', desc: 'Smart-Tab Übersicht', action: () => showHelp() },
-  { id: 'table', label: 'Tabelle einfügen', desc: '3x2 Tabelle', action: () => runFormat(CONST.FORMATS.TABLE) },
-  { id: 'task', label: 'Aufgabenliste einfügen', desc: 'Checkboxen', action: () => runFormat(CONST.FORMATS.TASK) },
+  { id: 'tools', label: 'Werkzeuge umschalten', desc: 'Seitenleiste ein/aus', action: () => toggleTools() },
+  { id: 'help', label: 'Tab-Befehle anzeigen', desc: 'Smart-Tab Übersicht', action: () => showHelp() },
+  { id: 'table', label: 'Tabelle einfügen', desc: 'Spalten und Zeilen abfragen', action: () => runFormat(CONST.FORMATS.TABLE) },
+  { id: 'task', label: 'Aufgabenliste einfügen', desc: 'Checkboxen', action: () => runCommand(CONST.FORMATS.TASK) },
   { id: 'link', label: 'Link einfügen', desc: 'Hyperlink mit URL', action: () => runFormat('link') },
-  { id: 'theme-light', label: 'Theme: Hell', desc: 'Klassisches helles Design', action: () => runCommand('applyThemeLight') },
-  { id: 'theme-dark', label: 'Theme: Dunkel', desc: 'Dunkles Design', action: () => runCommand('applyThemeDark') },
-  { id: 'theme-sepia', label: 'Theme: Sepia', desc: 'Warmes Papier für langes Lesen', action: () => runCommand('applyThemeSepia') },
-  { id: 'theme-midnight', label: 'Theme: Midnight', desc: 'Dunkel und modern', action: () => runCommand('applyThemeMidnight') },
-  { id: 'theme-clean', label: 'Theme: Clean', desc: 'Minimal und hell', action: () => runCommand('applyThemeClean') },
+  { id: 'theme-light', label: 'Theme: Hell', desc: 'Klassisches helles Design', action: () => applyTheme('light') },
+  { id: 'theme-dark', label: 'Theme: Dunkel', desc: 'Dunkles Design', action: () => applyTheme('dark') },
+  { id: 'export', label: 'Exportieren...', desc: 'MD, HTML oder PDF', action: () => showExportDialog() },
+  { id: 'recent', label: 'Zuletzt verwendet', desc: 'Letzte Dateien öffnen', action: () => runCommand('openRecent') },
   { id: 'addRow', label: 'Tabelle: Zeile hinzufügen', desc: 'Unter aktueller Zeile', action: () => runCommand('addTableRow') },
   { id: 'addCol', label: 'Tabelle: Spalte hinzufügen', desc: 'Rechts der aktuellen Spalte', action: () => runCommand('addTableCol') },
   { id: 'delRow', label: 'Tabelle: Zeile löschen', desc: 'Aktuelle Zeile entfernen', action: () => runCommand('delTableRow') },
   { id: 'delCol', label: 'Tabelle: Spalte löschen', desc: 'Aktuelle Spalte entfernen', action: () => runCommand('delTableCol') },
+  { id: 'toggleAutoSave', label: 'Auto-Speichern umschalten', desc: 'Opt-in automatisches Speichern', action: () => toggleAutoSave() },
+  { id: 'setWordGoal', label: 'Wortziel setzen', desc: 'Ziel für Wörterzahl festlegen', action: () => setWordGoal() },
   { id: 'findReplace', label: 'Suchen & Ersetzen', desc: 'Find & Replace (Strg+F)', action: () => showFindReplace() },
 ];
 
@@ -1290,7 +1972,7 @@ function showExportDialog() {
     // fallback
     const choice = prompt('Export als: md / html / pdf', 'md');
     if (choice === 'md') runCommand(CONST.COMMANDS.COPY_MD);
-    else if (choice === 'html') post('exportHtml', {html: documentHtml()});
+    else if (choice === 'html') runCommand(CONST.COMMANDS.EXPORT_HTML);
     else if (choice === 'pdf') printForPdf();
     return;
   }
@@ -1308,7 +1990,7 @@ function showExportDialog() {
       if (type === 'md') {
         runCommand(CONST.COMMANDS.COPY_MD);
       } else if (type === 'html') {
-        post('exportHtml', {html: documentHtml()});
+        runCommand(CONST.COMMANDS.EXPORT_HTML);
       } else if (type === 'pdf') {
         printForPdf();
       }
@@ -1366,12 +2048,13 @@ function rawCommand(text){ return String(text||'').replace(/\u00a0/g,' ').trim()
 function normalizeCommand(text){ return rawCommand(text).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
 function currentTextCommand(){ const block=currentBlock(); const sel=getSelection(); if(!block || block.closest('table') || block.closest('pre') || !sel.isCollapsed) return null; if(!['P','DIV','H1','H2','H3','H4','H5','H6'].includes(block.tagName)) return null; const raw=rawCommand(block.textContent||''); const text=normalizeCommand(raw); return {block,text,raw}; }
 function smartCodeCommandKey(command){ const raw=typeof command==='object' && command ? command.raw : rawCommand(command); const key=cleanCaretBoundaries(rawCommand(raw)).toUpperCase(); return key==='INL' || key==='CODE' ? key : null; }
-function matchSnippet(command){ const raw=typeof command==='object' && command ? command.raw : rawCommand(command); const key=typeof command==='object' && command ? command.text : normalizeCommand(raw); if(!key) return null; if(key==='?'||key==='hilfe'||key==='help') return {action:'help'}; const smartKey=smartCodeCommandKey(command); const normalized=snippets.map(s=>({...s, normalizedKeys:s.keys.map(normalizeCommand)})); const exact=normalized.find(s=>s.exactOnly ? (smartKey && s.keys.some(k=>String(k).toUpperCase()===smartKey)) : s.normalizedKeys.includes(key)); if(exact) return exact; return key.length>1 ? normalized.find(s=>!s.exactOnly && s.normalizedKeys.some(k=>k.startsWith(key))) : null; }
+function matchSnippet(command){ const raw=typeof command==='object' && command ? command.raw : rawCommand(command); const key=typeof command==='object' && command ? command.text : normalizeCommand(raw); if(!key) return null; if(key==='?'||key==='hilfe'||key==='help') return {action:'help'}; const smartKey=smartCodeCommandKey(command); const normalized=snippets.map(s=>({...s, normalizedKeys:s.keys.map(normalizeCommand)})); const exact=normalized.find(s=>s.exactOnly ? (smartKey && s.keys.some(k=>String(k).toUpperCase()===smartKey)) : s.normalizedKeys.includes(key)); if(exact) return e
+    xact; return key.length>1 ? normalized.find(s=>!s.exactOnly && s.normalizedKeys.some(k=>k.startsWith(key))) : null; }
 function updateAssist(){ const ctx=currentTextCommand(); const m=ctx && matchSnippet(ctx); if(!m || m.action==='help'){ tabSuggest.dataset.visible='false'; tabSuggest.style.display='none'; return; } try{ tabSuggestText.textContent=m.label; const sel=getSelection(); if(!sel.rangeCount) return; const r=sel.getRangeAt(0).getBoundingClientRect(); tabSuggest.style.left=Math.min(Math.max(r.left,18),innerWidth-360)+'px'; tabSuggest.style.top=(r.bottom+10)+'px'; tabSuggest.style.display='flex'; tabSuggest.dataset.visible='true'; }catch{ tabSuggest.style.display='none'; } }
 function showHelp(){ helpSnippets.innerHTML=snippets.map((s,i)=>`<button class="snippet-card" data-i="${i}"><strong>${escapeHtml(s.label)}</strong><p>${escapeHtml(s.description)}</p><code>${escapeHtml(s.keys[0])}</code></button>`).join(''); helpBackdrop.hidden=false; }
-function handleTableTab(e){ if(e.key!=='Tab'||e.ctrlKey||e.metaKey||e.altKey) return false; const cell=currentBlock()?.closest?.('td,th'); if(!cell || !editor.contains(cell)) return false; e.preventDefault(); const cells=Array.from(cell.closest('table').querySelectorAll('th,td')); let idx=cells.indexOf(cell)+(e.shiftKey?-1:1); if(idx<0) idx=0; if(idx>=cells.length){ const table=cell.closest('table'); const cols=table.querySelector('tr')?.children.length || 3; const tr=document.createElement('tr'); for(let i=0;i<cols;i++) tr.insertAdjacentHTML('beforeend','<td><br></td>'); (table.tBodies[0] || table.createTBody()).appendChild(tr); idx=cells.length; cells.push(...Array.from(tr.children)); ensureTail(); } placeCaret(cells[idx]); emitChange(); return true; }
+function handleTableTab(e){ if(e.key!=='Tab'||e.ctrlKey||e.metaKey||e.altKey) return false; const cell=currentBlock()?.closest?.('td,th'); if(!cell || !editor.contains(cell)) return false; e.preventDefault(); const cells=Array.from(cell.closest('table').querySelectorAll('th,td')); let idx=cells.indexOf(cell)+(e.shiftKey?-1:1); if(idx<0) idx=0; if(idx>=cells.length){ const table=cell.closest('table'); const cols=table.querySelector('tr')?.children.length || 2; const tr=document.createElement('tr'); for(let i=0;i<cols;i++) tr.insertAdjacentHTML('beforeend','<td><br></td>'); (table.tBodies[0] || table.createTBody()).appendChild(tr); idx=cells.length; cells.push(...Array.from(tr.children)); ensureTail(); } placeCaret(cells[idx]); emitChange(); return true; }
 
-/* === TABLE FEATURES === */
+/* === Bessere Tabellen (V4 Pro-Features) === */
 function getCurrentTableCell() {
   const block = currentBlock();
   return block?.closest?.('td,th') || null;
@@ -1449,26 +2132,34 @@ function deleteTableColumn() {
   emitChange();
   return true;
 }
-function handleCodeTab(e){
- if(!['Tab','Enter'].includes(e.key)||e.shiftKey||e.ctrlKey||e.metaKey||e.altKey||e.isComposing) return false;
+function handleCodeEnter(e){
+ if(e.key!=='Enter'||e.ctrlKey||e.metaKey||e.altKey||e.isComposing) return false;
  const pre=codeBlockFromSelection();
  if(!pre || !editor.contains(pre)) return false;
-
- if(e.key==='Tab'){
-  e.preventDefault();
-  e.stopPropagation();
-  const p=insertParagraphAfter(pre);
-  placeCaret(p,true);
-  emitChange();
-  return true;
+ const info=codeRangeInfo(pre);
+ if(!info) return false;
+ const {target, range}=info;
+ e.preventDefault();
+ e.stopPropagation();
+ if(!e.shiftKey && range.collapsed){
+  const before=codeTextBeforeCaret(target, range);
+  const after=codeTextAfterCaret(target, range);
+  if(after==='' && before.endsWith('\n')){
+   target.textContent=before.slice(0,-1);
+   const p=insertParagraphAfter(pre);
+   placeCaret(p,true);
+   hydrateCopyTargets();
+   rememberSelection();
+   emitChange();
+   return true;
+  }
  }
-
- const code=pre.querySelector('code') || pre;
- if(!caretAtEndOfElement(code)) return false;
- const text=cleanCaretBoundaries(code.textContent || '').replace(/\u00a0/g,' ');
- const onBlankCodeLine=/\n\s*$/.test(text);
- if(!onBlankCodeLine) return false;
-
+ return insertTextIntoCodeBlock(pre, '\n', true);
+}
+function handleCodeTab(e){
+ if(e.key!=='Tab'||e.shiftKey||e.ctrlKey||e.metaKey||e.altKey||e.isComposing) return false;
+ const pre=codeBlockFromSelection();
+ if(!pre || !editor.contains(pre)) return false;
  e.preventDefault();
  e.stopPropagation();
  const p=insertParagraphAfter(pre);
@@ -1476,29 +2167,67 @@ function handleCodeTab(e){
  emitChange();
  return true;
 }
-function tableHtml(cols=3, rows=2){
- cols=Math.max(1, Math.min(12, parseInt(cols,10) || 3));
+function tableHtml(cols=2, rows=2){
+ cols=Math.max(1, Math.min(12, parseInt(cols,10) || 2));
  rows=Math.max(1, Math.min(50, parseInt(rows,10) || 2));
  const head='<thead><tr>'+Array.from({length:cols},(_,i)=>`<th>Spalte ${i+1}</th>`).join('')+'</tr></thead>';
- const body='<tbody>'+Array.from({length:rows},()=>'<tr>'+Array.from({length:cols},()=>'<td>Wert</td>').join('')+'</tr>').join('')+'</tbody>';
+ const body='<tbody>'+Array.from({length:rows},()=>'<tr>'+Array.from({length:cols},()=>'<td><br></td>').join('')+'</tr>').join('')+'</tbody>';
  return `<table>${head}${body}</table><p><br></p>`;
 }
-function promptTableSize(){
- const cols=prompt('Wie viele Spalten?', '3');
- if(cols===null) return null;
- const rows=prompt('Wie viele Zeilen?', '2');
- if(rows===null) return null;
- return {cols, rows};
+function readTableSize(){
+ const cols = Math.max(1, Math.min(12, parseInt(tableColsInput?.value, 10) || 2));
+ const rows = Math.max(1, Math.min(50, parseInt(tableRowsInput?.value, 10) || 2));
+ return { cols, rows };
+}
+function validateTableSize(showMessage=false){
+ const cols = parseInt(tableColsInput?.value, 10);
+ const rows = parseInt(tableRowsInput?.value, 10);
+ const ok = Number.isInteger(cols) && cols >= 1 && cols <= 12 && Number.isInteger(rows) && rows >= 1 && rows <= 50;
+ if (tableError) {
+  tableError.textContent = ok ? '' : 'Bitte gültige Werte zwischen 1 und 12 Spalten sowie 1 und 50 Zeilen eingeben.';
+  tableError.dataset.visible = ok ? 'false' : 'true';
+ }
+ if (!ok && showMessage) notify('Ungültige Tabellenangabe', 'Bitte gültige Zahlen eingeben.');
+ return ok;
+}
+function openTableDialog(block=null){
+ pendingTableBlock = block || null;
+ if (tableColsInput) tableColsInput.value = '2';
+ if (tableRowsInput) tableRowsInput.value = '2';
+ if (tableError) {
+  tableError.textContent = '';
+  tableError.dataset.visible = 'false';
+ }
+ if (tableBackdrop) tableBackdrop.hidden = false;
+ setTimeout(() => {
+  tableColsInput?.focus();
+  tableColsInput?.select?.();
+ }, 0);
+}
+function closeTableDialog(){
+ pendingTableBlock = null;
+ if (tableBackdrop) tableBackdrop.hidden = true;
+ if (tableError) {
+  tableError.textContent = '';
+  tableError.dataset.visible = 'false';
+ }
+ editor.focus();
+}
+function submitTableDialog(){
+ if (!validateTableSize(true)) return false;
+ const { cols, rows } = readTableSize();
+ const html = tableHtml(cols, rows);
+ const block = pendingTableBlock;
+ pendingTableBlock = null;
+ if (tableBackdrop) tableBackdrop.hidden = true;
+ if (block) {
+  return insertSnippetNodes(block, { html, focus: 'th' });
+ }
+ insertHtml(html, 'th');
+ return true;
 }
 function insertTablePrompt(block=null){
- const size=promptTableSize();
- if(!size) return false;
- const html=tableHtml(size.cols, size.rows);
- if(block){
-  const snippet={html, focus:'th'};
-  return insertSnippetNodes(block, snippet);
- }
- insertHtml(html,'th');
+ openTableDialog(block);
  return true;
 }
 function handleInlineCodeExit(e){
@@ -1565,37 +2294,6 @@ function handleInlineCommandTab(e){
 function insertSnippetNodes(block, snippet){ const t=document.createElement('template'); t.innerHTML=snippet.html; const nodes=Array.from(t.content.childNodes); block.replaceWith(...nodes); const first=nodes.find(n=>n.nodeType===1); const focus=first?.matches?.(snippet.focus)?first:first?.querySelector?.(snippet.focus)||first; if(focus){ if(focus.tagName==='CODE' || focus.tagName==='A' || /^H[1-6]$/.test(focus.tagName)) selectContents(focus); else placeCaret(focus); } ensureTail(); hydrateTasks(); hydrateCopyTargets(); emitChange(); return true; }
 function exactCommandSnippet(ctx){ const smartKey=smartCodeCommandKey(ctx); if(!smartKey) return null; return snippets.find(s=>s.exactOnly && s.keys.some(k=>String(k).toUpperCase()===smartKey)) || null; }
 function handleTab(e){ if(handleTableTab(e)) return true; if(e.key!=='Tab'||e.shiftKey||e.ctrlKey||e.metaKey||e.altKey) return false; const ctx=currentTextCommand(); if(!ctx) return false; const exact=exactCommandSnippet(ctx); if(exact){ e.preventDefault(); return exact===snippets[0] ? insertTablePrompt(ctx.block) : insertSnippetNodes(ctx.block, exact); } const m=matchSnippet(ctx); if(!m) return false; e.preventDefault(); if(m.action==='help'){ ctx.block.innerHTML='<br>'; showHelp(); emitChange(); return true; } return m===snippets[0] ? insertTablePrompt(ctx.block) : insertSnippetNodes(ctx.block, m); }
-function insertTextAtSelection(text){
- const sel=getSelection();
- if(!sel.rangeCount || !editorOwnsRange(sel.getRangeAt(0))) return false;
- const range=sel.getRangeAt(0);
- range.deleteContents();
- const node=document.createTextNode(text);
- range.insertNode(node);
- range.setStartAfter(node);
- range.collapse(true);
- sel.removeAllRanges();
- sel.addRange(range);
- return true;
-}
-function handleEditorTabFallback(e){
- if(e.key!=='Tab'||e.ctrlKey||e.metaKey||e.altKey||e.isComposing) return false;
- const exportDialog=document.getElementById('exportBackdrop');
- const findDialog=document.getElementById('findReplaceBackdrop');
- if(commandMenu?.dataset.visible==='true' || !helpBackdrop.hidden || (exportDialog && !exportDialog.hidden) || (findDialog && !findDialog.hidden)) return false;
- const sel=getSelection();
- const selectionInEditor=sel.rangeCount && editorOwnsRange(sel.getRangeAt(0));
- if(!selectionInEditor && !editorOwnsNode(document.activeElement) && document.activeElement!==editor) return false;
- e.preventDefault();
- if(e.shiftKey){
-  editor.focus();
-  return true;
- }
- if(!insertTextAtSelection('\u00a0\u00a0')) editor.focus();
- emitChange();
- updateAssist();
- return true;
-}
 function handleCodeSelectAll(e){ const key=e.key.toLowerCase(); if(!(e.ctrlKey||e.metaKey) || key!=='a') return false; const pre=codeBlockFromSelection(); if(!pre || !editor.contains(pre)) return false; e.preventDefault(); selectContents(pre.querySelector('code') || pre); return true; }
 function pastePlainText(text){
  if(text == null) return false;
@@ -1655,7 +2353,15 @@ function handlePlainPaste(e){
 function handleCodePaste(e){
  const pre=codeBlockFromSelection();
  if(!pre || !editor.contains(pre)) return false;
- return handlePlainPaste(e);
+ const text=e.clipboardData?.getData('text/plain');
+ if(text == null) return false;
+ e.preventDefault();
+ e.stopPropagation();
+ insertTextIntoCodeBlock(pre, text, true);
+ ensureTail();
+ hydrateCopyTargets();
+ updateAssist();
+ return true;
 }
 
 function parseFencedCodeBlock(text){ const value=String(text ?? '').replace(/\r\n?/g,'\n'); let m=value.match(/^\s*```[^\n`]*\n([\s\S]*?)\n?\s*```\s*$/); if(m) return m[1]; m=value.match(/^\s*```\s*([\s\S]+?)\s*```\s*$/); return m ? m[1] : null; }
@@ -1696,6 +2402,14 @@ function liveShortcuts(){
  if(!['P','DIV'].includes(block.tagName)) return;
  let m=raw.match(/^(#{1,6})\s+(.*)$/);
  if(m){ const h=document.createElement('h'+m[1].length); h.innerHTML=m[2] ? inlineMarkdown(m[2]) : '<br>'; block.replaceWith(h); placeCaret(h); emitChange(); return; }
+ if(/^\s*``\s*$/.test(raw)){
+  block.innerHTML='<code>INLINE</code>&nbsp;';
+  hydrateCopyTargets();
+  const inline=block.querySelector?.('code');
+  if(inline) selectContents(inline); else placeCaret(block);
+  emitChange();
+  return;
+ }
  m=raw.match(/^\s*`([^`\n]+)`\s*$/);
  if(m){ block.innerHTML='<code>'+escapeHtml(m[1])+'</code>&nbsp;'; hydrateCopyTargets(); placeCaret(block); emitChange(); return; }
  if(/^([-*_])\1\1+\s*$/.test(text)){ replaceWithRule(block); return; }
@@ -1769,63 +2483,90 @@ function liveInlineMarkdown(){
  }
  return false;
 }
-/* === EVENT WIRING & INITIALIZATION === */
+/* === EVENT WIRING & INITIALIZATION (V4: hier später auch Command Palette + Focus Mode Events) === */
 editor.addEventListener('input',()=>{ liveShortcuts(); liveInlineMarkdown(); ensureTail(); hydrateTasks(); hydrateCopyTargets(); updateAssist(); rememberSelection(); emitChange(); typewriterScroll(); });
 function copyCodeTargetFromEvent(e, requireModifier=true){
  const hasModifier = e.ctrlKey || e.metaKey || e.altKey;
  if(requireModifier && !hasModifier) return false;
  const target = e.target?.closest?.('code,pre');
  if(!target || !editor.contains(target)) return false;
- const pre = target.closest?.('pre');
- if(pre && editor.contains(pre)){
-  e.preventDefault();
-  e.stopPropagation();
-  copyElementText(pre,'Codeblock kopiert');
-  return true;
- }
- const code = target.matches?.('code') ? target : target.closest?.('code');
- if(code && editor.contains(code) && !code.closest('pre')){
-  e.preventDefault();
-  e.stopPropagation();
-  copyElementText(code,'Inline-Code kopiert');
-  return true;
- }
- return false;
+	 const pre = target.closest?.('pre');
+	 if(pre && editor.contains(pre)){
+	  e.preventDefault();
+	  e.stopPropagation();
+	  copyElementText(pre,'Codeblock kopiert', !requireModifier);
+	  requestAnimationFrame(()=>placeCaret(codeEditableFromPre(pre) || pre));
+	  return true;
+	 }
+	 const code = target.matches?.('code') ? target : target.closest?.('code');
+	 if(code && editor.contains(code) && !code.closest('pre')){
+	  e.preventDefault();
+	  e.stopPropagation();
+	  copyElementText(code,'Inline-Code kopiert', !requireModifier);
+	  requestAnimationFrame(()=>placeCaretAfterInlineElement(code, false));
+	  return true;
+	 }
+	 return false;
+	}
+function suppressCodeMultiClickSelection(e){
+ if((e.detail || 0) < 2) return false;
+ const target=e.target?.closest?.('code,pre');
+ if(!target || !editor.contains(target)) return false;
+ e.preventDefault();
+ e.stopPropagation();
+ return true;
 }
+editor.addEventListener('pointerdown',suppressCodeMultiClickSelection,true);
+editor.addEventListener('mousedown',suppressCodeMultiClickSelection,true);
 editor.addEventListener('pointerdown',e=>{ copyCodeTargetFromEvent(e,true); }, true);
 editor.addEventListener('mousedown',e=>{ copyCodeTargetFromEvent(e,true); }, true);
 editor.addEventListener('contextmenu',e=>{ copyCodeTargetFromEvent(e,false); }, true);
 editor.addEventListener('paste',e=>{ if(handleCodePaste(e)) return; handlePlainPaste(e); });
 editor.addEventListener('keyup',()=>{ rememberSelection(); updateAssist(); typewriterScroll(); });
-editor.addEventListener('click',e=>{ if(e.target?.tagName==='HR'){ const p=insertParagraphAfter(e.target); placeCaret(p); rememberSelection(); return; } rememberSelection(); updateAssist(); });
+editor.addEventListener('pointerdown',e=>{ focusTitleForDirectEdit(e); }, true);
+editor.addEventListener('click',e=>{ focusTitleForDirectEdit(e); if(e.target?.tagName==='HR'){ const p=insertParagraphAfter(e.target); placeCaret(p); rememberSelection(); return; } rememberSelection(); updateAssist(); });
 editor.addEventListener('blur',()=>{ tabSuggest.style.display='none'; });
-document.addEventListener('keydown',captureTitleTab,true);
-editor.addEventListener('keydown',e=>{ if(handleInlineFormatExit(e)) return; if(handleQuoteExit(e)) return; if(handleCodeSelectAll(e)) return; if(handleEditorSelectAll(e)) return; if(handleBodySelectionDelete(e)) return; if(handleDeleteStructures(e)) return; if(handleTitleTab(e)) return; if(handleInlineCodeExit(e)) return; if(handleCodeTab(e)) return; if(handleInlineCommandTab(e)) return; if(handleTab(e)) return; if(handleEditorTabFallback(e)) return; const key=e.key.toLowerCase(); if((e.ctrlKey||e.metaKey)&&key==='b'){ e.preventDefault(); runFormat('bold'); } if((e.ctrlKey||e.metaKey)&&key==='i'){ e.preventDefault(); runFormat('italic'); } if((e.ctrlKey||e.metaKey)&&e.altKey&&key==='1'){ e.preventDefault(); runFormat('h1'); } if((e.ctrlKey||e.metaKey)&&e.altKey&&key==='2'){ e.preventDefault(); runFormat('h2'); } if((e.ctrlKey||e.metaKey)&&key==='k'){ e.preventDefault(); showCommandPalette(); } if((e.ctrlKey||e.metaKey)&&key==='e'){ e.preventDefault(); runCommand('exportHtml'); } if(e.key==='F1'||((e.ctrlKey||e.metaKey)&&key==='/')){ e.preventDefault(); showHelp(); }
+editor.addEventListener('keydown',e=>{ if(!tableBackdrop.hidden && e.key==='Escape'){ e.preventDefault(); closeTableDialog(); return; } if(handleInlineFormatExit(e)) return; if(handleQuoteExit(e)) return; if(handleCodeSelectAll(e)) return; if(handleEditorSelectAll(e)) return; if(handleBodySelectionDelete(e)) return; if(handleDeleteStructures(e)) return; if(handleTitleTab(e)) return; if(handleInlineCodeExit(e)) return; if(handleCodeEnter(e)) return; if(handleCodeTab(e)) return; if(handleInlineCommandTab(e)) return; if(handleTab(e)) return; const key=e.key.toLowerCase(); if((e.ctrlKey||e.metaKey)&&key==='b'){ e.preventDefault(); runFormat('bold'); } if((e.ctrlKey||e.metaKey)&&key==='i'){ e.preventDefault(); runFormat('italic'); } if((e.ctrlKey||e.metaKey)&&e.altKey&&key==='1'){ e.preventDefault(); runFormat('h1'); } if((e.ctrlKey||e.metaKey)&&e.altKey&&key==='2'){ e.preventDefault(); runFormat('h2'); } if((e.ctrlKey||e.metaKey)&&key==='k'){ e.preventDefault(); showCommandPalette(); } if((e.ctrlKey||e.metaKey)&&key==='e'){ e.preventDefault(); runCommand('exportHtml'); } if(e.key==='F1'||((e.ctrlKey||e.metaKey)&&key==='/')){ e.preventDefault(); showHelp(); }
   if(e.key==='F11'){ e.preventDefault(); toggleFocusMode(); }
-  if(!helpBackdrop.hidden && e.key==='Escape'){ helpBackdrop.hidden=true; }});
+  if(!helpBackdrop.hidden && e.key==='Escape'){ helpBackdrop.hidden=true; }
+  if(!menuSheet.hidden && e.key==='Escape'){ e.preventDefault(); closeMenu(true); }});
 editor.addEventListener('click',e=>{ copyCodeTargetFromEvent(e,true); });
 editor.addEventListener('dblclick',e=>{ copyCodeTargetFromEvent(e,false); }, true);
 document.addEventListener('keydown',e=>{ 
   const key=e.key.toLowerCase(); 
+  if(!tableBackdrop.hidden && e.key==='Escape'){ e.preventDefault(); closeTableDialog(); return; }
   if((e.ctrlKey||e.metaKey)&&key==='s'){ e.preventDefault(); runCommand('save'); } 
   if((e.ctrlKey||e.metaKey)&&key==='f'){ e.preventDefault(); showFindReplace(); }
   if((e.ctrlKey||e.metaKey)&&key==='h'){ e.preventDefault(); showFindReplace(); }
 });
-document.addEventListener('selectionchange',()=>rememberSelection());
+document.addEventListener('selectionchange',()=>{ rememberSelection(); updateStatusBar(); });
 document.querySelectorAll('[data-command]').forEach(b=>b.addEventListener('click',()=>runCommand(b.dataset.command)));
 document.querySelectorAll('[data-format]').forEach(b=>{
  b.addEventListener('pointerdown',()=>rememberSelection());
- b.addEventListener('click',e=>{ e.preventDefault(); runFormat(b.dataset.format); });
+ b.addEventListener('click',e=>{ e.preventDefault(); if(b.dataset.format==='table') { insertTablePrompt(); return; } runFormat(b.dataset.format); });
 });
-window.addEventListener('resize',()=>{});
+document.querySelectorAll('[data-menu-panel]').forEach(b=>b.addEventListener('click',e=>openMenu(e)));
+menuBackdrop.addEventListener('click',()=>closeMenu(false));
+document.addEventListener('pointerdown',e=>{ if(menuSheet.hidden) return; if(menuSheet.contains(e.target)) return; if(e.target.closest?.('[data-menu-panel]')) return; closeMenu(false); }, true);
+window.addEventListener('resize',()=>{ if(!menuSheet.hidden) positionMenu(document.querySelector('[data-menu-panel]')); });
 helpClose.addEventListener('click',()=>helpBackdrop.hidden=true);
 helpBackdrop.addEventListener('click',e=>{ if(e.target===helpBackdrop) helpBackdrop.hidden=true; });
 helpSnippets.addEventListener('click',e=>{ const card=e.target.closest('[data-i]'); if(!card) return; helpBackdrop.hidden=true; const s=snippets[Number(card.dataset.i)]; if(s===snippets[0]) insertTablePrompt(); else insertHtml(s.html,s.focus); });
-if(window.chrome?.webview){ chrome.webview.addEventListener('message',ev=>{ const msg=ev.data||{}; if(msg.type==='setMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='setMarkdownBase64') setMarkdownBase64(msg.base64||'', msg); if(msg.type==='notify') notify(msg.title||'',msg.message||''); if(msg.type==='applySettings') applySettings(msg); }); }
+tableBackdrop.addEventListener('click',e=>{ if(e.target===tableBackdrop) closeTableDialog(); });
+tableCancel.addEventListener('click',closeTableDialog);
+document.getElementById('tableClose').addEventListener('click',closeTableDialog);
+document.getElementById('tableForm').addEventListener('submit',e=>{ e.preventDefault(); submitTableDialog(); });
+tableColsInput.addEventListener('input',()=>validateTableSize(false));
+tableRowsInput.addEventListener('input',()=>validateTableSize(false));
+outline.addEventListener('click',e=>{ const b=e.target.closest('button[data-index]'); if(!b) return; const h=editor.querySelectorAll('h1,h2,h3')[Number(b.dataset.index)]; h?.scrollIntoView({block:'center'}); });
+themeInput.addEventListener('change',toggleTheme);
+document.body.classList.add('windows-native-shell');
+if(window.chrome?.webview){ chrome.webview.addEventListener('message',ev=>{ const msg=ev.data||{}; if(msg.type==='setMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='setMarkdownBase64') setMarkdownBase64(msg.base64||'', msg); if(msg.type==='setSourceMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='notify') notify(msg.title||'',msg.message||''); if(msg.type==='applySettings') applySettings(msg); if(msg.type==='saveState') applySaveState(msg.state); }); }
 applyTheme(localStorage.getItem('markdownStudioTheme') || 'dark');
+applyTools(localStorage.getItem('markdownStudioToolsOpen') === 'true', false);
 applyFocusMode(localStorage.getItem('markdownStudioFocusMode') === 'true', false);
 ensureTail(); hydrateTasks(); hydrateCopyTargets(); updateAll();
-window.markdownStudio={setMarkdown,setMarkdownBase64,notify,toMarkdown,applySettings,focusInitialTitle,focusBodyStart};
+window.markdownStudio={setMarkdown,setMarkdownBase64,notify,toMarkdown,documentStats,applySettings,applySaveState,focusInitialTitle,focusBodyStart};
 post('ready');
 </script>
 </body>

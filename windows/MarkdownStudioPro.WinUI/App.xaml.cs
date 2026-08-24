@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.UI.Xaml;
 
 namespace MarkdownStudioPro.WinUI;
@@ -36,18 +38,37 @@ public partial class App : Application
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        window = new MainWindow(ResolveInitialFilePath());
+        window = new MainWindow(ResolveInitialFilePath(args.Arguments));
         window.Activate();
     }
 
-    private string? ResolveInitialFilePath()
+    private string? ResolveInitialFilePath(string? activationArguments)
     {
-        if (launchArgs.Length == 0)
+        var activationCandidates = string.IsNullOrWhiteSpace(activationArguments)
+            ? Array.Empty<string>()
+            : ExpandCommandLineCandidate(activationArguments);
+
+        var candidates = activationCandidates
+            .Concat(launchArgs)
+            .Concat(Environment.GetCommandLineArgs().Skip(1))
+            .SelectMany(ExpandCommandLineCandidate)
+            .ToList();
+
+        foreach (var candidate in candidates)
         {
-            return null;
+            var resolved = ResolveFilePathCandidate(candidate);
+            if (resolved is not null)
+            {
+                return resolved;
+            }
         }
 
-        var candidate = launchArgs[0].Trim().Trim('"');
+        return null;
+    }
+
+    private static string? ResolveFilePathCandidate(string? value)
+    {
+        var candidate = value?.Trim().Trim('"');
         if (string.IsNullOrWhiteSpace(candidate))
         {
             return null;
@@ -59,5 +80,24 @@ public partial class App : Application
         }
 
         return System.IO.File.Exists(candidate) ? System.IO.Path.GetFullPath(candidate) : null;
+    }
+
+    private static string[] ExpandCommandLineCandidate(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Array.Empty<string>();
+        }
+
+        var direct = ResolveFilePathCandidate(value);
+        if (direct is not null)
+        {
+            return new[] { direct };
+        }
+
+        return Regex.Matches(value, "\"([^\"]+)\"|([^\\s]+)")
+            .Select(match => match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Value)
+            .Where(token => !string.IsNullOrWhiteSpace(token))
+            .ToArray();
     }
 }

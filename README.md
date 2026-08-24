@@ -1,150 +1,121 @@
-# Markdown Studio Pro
+<p align="center">
+  <img src="windows/MarkdownStudioPro.WinUI/Assets/markdown_studio_icon.png" width="96" alt="Markdown Studio Pro icon">
+</p>
 
-Markdown Studio Pro is an early Markdown editor project focused on clean writing, readable documents, and a calm native desktop experience.
+<h1 align="center">Markdown Studio Pro</h1>
 
-The goal is to build a simple but polished editor for writing Markdown without visual clutter. The current repository contains native desktop shells for macOS and Windows, both wrapping the Markdown Studio editor experience in platform-specific UI.
+<p align="center">
+  A calm desktop Markdown editor built around focused writing, readable documents, and native platform behavior.
+</p>
 
-This is not a finished app release yet. It is a working development version for testing, iteration, and feedback.
+<p align="center">
+  <img alt="Windows 10/11" src="https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?logo=windows11&logoColor=white">
+  <img alt="WinUI 3" src="https://img.shields.io/badge/WinUI-3-5C2D91?logo=windows&logoColor=white">
+  <img alt=".NET 8" src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet&logoColor=white">
+  <img alt="WebView2" src="https://img.shields.io/badge/WebView2-editor-0F6CBD?logo=microsoftedge&logoColor=white">
+  <img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg">
+</p>
 
-## Current status
+---
 
-- Early macOS source prototype
-- Windows WinUI 3 source version
-- Native macOS and Windows app shells
-- Source-first GitHub release
-- No packaged `.dmg` installer yet
-- No packaged Windows installer yet
+Markdown Studio Pro combines a native desktop shell with a writing-first Markdown editor. The Windows version uses **WinUI 3** for the application chrome and **WebView2** for the document editor, keeping file handling and platform behavior native while preserving a flexible editing surface.
 
-## Platforms
+> **Current distribution:** source build. A public installer/package is not published yet.
 
-```text
-main
-macos/      native macOS app
-windows/    native Windows WinUI 3 app
-```
+## Windows highlights
 
-The repository is structured for platform-specific desktop apps. The macOS and Windows versions can evolve independently while sharing editor ideas and workflow decisions.
+- Native WinUI 3 shell with an Editorial Pro-style command surface
+- Light and Dark themes with live settings preview
+- Markdown, text, HTML export and print/PDF workflow
+- White-paper print output even when the app is in Dark mode
+- Improved print pagination for headings, tables, quotes and code blocks
+- Clear save states: **Saved**, **Unsaved** and **Saving...**
+- Auto-save support for already saved documents
+- Open/recent-file workflows and optional last-document restore
+- Window size and position persistence
+- Drag & drop for `.md`, `.markdown` and `.txt` with a native drop surface
+- Find & replace, source editing, command palette and Smart-Tab commands
+- Focus mode, spellcheck, word goal and reading statistics
+- Selection statistics for selected words and characters
+- Configurable editor width, font size and line height with live preview
 
-## macOS prototype
+The existing keyboard, shortcut, Smart-Tab execution and editor key handling are intentionally preserved as part of the confirmed Windows baseline.
 
-The macOS app wraps the Markdown editor in a native desktop shell with:
+## Platform status
 
-- native macOS menu bar and toolbar
-- document open, save, and save as
-- support for Markdown and common text-based files
-- light, dark, and system appearance modes
-- table insertion modal
-- code block support
-- HTML export
-- bundled editor HTML at `macos/MarkdownStudioProMac/App/editor.html`
+| Platform | Stack | Status |
+| --- | --- | --- |
+| Windows | WinUI 3 + WebView2 + .NET 8 | Active, current Editorial Pro/QoL track |
+| macOS | SwiftUI + WKWebView | Separate source track; not changed by the Windows polish work |
 
-## Windows WinUI version
+## Build the Windows app
 
-The Windows app is under `windows/` and uses WinUI 3 with WebView2:
+### Requirements
 
-- native WinUI command bar
-- native file open, save, save as, recent files, and export workflows
-- WebView2 editor startup diagnostics
-- cleaned single Windows app surface without legacy WinForms duplication
-- bundled editor HTML at `windows/MarkdownStudioPro.WinUI/App/editor.html`
+- Windows 10 version 2004 / build 19041 or newer
+- x64
+- .NET 8 SDK
+- Microsoft Edge WebView2 Runtime
+- Visual Studio with Windows App SDK / WinUI tooling, if you prefer IDE builds
 
-## Build on macOS
+### Helper scripts
 
-Requirements:
-
-- macOS
-- Xcode
-
-Steps:
-
-1. Open `macos/MarkdownStudioProMac.xcodeproj`.
-2. Select the `MarkdownStudioProMac` scheme.
-3. Build with `Cmd+B`.
-4. Run with `Cmd+R`.
-
-From the command line:
-
-```sh
-xcodebuild -project macos/MarkdownStudioProMac.xcodeproj -scheme MarkdownStudioProMac -configuration Debug build
-```
-
-## Build on Windows
-
-Requirements:
-
-- Windows
-- .NET SDK 8+
-- Windows App SDK / WinUI workload
-- WebView2 Runtime
-
-Steps:
-
-1. Open `windows/MarkdownStudioPro.WinUI/MarkdownStudioPro.WinUI.csproj` in Visual Studio, or use the scripts in `windows/`.
-2. Build with:
+From the `windows` directory:
 
 ```bat
-cd windows
 build_winui3.bat
-```
-
-3. Start with:
-
-```bat
 start_winui3.bat
 ```
 
-## Repository structure
+The build script restores and builds the self-contained `win-x64` app and checks that the executable, `editor.html`, and `WebView2Loader.dll` are present in the output.
+
+### Direct build
+
+```powershell
+dotnet build .\windows\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj -c Debug -r win-x64
+```
+
+More details are in [`windows/README_WINUI3.md`](windows/README_WINUI3.md).
+
+## Changelog
+
+User-facing release notes are tracked in [`CHANGELOG.md`](CHANGELOG.md). Detailed Windows implementation notes live in [`windows/PATCH_NOTES.md`](windows/PATCH_NOTES.md).
+
+## Repository layout
 
 ```text
 .
 ├─ AI.md
+├─ CHANGELOG.md
+├─ LICENSE
 ├─ README.md
-├─ .gitignore
-├─ macos/
+├─ windows/
+│  ├─ README_WINUI3.md
+│  ├─ PATCH_NOTES.md
+│  ├─ build_winui3.bat
+│  ├─ start_winui3.bat
+│  └─ MarkdownStudioPro.WinUI/
+│     ├─ MarkdownStudioPro.WinUI.csproj
+│     ├─ MainWindow.xaml
+│     ├─ MainWindow.xaml.cs
+│     ├─ App/editor.html
+│     └─ Assets/
+└─ macos/
    ├─ README.md
    ├─ MarkdownStudioProMac.xcodeproj/
    └─ MarkdownStudioProMac/
-└─ windows/
-   ├─ README_WINUI3.md
-   ├─ MarkdownStudioPro.WinUI/
-   └─ build/start/diagnostic scripts
 ```
 
-## macOS notes
+## Development notes
 
-See [macos/README.md](macos/README.md) for macOS-specific setup notes.
-See [windows/README_WINUI3.md](windows/README_WINUI3.md) for Windows-specific setup notes.
+[`AI.md`](AI.md) records project decisions, completed stages, compatibility constraints, and the confirmed baseline for future work.
 
-## AI-assisted development
-
-This project uses an `AI.md` file to document project workflow, technical decisions, completed stages, and next steps.
-
-See [AI.md](AI.md) for project notes.
-
-## Known limitations
-
-- This is not a finished public app release.
-- No `.dmg` installer is provided yet.
-- Some UI details and workflows are still experimental.
-- Windows support is source-based and not packaged as an installer yet.
-
-## Roadmap
-
-Planned next steps:
-
-- add screenshots to the GitHub page
-- continue macOS editor polish
-- improve unsaved-change handling around app termination
-- improve export and packaging workflows
-- continue Windows WinUI polish and packaging
-- add packaged macOS beta builds later
+Windows should follow the product direction without replacing native Windows behavior with macOS-specific interaction patterns. Changes to established keyboard or editor key handling should only be made deliberately and tested separately.
 
 ## Support
 
-If you want to support the project:
-
-[PayPal: @Shyiox](https://paypal.me/Shyiox)
+If Markdown Studio Pro is useful to you, you can support the project via [PayPal @Shyiox](https://paypal.me/Shyiox).
 
 ## License
 
-This project is licensed under the MIT License.
+Markdown Studio Pro is released under the [MIT License](LICENSE).
