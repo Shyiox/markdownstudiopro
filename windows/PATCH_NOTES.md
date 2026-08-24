@@ -1,48 +1,63 @@
 # Markdown Studio Pro - Windows Stand
 
-## Ziel
+## Bestätigte Baseline
 
-Die Windows-Version bleibt eine eigenständige WinUI-3-App, orientiert sich aber an der macOS-App als Lead-Version. Ziel ist Parität dort, wo sie unter Windows sinnvoll und stabil umsetzbar ist.
+Die aktuelle Windows-Version basiert auf **WinUI 3 + WebView2** und dem abgeschlossenen Editorial-Pro-/QoL-Pass. Sie ist die Referenz für weitere Windows-Arbeiten.
 
-## Aktueller Schwerpunkt
+## Oberfläche
 
-- WinUI-3-Shell mit nativer CommandBar
-- WebView2-Editor als Kern des Markdown-Erlebnisses
-- Ruhige, produktive Schreiboberfläche ohne doppelte Toolbars
-- Saubere Datei- und Dirty-State-Logik
-- Robuste Theme-Kontraste
-- Self-contained Windows-Build fuer .NET
+- Native obere Dokument-/Toolbar-Shell ohne zusätzliche Sidebar
+- Light und Dark; Dark basiert auf der früheren Midnight-Richtung
+- Dynamischer Dokumentname und sauber zentrierte erste H1
+- Überarbeitete Dialoge und Kontraste
+- Suchen & Ersetzen mit weichem Hintergrund-Blur statt starker Abdunklung
+- Kompaktere Smart-Tab-Befehlsübersicht
 
-## Wichtige Änderungen
+## Datei- und Sitzungslogik
 
-- Neues Logo in Windows-Assets und App-Icon eingebunden
-- App-Name und Logo aus der Topbar entfernt; Fokus liegt auf Dokument und Aktionen
-- Dokumenttitel, Speicherstatus und Pfad in der nativen Shell sichtbar
-- Wort-/Zeichenstatistik nur noch in der Statusbar
-- Titel bleibt beim Start vormarkiert, damit er direkt ersetzt werden kann
-- `Tab` springt vom Titel direkt in den Schreibbereich
-- Öffnen von Markdown-Dateien per Menü und Startargument stabilisiert
-- `.md`-Startargumente mit Leerzeichen und Umlauten getestet
-- Schließen prüft aktiv den aktuellen WebView-Inhalt und zeigt bei Änderungen den Speichern-Dialog
-- `Clean`-Theme entfernt; alte `clean`-Settings werden auf `light` normalisiert
-- Kontrast-Tokens für Hell, Dunkel, Sepia und Midnight überarbeitet
-- Über-Dialog neu aufgebaut: flach, clean, theme-adaptiv, ohne generische Cards/Chips
-- PayPal-Spendenlink dezent als Link statt als breiter Button
-- Einstellungen erweitert und dauerhaft gespeichert
-- Export, Quelle bearbeiten, Suche/Ersetzen, Command Palette und Fokusmodus bleiben aktiv
+- Gespeichert / Ungespeichert / Speichert... synchron zwischen WinUI und WebView
+- Auto-Save für bereits gespeicherte Dateien
+- Abfrage bei ungespeicherten Änderungen
+- Drag & Drop für `.md`, `.markdown` und `.txt`
+- Drop-Overlay bei gültigem Einzeldatei-Drop
+- Fenstergröße und Fensterposition werden gespeichert
+- Optionales Wiederöffnen des zuletzt geöffneten Dokuments
+- Explizit übergebene Startdateien haben Vorrang vor Session-Restore
 
-## Nachtest
+## Einstellungen
+
+- Live-Vorschau für Theme, Editorbreite, Schriftgröße und Zeilenhöhe
+- Abbrechen stellt den Zustand vor Öffnen des Settings-Dialogs wieder her
+- Settings-Inhalt scrollbar, Footer bleibt fest
+- Rechtschreibung, Fokusmodus, Auto-Save und Wortziel bleiben verfügbar
+
+## Editor und Status
+
+- Inline-Code-Verhalten korrigiert
+- Auswahlstatistik ergänzt Wörter und Zeichen der markierten Textmenge
+- Sichtbare Status-Trenner verwenden `|`
+- Bestehende Tastatur-, Shortcut-, Smart-Tab-Ausführungs- und Editor-`keydown`-Logik bleibt unangetastet
+
+## Drucken
+
+- Druckinhalt verwendet immer eine helle Papierpalette, auch bei aktivem Darkmode
+- Überschriften werden möglichst mit folgendem Inhalt zusammengehalten
+- Widow-/Orphan-Regeln für Absätze
+- Umbruchvermeidung für Codeblöcke, Zitate, Tabellen und Tabellenzeilen
+- Explizite manuelle Seitenumbrüche bleiben erhalten
+
+## Build
 
 ```bat
-dotnet build MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj
+build_winui3.bat
 ```
 
-Zusätzlich manuell prüfen:
+Oder direkt:
 
-- Start ohne Datei
-- Titel direkt überschreiben
-- Schreiben und sofort per `X` schließen
-- Datei per Menü öffnen
-- Datei per Startargument öffnen
-- Hell/Dunkel/Sepia/Midnight
-- Über-Dialog in hellem und dunklem Theme
+```powershell
+dotnet build .\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj -c Debug -r win-x64
+```
+
+## Scope-Hinweis
+
+Dieser Stand betrifft die Windows-Version. macOS-Dateien werden durch diesen Windows-Pass nicht verändert.
