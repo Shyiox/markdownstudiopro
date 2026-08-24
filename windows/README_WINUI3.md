@@ -1,115 +1,120 @@
 # Markdown Studio Pro - Windows
 
-Die Windows-Version von Markdown Studio Pro ist eine eigenständige **WinUI-3-App mit WebView2-Editor**. Die Oberfläche ist auf ruhiges Schreiben ausgelegt: native Windows-Shell außen, Markdown-Editor innen, ohne doppelte Web-Menüleisten oder zusätzliche Seitenleisten.
+The Windows edition of Markdown Studio Pro is a standalone **WinUI 3 application with a WebView2-based Markdown editor**. Its interface is designed around calm, focused writing: a native Windows shell around a flexible document surface, without duplicate web toolbars or additional sidebars.
 
-## Aktueller Stand
+## Current status
 
-- Native WinUI-3-Shell mit Editorial-Pro-Toolbar
-- WebView2-basierter Markdown-Editor
-- Themes: **Hell** und **Dunkel**
-- Dateiaktionen: Neu, Öffnen, Speichern, Speichern unter und zuletzt verwendet
-- Start mit Markdown-Dateipfad, auch mit Leerzeichen und Umlauten
-- Speicherstatus: **Gespeichert**, **Ungespeichert**, **Speichert...**
-- Auto-Save für bereits gespeicherte Dokumente
-- Schutz vor Datenverlust beim Schließen oder Ersetzen eines ungespeicherten Dokuments
-- Drag & Drop für `.md`, `.markdown` und `.txt` mit sichtbarer Drop-Fläche
-- Fenstergröße und Fensterposition werden gespeichert
-- Optionales Wiederöffnen des zuletzt verwendeten Dokuments
-- Einstellungen mit Live-Vorschau für Theme, Editorbreite, Schriftgröße und Zeilenhöhe
-- Rechtschreibprüfung, Fokusmodus und Wortziel
-- Statusleiste mit Wort-/Zeichenstatistik und Auswahlstatistik
-- Quelle bearbeiten, Suchen & Ersetzen, Command Palette und Smart-Tab-Befehle
-- Export als Markdown und HTML
-- Drucken/PDF mit heller Papierdarstellung unabhängig vom App-Theme
-- Verbesserte Druckumbrüche für Überschriften, Tabellen, Zitate und Codeblöcke
+- Native WinUI 3 shell with the Editorial Pro command surface
+- WebView2-based Markdown editor
+- **Light** and **Dark** themes
+- File actions: New, Open, Save, Save As, and recent files
+- Launch directly with a Markdown file path, including paths with spaces and Unicode characters
+- Clear save states: **Saved**, **Unsaved**, and **Saving...**
+- Auto-save for documents that already have a file path
+- Unsaved-change protection when closing or replacing a document
+- Drag & drop for `.md`, `.markdown`, and `.txt` with a visible drop surface
+- Persistent window size and position
+- Optional reopening of the last document on startup
+- Live settings preview for theme, editor width, font size, and line height
+- Spellcheck, Focus Mode, and word goal
+- Status bar with word/character statistics and selection statistics
+- Source editing, Find & Replace, Command Palette, and Smart-Tab commands
+- Markdown and HTML export
+- Print/PDF workflow with a white paper surface independent of the app theme
+- Improved print pagination for headings, tables, quotes, and code blocks
 
-Die vorhandene Tastatur-, Shortcut-, Smart-Tab- und Editor-`keydown`-Logik gehört zum bestätigten Baseline-Verhalten und sollte nicht nebenbei verändert werden.
+The existing keyboard, shortcut, Smart-Tab execution, and editor `keydown` behavior are part of the confirmed baseline and should not be changed incidentally.
 
-## Voraussetzungen
+## Requirements
 
-- Windows 10 Build 19041 oder neuer
+- Windows 10 build 19041 or newer
 - x64
-- .NET 8 SDK für Entwicklung und Build
+- .NET 8 SDK for development and builds
 - Microsoft Edge WebView2 Runtime
-- Optional: Visual Studio mit Windows App SDK / WinUI Tooling
+- Optional: Visual Studio with Windows App SDK / WinUI tooling
 
-Das Projekt wird für `win-x64` self-contained gebaut. Die .NET Runtime wird daher in den Build-Output aufgenommen. WebView2 bleibt eine Windows-Runtime-Voraussetzung.
+The project is built self-contained for `win-x64`, so the .NET runtime is included in the build output. WebView2 remains a Windows runtime requirement.
 
 ## Build
 
-Im Ordner `windows`:
+From the `windows` directory:
 
 ```bat
 build_winui3.bat
 ```
 
-Das Skript:
+The script:
 
-1. bereinigt `bin` und `obj`,
-2. führt Restore für `win-x64` aus,
-3. baut die Debug-Version,
-4. prüft EXE, `App/editor.html` und `WebView2Loader.dll`.
+1. cleans `bin` and `obj`,
+2. restores dependencies for `win-x64`,
+3. builds the Debug configuration,
+4. verifies the executable, `App/editor.html`, and `WebView2Loader.dll`.
 
-Direkt mit `dotnet`:
+Direct build with `dotnet`:
 
 ```powershell
 dotnet build .\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj -c Debug -r win-x64
 ```
 
-## Start
+## Run
 
-Nach erfolgreichem Build:
+After a successful build:
 
 ```bat
 start_winui3.bat
 ```
 
-Direkter Pfad der Debug-Ausgabe:
+Direct path to the Debug executable:
 
 ```text
 MarkdownStudioPro.WinUI\bin\Debug\net8.0-windows10.0.19041.0\win-x64\Markdown Studio Pro.exe
 ```
 
-Datei direkt mitgeben:
+Open a file directly at launch:
 
 ```bat
-"MarkdownStudioPro.WinUI\bin\Debug\net8.0-windows10.0.19041.0\win-x64\Markdown Studio Pro.exe" "C:\Pfad\Dokument.md"
+"MarkdownStudioPro.WinUI\bin\Debug\net8.0-windows10.0.19041.0\win-x64\Markdown Studio Pro.exe" "C:\Path\Document.md"
 ```
 
-Ein explizit übergebener Dateipfad hat Vorrang vor der optionalen Wiederherstellung des zuletzt geöffneten Dokuments.
+An explicitly supplied launch path always takes precedence over optional last-document restore.
 
-## Diagnose
+## Diagnostics
 
 ```bat
 diagnose_winui3.bat
 ```
 
-Die Diagnose prüft Projektdateien, Output, WebView2 Runtime, `WebView2Loader.dll`, relevante NuGet-Pakete und vorhandene Startup-Logs.
+The diagnostic script checks the project files, build output, WebView2 Runtime, `WebView2Loader.dll`, relevant NuGet packages, and available startup logs.
 
-## Aufräumen
+## Cleanup
 
 ```bat
 clean_project_artifacts.bat
 ```
 
-Entfernt Build-Artefakte und lokale WebView2-Profile aus dem Projektordner.
+This removes build artifacts and local WebView2 profiles from the project directory.
 
-## Manueller Smoke-Test
+## Manual smoke test
 
-Vor einer Veröffentlichung mindestens prüfen:
+Before publishing a Windows build, verify at least:
 
-- Start ohne Datei
-- Datei per Menü öffnen
-- `.md`, `.markdown` und `.txt` per Drag & Drop öffnen
-- ungespeicherte Änderungen beim Öffnen/Schließen abfangen
-- Speichern und Speichern unter
-- Auto-Save bei bereits gespeicherter Datei
-- Hell/Dunkel
-- Editorbreite, Schriftgröße und Zeilenhöhe live ändern und per Abbrechen zurücksetzen
-- Fenster verschieben/vergrößern und nach Neustart wiederherstellen
-- optionales Wiederöffnen des letzten Dokuments an/aus
-- Suchen & Ersetzen
-- Smart-Tab-Hilfe und bestehende Smart-Tab-Ausführung
-- Markdown-/HTML-Export
-- Druckvorschau im Darkmode: Dokumentblatt bleibt weiß
-- längeres Dokument auf saubere Seitenumbrüche prüfen
+- launch without a file
+- open a file from the menu
+- open `.md`, `.markdown`, and `.txt` via drag & drop
+- unsaved-change prompts when replacing or closing a document
+- Save and Save As
+- auto-save for an already saved document
+- Light and Dark themes
+- live editor width, font size, and line-height preview plus Cancel rollback
+- window move/resize persistence after restart
+- last-document restore enabled and disabled
+- Find & Replace
+- Smart-Tab help and the existing Smart-Tab execution behavior
+- Markdown/HTML export
+- print preview in Dark mode: the document paper remains white
+- a longer document for clean page breaks
+
+## Related documentation
+
+- [`../CHANGELOG.md`](../CHANGELOG.md) - public release-oriented history
+- [`PATCH_NOTES.md`](PATCH_NOTES.md) - detailed Windows baseline and implementation notes
