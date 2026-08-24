@@ -30,6 +30,7 @@ public sealed partial class MainWindow : Window
 {
     private const string AppName = "Markdown Studio Pro";
     private const int MaxRecentFiles = 8;
+    private const int MinVisibleWindowPixels = 64;
 
     private static readonly Encoding StrictUtf8 = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
     private static readonly Encoding Utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
@@ -47,11 +48,12 @@ public sealed partial class MainWindow : Window
     private bool initialDocumentLoaded;
     private bool startupCompleting;
     private bool isDirty;
+    private bool isSaving;
+    private bool isSupportedFileDrag;
     private bool closeAllowed;
     private ElementTheme currentTheme = ElementTheme.Dark;
     private AppSettings currentSettings = new();
     private readonly DispatcherTimer autoSaveTimer = new();
-    private DateTime? lastSavedAt;
     private int currentWordCount;
     private int currentCharacterCount;
 
@@ -59,10 +61,12 @@ public sealed partial class MainWindow : Window
     {
         InitializeComponent();
 
-        this.initialFilePath = NormalizeInitialPath(initialFilePath);
+        var hasExplicitInitialPath = !string.IsNullOrWhiteSpace(initialFilePath);
+        var explicitInitialFilePath = NormalizeInitialPath(initialFilePath);
         editorPath = Path.Combine(AppContext.BaseDirectory, "App", "editor.html");
 
         LoadSettings();
+        this.initialFilePath = hasExplicitInitialPath ? explicitInitialFilePath : ResolveLastDocumentPathForStartup();
         LoadRecentFiles();
         ConfigureAutoSaveTimer();
         ConfigureWindow();
@@ -100,6 +104,19 @@ public sealed partial class MainWindow : Window
             var hWnd = WindowNative.GetWindowHandle(this);
             var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             appWindow = AppWindow.GetFromWindowId(windowId);
+            if (AppWindowTitleBar.IsCustomizationSupported())
+            {
+                ExtendsContentIntoTitleBar = true;
+                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+                SetTitleBar(AppTitleBarDragRegion);
+            }
+            else
+            {
+                TopBar.Visibility = Visibility.Collapsed;
+                Root.RowDefinitions[0].Height = new GridLength(0);
+            }
+
             var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "markdown_studio_icon.ico");
             if (File.Exists(iconPath))
             {
@@ -111,11 +128,20 @@ public sealed partial class MainWindow : Window
             var windowWidth = Math.Clamp(currentSettings.WindowWidth, 820, Math.Max(820, workArea.Width - 120));
             var windowHeight = Math.Clamp(currentSettings.WindowHeight, 720, Math.Max(720, workArea.Height - 90));
             appWindow.Resize(new SizeInt32 { Width = windowWidth, Height = windowHeight });
-            appWindow.Move(new PointInt32
+
+            if (TryGetSavedWindowPosition(windowWidth, windowHeight, out var savedPosition))
             {
-                X = workArea.X + Math.Max(0, (workArea.Width - windowWidth) / 2),
-                Y = workArea.Y + Math.Max(0, (workArea.Height - windowHeight) / 2)
-            });
+                appWindow.Move(savedPosition);
+            }
+            else
+            {
+                appWindow.Move(new PointInt32
+                {
+                    X = workArea.X + Math.Max(0, (workArea.Width - windowWidth) / 2),
+                    Y = workArea.Y + Math.Max(0, (workArea.Height - windowHeight) / 2)
+                });
+            }
+
             ApplyWindowChrome();
             appWindow.Closing += OnAppWindowClosing;
         }
@@ -125,25 +151,74 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private bool TryGetSavedWindowPosition(int windowWidth, int windowHeight, out PointInt32 position)
+    {
+        position = default;
+
+        if (currentSettings.WindowX is not int savedX || currentSettings.WindowY is not int savedY)
+        {
+            return false;
+        }
+
+        foreach (var displayArea in DisplayArea.FindAll())
+        {
+            var bounds = displayArea.OuterBounds;
+            var visibleWidth = Math.Min((long)savedX + windowWidth, (long)bounds.X + bounds.Width)
+                - Math.Max((long)savedX, bounds.X);
+            var visibleHeight = Math.Min((long)savedY + windowHeight, (long)bounds.Y + bounds.Height)
+                - Math.Max((long)savedY, bounds.Y);
+
+            if (visibleWidth >= Math.Min(MinVisibleWindowPixels, windowWidth)
+                && visibleHeight >= Math.Min(MinVisibleWindowPixels, windowHeight))
+            {
+                position = new PointInt32 { X = savedX, Y = savedY };
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void ApplyWindowChrome()
     {
-        if (appWindow?.TitleBar is not { } titleBar)
+        if (!AppWindowTitleBar.IsCustomizationSupported() || appWindow?.TitleBar is not { } titleBar)
         {
             return;
         }
 
-        titleBar.BackgroundColor = Color.FromArgb(255, 32, 31, 28);
-        titleBar.ForegroundColor = Color.FromArgb(255, 250, 249, 245);
-        titleBar.InactiveBackgroundColor = Color.FromArgb(255, 24, 23, 21);
-        titleBar.InactiveForegroundColor = Color.FromArgb(255, 160, 157, 150);
-        titleBar.ButtonBackgroundColor = Color.FromArgb(255, 32, 31, 28);
-        titleBar.ButtonForegroundColor = Color.FromArgb(255, 250, 249, 245);
-        titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 58, 53, 47);
-        titleBar.ButtonHoverForegroundColor = Color.FromArgb(255, 255, 255, 255);
-        titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 204, 120, 92);
-        titleBar.ButtonPressedForegroundColor = Color.FromArgb(255, 24, 23, 21);
-        titleBar.ButtonInactiveBackgroundColor = Color.FromArgb(255, 24, 23, 21);
-        titleBar.ButtonInactiveForegroundColor = Color.FromArgb(255, 160, 157, 150);
+        var light = IsLightShellTheme(currentSettings.Theme);
+        var transparent = Color.FromArgb(0, 0, 0, 0);
+        var foreground = light
+            ? Color.FromArgb(255, 36, 33, 31)
+            : Color.FromArgb(255, 242, 240, 236);
+        var inactiveForeground = light
+            ? Color.FromArgb(255, 125, 117, 109)
+            : Color.FromArgb(255, 165, 161, 155);
+        var hoverBackground = light
+            ? Color.FromArgb(255, 239, 233, 225)
+            : Color.FromArgb(255, 40, 42, 46);
+        var pressedBackground = light
+            ? Color.FromArgb(255, 232, 222, 213)
+            : Color.FromArgb(255, 48, 50, 56);
+
+        titleBar.BackgroundColor = transparent;
+        titleBar.ForegroundColor = foreground;
+        titleBar.InactiveBackgroundColor = transparent;
+        titleBar.InactiveForegroundColor = inactiveForeground;
+        titleBar.ButtonBackgroundColor = transparent;
+        titleBar.ButtonForegroundColor = foreground;
+        titleBar.ButtonHoverBackgroundColor = hoverBackground;
+        titleBar.ButtonHoverForegroundColor = foreground;
+        titleBar.ButtonPressedBackgroundColor = pressedBackground;
+        titleBar.ButtonPressedForegroundColor = foreground;
+        titleBar.ButtonInactiveBackgroundColor = transparent;
+        titleBar.ButtonInactiveForegroundColor = inactiveForeground;
+
+        AppTitleBarDragRegion.Padding = new Thickness(
+            Math.Max(16, titleBar.LeftInset + 16),
+            0,
+            Math.Max(150, titleBar.RightInset + 12),
+            0);
     }
 
     private void ApplyShellTheme()
@@ -151,8 +226,9 @@ public sealed partial class MainWindow : Window
         var shellTheme = ThemeToElementTheme(currentSettings.Theme);
         Root.RequestedTheme = shellTheme;
         TopBar.RequestedTheme = shellTheme;
-        MainCommandBar.RequestedTheme = shellTheme;
+        EditorialToolbar.RequestedTheme = shellTheme;
         currentTheme = shellTheme;
+        ApplyShellSurfacePalette();
 
         try
         {
@@ -160,58 +236,38 @@ public sealed partial class MainWindow : Window
         }
         catch
         {
-            // Mica is a polish layer. The app should keep running on machines that do not expose it.
-        }
-
-        if (IsLightShellTheme(currentSettings.Theme))
-        {
-            var titleBrush = new SolidColorBrush(Color.FromArgb(255, 30, 29, 27));
-            var metadataBrush = new SolidColorBrush(Color.FromArgb(255, 98, 94, 87));
-            var separatorBrush = new SolidColorBrush(Color.FromArgb(255, 178, 171, 160));
-
-            Root.Background = new SolidColorBrush(Color.FromArgb(255, 250, 249, 245));
-            TopBar.Background = new SolidColorBrush(Color.FromArgb(230, 255, 253, 248));
-            TopBar.BorderBrush = new SolidColorBrush(Color.FromArgb(255, 230, 223, 216));
-            DocumentTitleText.Foreground = titleBrush;
-            DocumentPathText.Foreground = metadataBrush;
-            MetadataSeparatorOne.Foreground = separatorBrush;
-            MainCommandBar.Foreground = titleBrush;
-            ApplyCommandBarForeground(titleBrush);
-        }
-        else
-        {
-            var titleBrush = new SolidColorBrush(Color.FromArgb(255, 250, 249, 245));
-            var metadataBrush = new SolidColorBrush(Color.FromArgb(255, 160, 157, 150));
-            var separatorBrush = new SolidColorBrush(Color.FromArgb(255, 94, 90, 82));
-
-            Root.Background = new SolidColorBrush(Color.FromArgb(255, 24, 23, 21));
-            TopBar.Background = new SolidColorBrush(Color.FromArgb(230, 32, 31, 28));
-            TopBar.BorderBrush = new SolidColorBrush(Color.FromArgb(255, 58, 53, 47));
-            DocumentTitleText.Foreground = titleBrush;
-            DocumentPathText.Foreground = metadataBrush;
-            MetadataSeparatorOne.Foreground = separatorBrush;
-            MainCommandBar.Foreground = titleBrush;
-            ApplyCommandBarForeground(titleBrush);
+            // Mica is a polish layer. The app should keep running without it.
         }
 
         ApplyWindowChrome();
     }
 
-    private void ApplyCommandBarForeground(Brush foreground)
+    private void ApplyShellSurfacePalette()
     {
-        foreach (var command in MainCommandBar.PrimaryCommands)
-        {
-            if (command is AppBarButton button)
-            {
-                button.Foreground = foreground;
+        Color titleBackground;
+        Color toolbarBackground;
+        Color border;
 
-                if (button.Icon is FontIcon icon)
-                {
-                    icon.Foreground = foreground;
-                }
-            }
+        if (string.Equals(currentSettings.Theme, "dark", StringComparison.OrdinalIgnoreCase))
+        {
+            // Dark uses the neutral graphite palette.
+            titleBackground = Color.FromArgb(255, 24, 25, 27);   // #18191B
+            toolbarBackground = Color.FromArgb(255, 25, 26, 29); // #191A1D
+            border = Color.FromArgb(255, 52, 54, 58);             // #34363A
         }
+        else
+        {
+            titleBackground = Color.FromArgb(255, 247, 244, 239);
+            toolbarBackground = Color.FromArgb(255, 251, 248, 243);
+            border = Color.FromArgb(255, 227, 220, 211);
+        }
+
+        TopBar.Background = new SolidColorBrush(titleBackground);
+        EditorialToolbar.Background = new SolidColorBrush(toolbarBackground);
+        TopBar.BorderBrush = new SolidColorBrush(border);
+        EditorialToolbar.BorderBrush = new SolidColorBrush(border);
     }
+
 
     private async void Root_Loaded(object sender, RoutedEventArgs e)
     {
@@ -226,8 +282,12 @@ public sealed partial class MainWindow : Window
         {
             currentSettings.WindowWidth = appWindow.Size.Width;
             currentSettings.WindowHeight = appWindow.Size.Height;
+            var windowPosition = appWindow.Position;
+            currentSettings.WindowX = windowPosition.X;
+            currentSettings.WindowY = windowPosition.Y;
         }
 
+        currentSettings.LastDocumentPath = NormalizeInitialPath(currentFilePath);
         SaveSettings();
 
         if (closeAllowed)
@@ -548,6 +608,110 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private static bool IsSupportedDroppedDocument(StorageFile file)
+    {
+        var extension = Path.GetExtension(file.Name).ToLowerInvariant();
+        return extension is ".md" or ".markdown" or ".txt";
+    }
+
+    private static async Task<bool> IsSupportedFileDragAsync(DataPackageView dataView)
+    {
+        if (!dataView.Contains(StandardDataFormats.StorageItems))
+        {
+            return false;
+        }
+
+        try
+        {
+            var items = await dataView.GetStorageItemsAsync();
+            return items.Count == 1
+                && items[0] is StorageFile file
+                && IsSupportedDroppedDocument(file);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private void SetFileDropOverlayVisible(bool visible)
+    {
+        FileDropOverlay.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private async void EditorSurface_DragEnter(object sender, DragEventArgs e)
+    {
+        e.Handled = true;
+        var deferral = e.GetDeferral();
+
+        try
+        {
+            isSupportedFileDrag = await IsSupportedFileDragAsync(e.DataView);
+            e.AcceptedOperation = isSupportedFileDrag
+                ? DataPackageOperation.Copy
+                : DataPackageOperation.None;
+            SetFileDropOverlayVisible(isSupportedFileDrag);
+        }
+        finally
+        {
+            deferral.Complete();
+        }
+    }
+
+    private void EditorSurface_DragOver(object sender, DragEventArgs e)
+    {
+        e.AcceptedOperation = isSupportedFileDrag
+            ? DataPackageOperation.Copy
+            : DataPackageOperation.None;
+        e.Handled = true;
+    }
+
+    private void EditorSurface_DragLeave(object sender, DragEventArgs e)
+    {
+        isSupportedFileDrag = false;
+        SetFileDropOverlayVisible(false);
+        e.Handled = true;
+    }
+
+    private async void EditorSurface_Drop(object sender, DragEventArgs e)
+    {
+        e.Handled = true;
+        isSupportedFileDrag = false;
+        SetFileDropOverlayVisible(false);
+
+        if (!e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            return;
+        }
+
+        try
+        {
+            var items = await e.DataView.GetStorageItemsAsync();
+            if (items.Count != 1 || items[0] is not StorageFile file)
+            {
+                await NotifyAsync("Datei nicht geöffnet", "Bitte genau eine Markdown- oder Textdatei ablegen.");
+                return;
+            }
+
+            if (!IsSupportedDroppedDocument(file))
+            {
+                await NotifyAsync("Datei nicht unterstützt", "Unterstützt werden .md, .markdown und .txt.");
+                return;
+            }
+
+            if (!await ConfirmDiscardIfNeededAsync())
+            {
+                return;
+            }
+
+            await LoadMarkdownFileAsync(file, notify: true);
+        }
+        catch (Exception ex)
+        {
+            await NotifyAsync("Datei konnte nicht geöffnet werden", ex.Message);
+        }
+    }
+
     private async Task LoadMarkdownFileAsync(StorageFile file, bool notify)
     {
         var path = !string.IsNullOrWhiteSpace(file.Path) && File.Exists(file.Path)
@@ -615,17 +779,35 @@ public sealed partial class MainWindow : Window
             targetPath = file.Path;
         }
 
-        markdown = NormalizeLineEndings(markdown);
-        await File.WriteAllTextAsync(targetPath, markdown, Utf8NoBom);
-        currentFilePath = targetPath;
-        currentMarkdown = markdown;
-        lastSavedMarkdown = markdown;
-        UpdateDocumentStats(markdown);
-        isDirty = false;
-        lastSavedAt = DateTime.Now;
-        AddRecentFile(targetPath);
+        var markdownToSave = NormalizeLineEndings(markdown);
+        currentMarkdown = markdownToSave;
+        UpdateDocumentStats(currentMarkdown);
+        isDirty = !string.Equals(
+            NormalizeLineEndings(currentMarkdown),
+            NormalizeLineEndings(lastSavedMarkdown),
+            StringComparison.Ordinal);
+        isSaving = true;
         UpdateTitle();
         UpdateStatus();
+
+        try
+        {
+            await File.WriteAllTextAsync(targetPath, markdownToSave, Utf8NoBom);
+            currentFilePath = targetPath;
+            lastSavedMarkdown = markdownToSave;
+            isDirty = !string.Equals(
+                NormalizeLineEndings(currentMarkdown),
+                markdownToSave,
+                StringComparison.Ordinal);
+            AddRecentFile(targetPath);
+        }
+        finally
+        {
+            isSaving = false;
+            UpdateTitle();
+            UpdateStatus();
+        }
+
         if (!silent)
         {
             await NotifyAsync("Gespeichert", Path.GetFileName(targetPath));
@@ -999,6 +1181,25 @@ public sealed partial class MainWindow : Window
         await ExecuteScriptWithTimeoutAsync(script, TimeSpan.FromSeconds(4), "send settings");
     }
 
+    private async Task SendSettingsPreviewAsync(string theme, int editorWidth, int fontSize, double lineHeight)
+    {
+        if (!editorReady || EditorWebView.CoreWebView2 is null)
+        {
+            return;
+        }
+
+        var preview = new
+        {
+            theme = NormalizeTheme(theme),
+            editorWidth = Math.Clamp(editorWidth, 680, 940),
+            fontSize = Math.Clamp(fontSize, 13, 22),
+            lineHeight = Math.Clamp(lineHeight, 1.35, 2.0)
+        };
+        var payload = JsonSerializer.Serialize(preview, jsonOptions);
+        var script = "window.markdownStudio && window.markdownStudio.applySettings && window.markdownStudio.applySettings(" + payload + ");";
+        await ExecuteScriptWithTimeoutAsync(script, TimeSpan.FromSeconds(4), "preview settings");
+    }
+
     private async Task SendRecentFilesAsync()
     {
         if (!editorReady || EditorWebView.CoreWebView2 is null)
@@ -1054,111 +1255,343 @@ public sealed partial class MainWindow : Window
 
     private async Task ShowSettingsAsync()
     {
+        var originalTheme = NormalizeTheme(currentSettings.Theme);
+        var originalEditorWidth = currentSettings.EditorWidth;
+        var originalFontSize = currentSettings.FontSize;
+        var originalLineHeight = currentSettings.LineHeight;
+        var lightDialog = IsLightShellTheme(currentSettings.Theme);
+        var textBrush = new SolidColorBrush(lightDialog
+            ? Color.FromArgb(255, 30, 29, 27)
+            : Color.FromArgb(255, 244, 241, 236));
+        var mutedBrush = new SolidColorBrush(lightDialog
+            ? Color.FromArgb(255, 101, 96, 88)
+            : Color.FromArgb(255, 184, 178, 168));
+        var cardBrush = new SolidColorBrush(lightDialog
+            ? Color.FromArgb(255, 250, 247, 242)
+            : Color.FromArgb(255, 32, 33, 36));
+        var controlBrush = new SolidColorBrush(lightDialog
+            ? Color.FromArgb(255, 255, 253, 249)
+            : Color.FromArgb(255, 23, 24, 26));
+        var borderBrush = new SolidColorBrush(lightDialog
+            ? Color.FromArgb(255, 221, 213, 202)
+            : Color.FromArgb(255, 52, 54, 58));
+        var accentBrush = new SolidColorBrush(lightDialog
+            ? Color.FromArgb(255, 204, 120, 92)
+            : Color.FromArgb(255, 216, 138, 108));
+        var accentHoverBrush = new SolidColorBrush(lightDialog
+            ? Color.FromArgb(255, 187, 103, 78)
+            : Color.FromArgb(255, 228, 154, 126));
+        var accentPressedBrush = new SolidColorBrush(lightDialog
+            ? Color.FromArgb(255, 169, 88, 67)
+            : Color.FromArgb(255, 198, 116, 88));
+        var onAccentTextBrush = new SolidColorBrush(Color.FromArgb(255, 23, 21, 18));
+
         var themeBox = new ComboBox
         {
-            Header = "Theme",
-            ItemsSource = new[] { "dark", "light", "sepia", "midnight" },
-            SelectedItem = currentSettings.Theme,
-            MinWidth = 220
+            ItemsSource = new[] { "Hell", "Dunkel" },
+            SelectedIndex = lightDialog ? 0 : 1,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            MinWidth = 180,
+            Background = controlBrush,
+            Foreground = textBrush,
+            BorderBrush = borderBrush,
+            CornerRadius = new CornerRadius(8)
         };
-        var focusSwitch = new ToggleSwitch
-        {
-            Header = "Fokusmodus beim Start",
-            IsOn = currentSettings.FocusMode
-        };
-        var spellcheckSwitch = new ToggleSwitch
-        {
-            Header = "Rechtschreibprüfung",
-            IsOn = currentSettings.Spellcheck
-        };
-        var autoSaveSwitch = new ToggleSwitch
-        {
-            Header = "Auto-Save für gespeicherte Dateien",
-            IsOn = currentSettings.AutoSaveEnabled
-        };
+
+        var focusSwitch = CreateSettingsToggle("Fokusmodus beim Start", currentSettings.FocusMode);
+        var spellcheckSwitch = CreateSettingsToggle("Rechtschreibprüfung", currentSettings.Spellcheck);
+        var autoSaveSwitch = CreateSettingsToggle("Auto-Save für gespeicherte Dateien", currentSettings.AutoSaveEnabled);
+        var reopenLastDocumentSwitch = CreateSettingsToggle("Letztes Dokument beim Start öffnen", currentSettings.ReopenLastDocument);
+
         var autoSaveBox = new NumberBox
         {
-            Header = "Auto-Save-Intervall (Sekunden)",
             Value = currentSettings.AutoSaveIntervalSeconds,
             Minimum = 10,
             Maximum = 600,
             SmallChange = 5,
             LargeChange = 30,
             SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline,
-            MinWidth = 220
+            Background = controlBrush,
+            Foreground = textBrush,
+            BorderBrush = borderBrush,
+            CornerRadius = new CornerRadius(8)
         };
         var widthBox = new NumberBox
         {
-            Header = "Editorbreite (px)",
             Value = currentSettings.EditorWidth,
             Minimum = 680,
             Maximum = 940,
             SmallChange = 20,
             LargeChange = 80,
             SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline,
-            MinWidth = 220
+            Background = controlBrush,
+            Foreground = textBrush,
+            BorderBrush = borderBrush,
+            CornerRadius = new CornerRadius(8)
         };
         var fontBox = new NumberBox
         {
-            Header = "Schriftgröße (px)",
             Value = currentSettings.FontSize,
             Minimum = 13,
             Maximum = 22,
             SmallChange = 1,
             SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline,
-            MinWidth = 220
+            Background = controlBrush,
+            Foreground = textBrush,
+            BorderBrush = borderBrush,
+            CornerRadius = new CornerRadius(8)
         };
         var lineHeightBox = new NumberBox
         {
-            Header = "Zeilenhöhe",
             Value = currentSettings.LineHeight,
             Minimum = 1.35,
             Maximum = 2.0,
             SmallChange = 0.05,
             SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline,
-            MinWidth = 220
+            Background = controlBrush,
+            Foreground = textBrush,
+            BorderBrush = borderBrush,
+            CornerRadius = new CornerRadius(8)
         };
         var goalBox = new NumberBox
         {
-            Header = "Schreibziel (Wörter, 0 = aus)",
             Value = currentSettings.WordGoal,
             Minimum = 0,
             Maximum = 100000,
             SmallChange = 100,
             LargeChange = 1000,
             SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline,
-            MinWidth = 220
+            Background = controlBrush,
+            Foreground = textBrush,
+            BorderBrush = borderBrush,
+            CornerRadius = new CornerRadius(8)
         };
 
-        var panel = new StackPanel { Spacing = 14, MinWidth = 520 };
-        panel.Children.Add(themeBox);
-        panel.Children.Add(focusSwitch);
-        panel.Children.Add(spellcheckSwitch);
-        panel.Children.Add(autoSaveSwitch);
-        panel.Children.Add(autoSaveBox);
-        panel.Children.Add(widthBox);
-        panel.Children.Add(fontBox);
-        panel.Children.Add(lineHeightBox);
-        panel.Children.Add(goalBox);
+        var appearanceContent = new StackPanel { Spacing = 7 };
+        appearanceContent.Children.Add(themeBox);
 
-        var dialog = CreateDialog("Einstellungen", panel);
+        var behaviorContent = new StackPanel { Spacing = 10 };
+        behaviorContent.Children.Add(CreateSettingsToggleRow(
+            "Fokusmodus beim Start",
+            "Öffnet neue Sitzungen direkt in der reduzierten Schreibansicht.",
+            focusSwitch,
+            textBrush,
+            mutedBrush));
+        behaviorContent.Children.Add(CreateSettingsSeparator(borderBrush));
+        behaviorContent.Children.Add(CreateSettingsToggleRow(
+            "Rechtschreibprüfung",
+            "Markiert mögliche Schreibfehler direkt im Editor.",
+            spellcheckSwitch,
+            textBrush,
+            mutedBrush));
+        behaviorContent.Children.Add(CreateSettingsSeparator(borderBrush));
+        behaviorContent.Children.Add(CreateSettingsToggleRow(
+            "Auto-Save",
+            "Speichert bereits angelegte Dateien automatisch.",
+            autoSaveSwitch,
+            textBrush,
+            mutedBrush));
+        behaviorContent.Children.Add(CreateSettingsField(
+            "Intervall",
+            "Sekunden zwischen automatischen Speicherungen",
+            autoSaveBox,
+            textBrush,
+            mutedBrush));
+        behaviorContent.Children.Add(CreateSettingsSeparator(borderBrush));
+        behaviorContent.Children.Add(CreateSettingsToggleRow(
+            "Letztes Dokument beim Start öffnen",
+            "Öffnet die zuletzt aktive Datei erneut, wenn sie noch vorhanden ist.",
+            reopenLastDocumentSwitch,
+            textBrush,
+            mutedBrush));
+
+        var editorGrid = new Grid
+        {
+            ColumnSpacing = 12,
+            RowSpacing = 12
+        };
+        editorGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        editorGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        editorGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        editorGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        editorGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+        var widthField = CreateSettingsField("Editorbreite", "680–940 px", widthBox, textBrush, mutedBrush);
+        var fontField = CreateSettingsField("Schriftgröße", "13–22 px", fontBox, textBrush, mutedBrush);
+        var lineHeightField = CreateSettingsField("Zeilenhöhe", "1,35–2,00", lineHeightBox, textBrush, mutedBrush);
+        var goalField = CreateSettingsField("Schreibziel", "Wörter · 0 = aus", goalBox, textBrush, mutedBrush);
+
+        Grid.SetColumn(widthField, 0);
+        Grid.SetRow(widthField, 0);
+        Grid.SetColumn(fontField, 1);
+        Grid.SetRow(fontField, 0);
+        Grid.SetColumn(lineHeightField, 0);
+        Grid.SetRow(lineHeightField, 1);
+        Grid.SetColumn(goalField, 1);
+        Grid.SetRow(goalField, 1);
+        editorGrid.Children.Add(widthField);
+        editorGrid.Children.Add(fontField);
+        editorGrid.Children.Add(lineHeightField);
+        editorGrid.Children.Add(goalField);
+
+        var panel = new StackPanel
+        {
+            Spacing = 12,
+            Width = 440
+        };
+        panel.Children.Add(CreateSettingsSection(
+            "Darstellung",
+            "Wähle die Oberfläche für Editor und App-Shell.",
+            appearanceContent,
+            cardBrush,
+            borderBrush,
+            textBrush,
+            mutedBrush));
+        panel.Children.Add(CreateSettingsSection(
+            "Verhalten",
+            "Einstellungen für Fokus, Prüfung und Speichern.",
+            behaviorContent,
+            cardBrush,
+            borderBrush,
+            textBrush,
+            mutedBrush));
+        panel.Children.Add(CreateSettingsSection(
+            "Editor",
+            "Passe Lesefläche und Typografie an.",
+            editorGrid,
+            cardBrush,
+            borderBrush,
+            textBrush,
+            mutedBrush));
+
+        var settingsScroll = new ScrollViewer
+        {
+            Content = panel,
+            MaxHeight = 560,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
+        };
+
+        var dialog = CreateDialog("Einstellungen", settingsScroll);
         dialog.PrimaryButtonText = "Übernehmen";
         dialog.CloseButtonText = "Abbrechen";
+        dialog.DefaultButton = ContentDialogButton.Primary;
 
-        if (await dialog.ShowAsync() != ContentDialogResult.Primary)
+        dialog.Resources["ToggleSwitchFillOn"] = accentBrush;
+        dialog.Resources["ToggleSwitchFillOnPointerOver"] = accentHoverBrush;
+        dialog.Resources["ToggleSwitchFillOnPressed"] = accentPressedBrush;
+        dialog.Resources["ToggleSwitchStrokeOn"] = accentBrush;
+        dialog.Resources["ToggleSwitchStrokeOnPointerOver"] = accentHoverBrush;
+        dialog.Resources["ToggleSwitchStrokeOnPressed"] = accentPressedBrush;
+        dialog.Resources["ToggleSwitchKnobFillOn"] = onAccentTextBrush;
+        dialog.Resources["ToggleSwitchKnobFillOnPointerOver"] = onAccentTextBrush;
+        dialog.Resources["ToggleSwitchKnobFillOnPressed"] = onAccentTextBrush;
+        dialog.Resources["AccentButtonBackground"] = accentBrush;
+        dialog.Resources["AccentButtonBackgroundPointerOver"] = accentHoverBrush;
+        dialog.Resources["AccentButtonBackgroundPressed"] = accentPressedBrush;
+        dialog.Resources["AccentButtonForeground"] = onAccentTextBrush;
+        dialog.Resources["AccentButtonForegroundPointerOver"] = onAccentTextBrush;
+        dialog.Resources["AccentButtonForegroundPressed"] = onAccentTextBrush;
+
+        void ApplySettingsDialogPalette(bool light)
         {
+            textBrush.Color = light
+                ? Color.FromArgb(255, 30, 29, 27)
+                : Color.FromArgb(255, 244, 241, 236);
+            mutedBrush.Color = light
+                ? Color.FromArgb(255, 101, 96, 88)
+                : Color.FromArgb(255, 184, 178, 168);
+            cardBrush.Color = light
+                ? Color.FromArgb(255, 250, 247, 242)
+                : Color.FromArgb(255, 32, 33, 36);
+            controlBrush.Color = light
+                ? Color.FromArgb(255, 255, 253, 249)
+                : Color.FromArgb(255, 23, 24, 26);
+            borderBrush.Color = light
+                ? Color.FromArgb(255, 221, 213, 202)
+                : Color.FromArgb(255, 52, 54, 58);
+            accentBrush.Color = light
+                ? Color.FromArgb(255, 204, 120, 92)
+                : Color.FromArgb(255, 216, 138, 108);
+            accentHoverBrush.Color = light
+                ? Color.FromArgb(255, 187, 103, 78)
+                : Color.FromArgb(255, 228, 154, 126);
+            accentPressedBrush.Color = light
+                ? Color.FromArgb(255, 169, 88, 67)
+                : Color.FromArgb(255, 198, 116, 88);
+            dialog.RequestedTheme = ThemeToElementTheme(currentSettings.Theme);
+        }
+
+        Task latestSettingsPreviewTask = Task.CompletedTask;
+
+        async Task RunSettingsPreviewAfterAsync(
+            Task previousPreviewTask,
+            string previewTheme,
+            int previewEditorWidth,
+            int previewFontSize,
+            double previewLineHeight)
+        {
+            try
+            {
+                await previousPreviewTask;
+            }
+            catch
+            {
+                // A later preview should still be allowed to replace a failed transient preview.
+            }
+
+            await SendSettingsPreviewAsync(previewTheme, previewEditorWidth, previewFontSize, previewLineHeight);
+        }
+
+        void QueueSettingsPreview()
+        {
+            var previewTheme = themeBox.SelectedIndex == 0 ? "light" : "dark";
+            var previewEditorWidth = ReadSettingsIntPreviewValue(widthBox, originalEditorWidth, 680, 940);
+            var previewFontSize = ReadSettingsIntPreviewValue(fontBox, originalFontSize, 13, 22);
+            var previewLineHeight = ReadSettingsDoublePreviewValue(lineHeightBox, originalLineHeight, 1.35, 2.0);
+            var previousPreviewTask = latestSettingsPreviewTask;
+            latestSettingsPreviewTask = RunSettingsPreviewAfterAsync(
+                previousPreviewTask,
+                previewTheme,
+                previewEditorWidth,
+                previewFontSize,
+                previewLineHeight);
+        }
+
+        themeBox.SelectionChanged += (_, _) =>
+        {
+            var previewTheme = themeBox.SelectedIndex == 0 ? "light" : "dark";
+            if (!string.Equals(currentSettings.Theme, previewTheme, StringComparison.OrdinalIgnoreCase))
+            {
+                currentSettings.Theme = previewTheme;
+                ApplyShellTheme();
+                ApplySettingsDialogPalette(IsLightShellTheme(previewTheme));
+            }
+
+            QueueSettingsPreview();
+        };
+        widthBox.ValueChanged += (_, _) => QueueSettingsPreview();
+        fontBox.ValueChanged += (_, _) => QueueSettingsPreview();
+        lineHeightBox.ValueChanged += (_, _) => QueueSettingsPreview();
+
+        var dialogResult = await dialog.ShowAsync();
+        await latestSettingsPreviewTask;
+        if (dialogResult != ContentDialogResult.Primary)
+        {
+            await RestoreSettingsPreviewAsync(originalTheme, originalEditorWidth, originalFontSize, originalLineHeight);
             return;
         }
 
-        currentSettings.Theme = themeBox.SelectedItem as string ?? currentSettings.Theme;
+        currentSettings.Theme = themeBox.SelectedIndex == 0 ? "light" : "dark";
         currentSettings.FocusMode = focusSwitch.IsOn;
         currentSettings.Spellcheck = spellcheckSwitch.IsOn;
         currentSettings.AutoSaveEnabled = autoSaveSwitch.IsOn;
-        currentSettings.AutoSaveIntervalSeconds = (int)Math.Clamp(autoSaveBox.Value, 10, 600);
-        currentSettings.EditorWidth = (int)Math.Clamp(widthBox.Value, 680, 940);
-        currentSettings.FontSize = (int)Math.Clamp(fontBox.Value, 13, 22);
-        currentSettings.LineHeight = Math.Clamp(lineHeightBox.Value, 1.35, 2.0);
-        currentSettings.WordGoal = (int)Math.Clamp(goalBox.Value, 0, 100000);
+        currentSettings.ReopenLastDocument = reopenLastDocumentSwitch.IsOn;
+        currentSettings.AutoSaveIntervalSeconds = ReadSettingsIntPreviewValue(autoSaveBox, currentSettings.AutoSaveIntervalSeconds, 10, 600);
+        currentSettings.EditorWidth = ReadSettingsIntPreviewValue(widthBox, originalEditorWidth, 680, 940);
+        currentSettings.FontSize = ReadSettingsIntPreviewValue(fontBox, originalFontSize, 13, 22);
+        currentSettings.LineHeight = ReadSettingsDoublePreviewValue(lineHeightBox, originalLineHeight, 1.35, 2.0);
+        currentSettings.WordGoal = ReadSettingsIntPreviewValue(goalBox, currentSettings.WordGoal, 0, 100000);
 
         Root.RequestedTheme = ThemeToElementTheme(currentSettings.Theme);
         currentTheme = Root.RequestedTheme;
@@ -1168,6 +1601,154 @@ public sealed partial class MainWindow : Window
         await SendSettingsAsync();
         UpdateStatus();
         await NotifyAsync("Einstellungen aktualisiert", "Editor und Shell wurden angepasst.");
+    }
+
+    private async Task RestoreSettingsPreviewAsync(string theme, int editorWidth, int fontSize, double lineHeight)
+    {
+        currentSettings.Theme = NormalizeTheme(theme);
+        ApplyShellTheme();
+        await SendSettingsPreviewAsync(currentSettings.Theme, editorWidth, fontSize, lineHeight);
+    }
+
+    private static int ReadSettingsIntPreviewValue(NumberBox box, int fallback, int min, int max)
+    {
+        var value = box.Value;
+        if (double.IsNaN(value) || double.IsInfinity(value))
+        {
+            return Math.Clamp(fallback, min, max);
+        }
+
+        return (int)Math.Clamp(value, min, max);
+    }
+
+    private static double ReadSettingsDoublePreviewValue(NumberBox box, double fallback, double min, double max)
+    {
+        var value = box.Value;
+        if (double.IsNaN(value) || double.IsInfinity(value))
+        {
+            return Math.Clamp(fallback, min, max);
+        }
+
+        return Math.Clamp(value, min, max);
+    }
+
+    private static ToggleSwitch CreateSettingsToggle(string accessibleName, bool isOn)
+    {
+        var toggle = new ToggleSwitch
+        {
+            IsOn = isOn,
+            OnContent = string.Empty,
+            OffContent = string.Empty,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(toggle, accessibleName);
+        return toggle;
+    }
+
+    private static Grid CreateSettingsToggleRow(
+        string title,
+        string description,
+        ToggleSwitch toggle,
+        Brush textBrush,
+        Brush mutedBrush)
+    {
+        var row = new Grid { ColumnSpacing = 16 };
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+        var copy = new StackPanel { Spacing = 2 };
+        copy.Children.Add(new TextBlock
+        {
+            Text = title,
+            Foreground = textBrush,
+            FontSize = 13,
+            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold
+        });
+        copy.Children.Add(new TextBlock
+        {
+            Text = description,
+            Foreground = mutedBrush,
+            FontSize = 11.5,
+            TextWrapping = TextWrapping.Wrap
+        });
+        row.Children.Add(copy);
+
+        Grid.SetColumn(toggle, 1);
+        row.Children.Add(toggle);
+        return row;
+    }
+
+    private static StackPanel CreateSettingsField(
+        string label,
+        string hint,
+        Control control,
+        Brush textBrush,
+        Brush mutedBrush)
+    {
+        var field = new StackPanel { Spacing = 6 };
+        field.Children.Add(new TextBlock
+        {
+            Text = label,
+            Foreground = textBrush,
+            FontSize = 12.5,
+            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold
+        });
+        field.Children.Add(control);
+        field.Children.Add(new TextBlock
+        {
+            Text = hint,
+            Foreground = mutedBrush,
+            FontSize = 10.5
+        });
+        return field;
+    }
+
+    private static Border CreateSettingsSeparator(Brush borderBrush) => new()
+    {
+        Height = 1,
+        Background = borderBrush,
+        Opacity = 0.68,
+        Margin = new Thickness(0, 1, 0, 1)
+    };
+
+    private static Border CreateSettingsSection(
+        string title,
+        string description,
+        UIElement content,
+        Brush surfaceBrush,
+        Brush borderBrush,
+        Brush textBrush,
+        Brush mutedBrush)
+    {
+        var stack = new StackPanel { Spacing = 12 };
+        var heading = new StackPanel { Spacing = 3 };
+        heading.Children.Add(new TextBlock
+        {
+            Text = title,
+            Foreground = textBrush,
+            FontSize = 13.5,
+            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold
+        });
+        heading.Children.Add(new TextBlock
+        {
+            Text = description,
+            Foreground = mutedBrush,
+            FontSize = 11.5,
+            TextWrapping = TextWrapping.Wrap
+        });
+        stack.Children.Add(heading);
+        stack.Children.Add(content);
+
+        return new Border
+        {
+            Background = surfaceBrush,
+            BorderBrush = borderBrush,
+            BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(12),
+            Padding = new Thickness(14),
+            Child = stack
+        };
     }
 
     private async Task ShowAboutAsync()
@@ -1520,16 +2101,15 @@ public sealed partial class MainWindow : Window
         currentSettings.WordGoal = Math.Clamp(currentSettings.WordGoal, 0, 100000);
         currentSettings.WindowWidth = Math.Clamp(currentSettings.WindowWidth, 820, 2560);
         currentSettings.WindowHeight = Math.Clamp(currentSettings.WindowHeight, 720, 1600);
+        currentSettings.LastDocumentPath = NormalizeInitialPath(currentSettings.LastDocumentPath);
     }
 
     private static string NormalizeTheme(string? theme)
     {
         return theme?.Trim().ToLowerInvariant() switch
         {
-            "light" or "clean" => "light",
-            "sepia" => "sepia",
-            "midnight" => "midnight",
-            "dark" => "dark",
+            "light" or "clean" or "sepia" => "light",
+            "dark" or "midnight" => "dark",
             _ => "dark"
         };
     }
@@ -1603,6 +2183,16 @@ public sealed partial class MainWindow : Window
 
     private static string AppDataDirectory =>
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Markdown Studio Pro");
+
+    private string? ResolveLastDocumentPathForStartup()
+    {
+        if (!currentSettings.ReopenLastDocument)
+        {
+            return null;
+        }
+
+        return NormalizeInitialPath(currentSettings.LastDocumentPath);
+    }
 
     private static string? NormalizeInitialPath(string? path)
     {
@@ -1681,6 +2271,11 @@ public sealed partial class MainWindow : Window
 
     private static string ExtractMarkdownTitle(string markdown)
     {
+        return TryExtractMarkdownTitle(markdown) ?? "dokument";
+    }
+
+    private static string? TryExtractMarkdownTitle(string markdown)
+    {
         var normalized = NormalizeLineEndings(markdown ?? string.Empty);
         var lines = normalized.Split('\n');
         var index = 0;
@@ -1699,10 +2294,10 @@ public sealed partial class MainWindow : Window
                 var titleMatch = Regex.Match(line, "^title\\s*:\\s*[\"']?(.*?)[\"']?\\s*$", RegexOptions.IgnoreCase);
                 if (titleMatch.Success)
                 {
-                    var title = titleMatch.Groups[1].Value.Trim();
+                    var title = StripMarkdownFormatting(titleMatch.Groups[1].Value);
                     if (!string.IsNullOrWhiteSpace(title))
                     {
-                        return StripMarkdownFormatting(title);
+                        return title;
                     }
                 }
             }
@@ -1721,7 +2316,7 @@ public sealed partial class MainWindow : Window
             }
         }
 
-        return "dokument";
+        return null;
     }
 
     private static string StripMarkdownFormatting(string value)
@@ -1807,8 +2402,7 @@ public sealed partial class MainWindow : Window
 
     private static bool IsLightShellTheme(string? theme)
     {
-        return string.Equals(theme, "light", StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(theme, "sepia", StringComparison.OrdinalIgnoreCase);
+        return string.Equals(theme, "light", StringComparison.OrdinalIgnoreCase);
     }
 
     private void UpdateDocumentStats(string markdown)
@@ -1818,30 +2412,63 @@ public sealed partial class MainWindow : Window
         currentCharacterCount = NormalizeLineEndings(markdown ?? string.Empty).Length;
     }
 
+    private string ResolveDisplayTitle()
+    {
+        if (!string.IsNullOrWhiteSpace(currentFilePath))
+        {
+            return Path.GetFileName(currentFilePath);
+        }
+
+        if (!string.IsNullOrWhiteSpace(initialFilePath))
+        {
+            return Path.GetFileName(initialFilePath);
+        }
+
+        return TryExtractMarkdownTitle(currentMarkdown) ?? "Unbenannt";
+    }
+
     private void UpdateTitle()
     {
-        var fileName = currentFilePath is null
-            ? initialFilePath is null ? "Unbenannt" : Path.GetFileName(initialFilePath)
-            : Path.GetFileName(currentFilePath);
-        Title = isDirty ? $"{fileName} * - {AppName}" : $"{fileName} - {AppName}";
+        var displayTitle = ResolveDisplayTitle();
+        Title = isDirty ? $"{displayTitle} * - {AppName}" : $"{displayTitle} - {AppName}";
     }
 
     private void UpdateStatus()
     {
-        var fileName = currentFilePath is null ? "Unbenannt" : Path.GetFileName(currentFilePath);
-        DocumentTitleText.Text = fileName;
+        var displayTitle = ResolveDisplayTitle();
+        DocumentTitleText.Text = displayTitle;
         DocumentPathText.Text = currentFilePath is null
             ? "Keine Datei geöffnet"
             : currentFilePath;
 
-        SaveStateText.Text = isDirty
-            ? currentSettings.AutoSaveEnabled && currentFilePath is not null ? "Auto-Save ausstehend" : "Nicht gespeichert"
-            : lastSavedAt is null ? "Gespeichert" : "Gespeichert " + lastSavedAt.Value.ToString("HH:mm");
+        SaveStateText.Text = isSaving
+            ? "Speichert…"
+            : isDirty ? "Ungespeichert" : "Gespeichert";
 
-        SaveStateText.Foreground = new SolidColorBrush(isDirty
+        SaveStateText.Foreground = new SolidColorBrush(isSaving || isDirty
             ? Color.FromArgb(255, 204, 120, 92)
             : Color.FromArgb(255, 160, 157, 150));
 
+        SendSaveStateToEditor();
+    }
+
+    private void SendSaveStateToEditor()
+    {
+        if (!editorReady || EditorWebView.CoreWebView2 is null)
+        {
+            return;
+        }
+
+        var state = isSaving ? "saving" : isDirty ? "unsaved" : "saved";
+        var payload = JsonSerializer.Serialize(new { type = "saveState", state }, jsonOptions);
+        try
+        {
+            EditorWebView.CoreWebView2.PostWebMessageAsJson(payload);
+        }
+        catch
+        {
+            // Save-state presentation must not interrupt editing or shutdown.
+        }
     }
 
     private async void NewButton_Click(object sender, RoutedEventArgs e) => await NewDocumentAsync();
@@ -1881,8 +2508,6 @@ public sealed partial class MainWindow : Window
 
     private async void ThemeLightButton_Click(object sender, RoutedEventArgs e) => await ApplyEditorThemeAsync("light", ElementTheme.Light);
     private async void ThemeDarkButton_Click(object sender, RoutedEventArgs e) => await ApplyEditorThemeAsync("dark", ElementTheme.Dark);
-    private async void ThemeSepiaButton_Click(object sender, RoutedEventArgs e) => await ApplyEditorThemeAsync("sepia", ElementTheme.Light);
-    private async void ThemeMidnightButton_Click(object sender, RoutedEventArgs e) => await ApplyEditorThemeAsync("midnight", ElementTheme.Dark);
 
     private async Task ApplyEditorThemeAsync(string theme, ElementTheme shellTheme)
     {
@@ -1915,6 +2540,10 @@ public sealed class AppSettings
     public double LineHeight { get; set; } = 1.68;
     public int WindowWidth { get; set; } = 1280;
     public int WindowHeight { get; set; } = 860;
+    public int? WindowX { get; set; }
+    public int? WindowY { get; set; }
+    public bool ReopenLastDocument { get; set; }
+    public string? LastDocumentPath { get; set; }
 }
 
 public sealed record RecentFileItem(string Path, string Name)
