@@ -77,11 +77,16 @@ dotnet build .\windows\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj -c
 
 More details are in [`windows/README_WINUI3.md`](windows/README_WINUI3.md).
 
+## Changelog
+
+User-facing release notes are tracked in [`CHANGELOG.md`](CHANGELOG.md). Detailed Windows implementation notes live in [`windows/PATCH_NOTES.md`](windows/PATCH_NOTES.md).
+
 ## Repository layout
 
 ```text
 .
 ├─ AI.md
+├─ CHANGELOG.md
 ├─ LICENSE
 ├─ README.md
 ├─ windows/
