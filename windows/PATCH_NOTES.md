@@ -1,50 +1,50 @@
-# Markdown Studio Pro - Windows Stand
+# Markdown Studio Pro - Windows Baseline
 
-## Bestätigte Baseline
+## Confirmed baseline
 
-Die aktuelle Windows-Version basiert auf **WinUI 3 + WebView2** und dem abgeschlossenen Editorial-Pro-/QoL-Pass. Sie ist die Referenz für weitere Windows-Arbeiten.
+The current Windows edition is based on **WinUI 3 + WebView2** and the completed Editorial Pro / QoL pass. This document records the confirmed technical baseline for future Windows work.
 
-## Oberfläche
+## Interface
 
-- Native obere Dokument-/Toolbar-Shell ohne zusätzliche Sidebar
-- Light und Dark; Dark basiert auf der früheren Midnight-Richtung
-- Dynamischer Dokumentname und sauber zentrierte erste H1
-- Überarbeitete Dialoge und Kontraste
-- Suchen & Ersetzen mit weichem Hintergrund-Blur statt starker Abdunklung
-- Kompaktere Smart-Tab-Befehlsübersicht
+- Native top document/toolbar shell without an additional sidebar
+- Light and Dark themes; Dark follows the earlier Midnight visual direction
+- Dynamic document title and a cleanly centered first H1
+- Refined dialogs and contrast handling
+- Find & Replace uses a soft background blur instead of a heavy dark overlay
+- Smart-Tab command help uses a calmer, compact single-column layout
 
-## Datei- und Sitzungslogik
+## File and session behavior
 
-- Gespeichert / Ungespeichert / Speichert... synchron zwischen WinUI und WebView
-- Auto-Save für bereits gespeicherte Dateien
-- Abfrage bei ungespeicherten Änderungen
-- Drag & Drop für `.md`, `.markdown` und `.txt`
-- Drop-Overlay bei gültigem Einzeldatei-Drop
-- Fenstergröße und Fensterposition werden gespeichert
-- Optionales Wiederöffnen des zuletzt geöffneten Dokuments
-- Explizit übergebene Startdateien haben Vorrang vor Session-Restore
+- **Saved / Unsaved / Saving...** are synchronized between WinUI and WebView
+- Auto-save for files that already have a path
+- Unsaved-change confirmation before replacing or closing a document
+- Drag & drop for `.md`, `.markdown`, and `.txt`
+- Visible drop overlay for a valid single-file drag
+- Window size and window position are persisted
+- Optional reopening of the last opened document
+- Explicit launch paths take precedence over session restore
 
-## Einstellungen
+## Settings
 
-- Live-Vorschau für Theme, Editorbreite, Schriftgröße und Zeilenhöhe
-- Abbrechen stellt den Zustand vor Öffnen des Settings-Dialogs wieder her
-- Settings-Inhalt scrollbar, Footer bleibt fest
-- Rechtschreibung, Fokusmodus, Auto-Save und Wortziel bleiben verfügbar
+- Live preview for theme, editor width, font size, and line height
+- Cancel restores the values that were active when the Settings dialog opened
+- Settings content is scrollable while the footer remains fixed
+- Spellcheck, Focus Mode, auto-save, and word goal remain available
 
-## Editor und Status
+## Editor and status
 
-- Inline-Code-Verhalten korrigiert
-- Auswahlstatistik ergänzt Wörter und Zeichen der markierten Textmenge
-- Sichtbare Status-Trenner verwenden `|`
-- Bestehende Tastatur-, Shortcut-, Smart-Tab-Ausführungs- und Editor-`keydown`-Logik bleibt unangetastet
+- Inline-code behavior corrected
+- Selection statistics include selected words and characters
+- Visible status separators use `|`
+- Existing keyboard, shortcut, Smart-Tab execution, and editor `keydown` behavior is intentionally preserved
 
-## Drucken
+## Printing
 
-- Druckinhalt verwendet immer eine helle Papierpalette, auch bei aktivem Darkmode
-- Überschriften werden möglichst mit folgendem Inhalt zusammengehalten
-- Widow-/Orphan-Regeln für Absätze
-- Umbruchvermeidung für Codeblöcke, Zitate, Tabellen und Tabellenzeilen
-- Explizite manuelle Seitenumbrüche bleiben erhalten
+- Printed content always uses a light paper palette, even when the app is in Dark mode
+- Headings are kept with following content where possible
+- Widow/orphan control for paragraphs
+- Break avoidance for code blocks, quotes, tables, and table rows
+- Explicit manual page breaks remain supported
 
 ## Build
 
@@ -52,12 +52,14 @@ Die aktuelle Windows-Version basiert auf **WinUI 3 + WebView2** und dem abgeschl
 build_winui3.bat
 ```
 
-Oder direkt:
+Or directly:
 
 ```powershell
 dotnet build .\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj -c Debug -r win-x64
 ```
 
-## Scope-Hinweis
+## Scope note
 
-Dieser Stand betrifft die Windows-Version. macOS-Dateien werden durch diesen Windows-Pass nicht verändert.
+This baseline covers the Windows edition. The Windows Editorial Pro / QoL pass does not modify macOS files.
+
+For user-facing release history, see [`../CHANGELOG.md`](../CHANGELOG.md).
