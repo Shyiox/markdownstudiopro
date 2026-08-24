@@ -10,6 +10,64 @@
 
 ## Completed stages
 
+### 2026-08-24 - Windows Editorial Pro shell redesign, stage 1
+
+- Redesigned only the Windows WinUI shell; macOS files were left untouched.
+- Replaced the visible WinUI CommandBar with a custom Editorial Pro title bar and compact icon-first command surface.
+- Preserved the existing file, formatting, insertion, table, search, export, focus, theme, settings, dirty-state, auto-save, and WebView2 command handlers.
+- Added native-compatible custom title-bar handling with system caption buttons and a fallback when title-bar customization is unavailable.
+- Refined the Windows-only editor frame, paper surface, heading rule, focus state, and status bar for the approved warm editorial direction.
+- Kept the existing application icon unchanged; icon/logo redesign is deferred to a separate final stage.
+- Static contract checks and XAML XML parsing pass in the patch environment. A Windows target-machine build and visual smoke test are still required because the patch environment does not provide the .NET/WinUI toolchain.
+
+
+### 2026-08-24 - Windows QoL/UX pass, stage 1
+
+- Updated only the Windows WinUI/WebView2 editor path; macOS files were not touched.
+- Unified the visible save state across the native shell and WebView as `Gespeichert`, `Ungespeichert`, and transient `Speichert...`.
+- Prevented Save/Save As from marking a document clean before the native write actually succeeds; cancelling Save As now preserves the dirty state.
+- Preserved edits made while a save is in progress so a completed write cannot incorrectly clear newer unsaved changes.
+- Extended the status bar with selected word/character counts when text is selected.
+- Replaced visible status separators in the touched status strings with `|`.
+- Stage-specific source/contract checks passed in the patch environment, and the Windows smoke test was reported without abnormalities before continuing.
+
+### 2026-08-24 - Windows QoL/UX pass, stage 2
+
+- Updated only the Windows WinUI settings flow; macOS files were not touched.
+- Added live preview for editor width, font size, and line height alongside the existing live theme preview.
+- Kept preview values transient until `Übernehmen`; cancelling restores theme, editor width, font size, and line height to the values present when the dialog opened.
+- Reused the existing WebView settings bridge without changing editor mechanics or persisting unrelated settings during preview.
+- Stage-specific contract checks passed in the patch environment, and continuation to the next stage was approved after the Windows smoke test.
+
+### 2026-08-24 - Windows QoL/UX pass, stage 3
+
+- Updated only the Windows WinUI session/settings flow; macOS files were not touched.
+- Persisted window size and window position and restore the saved position only when a meaningful part of the window remains visible on an attached display; otherwise the existing centered fallback is used.
+- Added the optional setting `Letztes Dokument beim Start öffnen`, disabled by default.
+- When enabled, the last active document is reopened only as a startup fallback; an explicit launch path always takes precedence, including the case where that explicit path no longer exists.
+- Missing remembered files fall back safely to a new document instead of blocking startup.
+- Stage-specific contract checks passed in the patch environment, and the Windows smoke test was reported as passing before continuing.
+
+### 2026-08-24 - Windows QoL/UX pass, stage 4
+
+- Updated only the Windows WinUI file-drop path; macOS files were not touched.
+- Added drag and drop for exactly one `.md`, `.markdown`, or `.txt` file and routed accepted files through the existing document-load path.
+- Reused the existing unsaved-changes confirmation before replacing the current document; unsupported files and multi-file drops leave the current document untouched.
+- Added a transient drop overlay over the existing editor surface for valid single-file drags, with no new toolbar buttons, sidebars, or editor mechanics.
+- The overlay disappears immediately on drag leave or drop and is not shown as a positive state for unsupported/multiple files.
+- Stage-specific contract/regression checks passed in the patch environment, and the Windows smoke test including the drop overlay was reported as passing before continuing.
+
+### 2026-08-24 - Windows QoL/UX pass, final visual polish
+
+- Kept the confirmed Stage 4 Windows behavior as the functional baseline; macOS files were not touched.
+- Fully rolled back the attempted keyboard/accessibility Stage 5 changes after they interfered with the existing keyboard setup. Existing keyboard, Smart-Tab execution, shortcut, and editor keydown behavior must not be changed unless explicitly requested.
+- Refined the `Suchen und Ersetzen` backdrop so the editor is softly blurred without the previous heavy dark overlay.
+- Restyled the Smart-Tab command help as a calmer compact single-column command list without changing Smart-Tab behavior.
+- Added a print-specific light paper palette so document content and preview remain white with dark text independently of the app Light/Dark theme; the surrounding Windows print UI remains system-controlled.
+- Improved print pagination with heading keep-with-next behavior, widow/orphan control, and break avoidance for code blocks, quotes, tables, table rows, and similar grouped content while preserving explicit manual page breaks.
+- The final visual/print polish changed only `windows/MarkdownStudioPro.WinUI/App/editor.html`; `MainWindow.xaml`, `MainWindow.xaml.cs`, and macOS were left unchanged for this polish step.
+- The Windows visual smoke test for the final polish was reported as looking good. The requested Windows QoL/UX pass is considered complete at this checkpoint.
+
 ### 2026-06-12 — macOS SwiftUI shell, stage 1
 
 - Inspected the uploaded macOS project ZIP.
