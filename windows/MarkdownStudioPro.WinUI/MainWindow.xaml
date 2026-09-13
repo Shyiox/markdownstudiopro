@@ -1,175 +1,532 @@
-﻿<Window
+<Window
     x:Class="MarkdownStudioPro.WinUI.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
-    <Grid x:Name="Root" Background="#181715">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid x:Name="Root" Background="Transparent">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.ThemeDictionaries>
+                    <ResourceDictionary x:Key="Light">
+                        <SolidColorBrush x:Key="MspWindowBackgroundBrush" Color="#E8E9E8" />
+                        <SolidColorBrush x:Key="MspBorderBrush" Color="#D8DCDD" />
+                        <SolidColorBrush x:Key="MspTextBrush" Color="#2B2B2A" />
+                        <SolidColorBrush x:Key="MspMutedBrush" Color="#777A7A" />
+                        <SolidColorBrush x:Key="MspAccentBrush" Color="#4F84B3" />
+                        <SolidColorBrush x:Key="MspAccentSoftBrush" Color="#E7EFF6" />
+                        <SolidColorBrush x:Key="MspHoverBrush" Color="#19FFFFFF" />
+                        <SolidColorBrush x:Key="MspPressedBrush" Color="#2EFFFFFF" />
+                        <SolidColorBrush x:Key="MspBandBrush" Color="#BDF8FAFB" />
+                        <SolidColorBrush x:Key="MspBandBorderBrush" Color="#B8FFFFFF" />
+                        <SolidColorBrush x:Key="MspToastBrush" Color="#E6FFFFFF" />
+                        <SolidColorBrush x:Key="MspToastBorderBrush" Color="#304F84B3" />
+                        <SolidColorBrush x:Key="MspBandDividerBrush" Color="#26777D82" />
+                        <SolidColorBrush x:Key="MspBandUtilityBrush" Color="#EEF2F5" />
+                        <SolidColorBrush x:Key="MspPaperBrush" Color="#FEFEFE" />
+                        <SolidColorBrush x:Key="MspPaperBorderBrush" Color="#22A7ACAD" />
+                        <SolidColorBrush x:Key="MspSkeletonBrush" Color="#775D6464" />
+                    </ResourceDictionary>
+                    <!-- WINDOWS V2 PHASE 7: DARK CALIBRATION -->
+                    <ResourceDictionary x:Key="Dark">
+                        <SolidColorBrush x:Key="MspWindowBackgroundBrush" Color="#151719" />
+                        <SolidColorBrush x:Key="MspBorderBrush" Color="#34383B" />
+                        <SolidColorBrush x:Key="MspTextBrush" Color="#EEF1F3" />
+                        <SolidColorBrush x:Key="MspMutedBrush" Color="#9FA6AD" />
+                        <SolidColorBrush x:Key="MspAccentBrush" Color="#72A8D1" />
+                        <SolidColorBrush x:Key="MspAccentSoftBrush" Color="#1E3445" />
+                        <SolidColorBrush x:Key="MspHoverBrush" Color="#16FFFFFF" />
+                        <SolidColorBrush x:Key="MspPressedBrush" Color="#28FFFFFF" />
+                        <SolidColorBrush x:Key="MspBandBrush" Color="#E0202226" />
+                        <SolidColorBrush x:Key="MspBandBorderBrush" Color="#26FFFFFF" />
+                        <SolidColorBrush x:Key="MspToastBrush" Color="#E61E2125" />
+                        <SolidColorBrush x:Key="MspToastBorderBrush" Color="#3272A8D1" />
+                        <SolidColorBrush x:Key="MspBandDividerBrush" Color="#20FFFFFF" />
+                        <SolidColorBrush x:Key="MspBandUtilityBrush" Color="#252A2F" />
+                        <SolidColorBrush x:Key="MspPaperBrush" Color="#191B1E" />
+                        <SolidColorBrush x:Key="MspPaperBorderBrush" Color="#30343A" />
+                        <SolidColorBrush x:Key="MspSkeletonBrush" Color="#6698A0A6" />
+                    </ResourceDictionary>
+                    <ResourceDictionary x:Key="HighContrast">
+                        <SolidColorBrush x:Key="MspWindowBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                        <SolidColorBrush x:Key="MspBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                        <SolidColorBrush x:Key="MspTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                        <SolidColorBrush x:Key="MspMutedBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                        <SolidColorBrush x:Key="MspAccentBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                        <SolidColorBrush x:Key="MspAccentSoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                        <SolidColorBrush x:Key="MspHoverBrush" Color="{ThemeResource SystemColorButtonFaceColor}" />
+                        <SolidColorBrush x:Key="MspPressedBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                        <SolidColorBrush x:Key="MspBandBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                        <SolidColorBrush x:Key="MspBandBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                        <SolidColorBrush x:Key="MspToastBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                        <SolidColorBrush x:Key="MspToastBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                        <SolidColorBrush x:Key="MspBandDividerBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                        <SolidColorBrush x:Key="MspBandUtilityBrush" Color="{ThemeResource SystemColorButtonFaceColor}" />
+                        <SolidColorBrush x:Key="MspPaperBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                        <SolidColorBrush x:Key="MspPaperBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                        <SolidColorBrush x:Key="MspSkeletonBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                    </ResourceDictionary>
+                </ResourceDictionary.ThemeDictionaries>
 
+                <Style x:Key="BandIconButtonStyle" TargetType="Button">
+                    <Setter Property="Width" Value="40" />
+                    <Setter Property="Height" Value="40" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="{ThemeResource MspTextBrush}" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="CornerRadius" Value="20" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="UseSystemFocusVisuals" Value="True" />
+                </Style>
+
+                <Style x:Key="PaperStatusButtonStyle" TargetType="Button">
+                    <Setter Property="Height" Value="32" />
+                    <Setter Property="Padding" Value="8,0" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="{ThemeResource MspMutedBrush}" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="CornerRadius" Value="8" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="UseSystemFocusVisuals" Value="True" />
+                </Style>
+
+                <Style x:Key="PaperFooterIconButtonStyle" TargetType="Button" BasedOn="{StaticResource PaperStatusButtonStyle}">
+                    <Setter Property="Width" Value="32" />
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+
+                <Style x:Key="V2MenuFlyoutPresenterStyle" TargetType="MenuFlyoutPresenter">
+                    <Setter Property="Background" Value="{ThemeResource MspPaperBrush}" />
+                    <Setter Property="BorderBrush" Value="{ThemeResource MspBorderBrush}" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="CornerRadius" Value="12" />
+                    <Setter Property="Padding" Value="4" />
+                </Style>
+
+                <Style x:Key="StartupSkeletonBarStyle" TargetType="Border">
+                    <Setter Property="Height" Value="7" />
+                    <Setter Property="Background" Value="{ThemeResource MspSkeletonBrush}" />
+                    <Setter Property="CornerRadius" Value="4" />
+                    <Setter Property="HorizontalAlignment" Value="Left" />
+                </Style>
+            </ResourceDictionary>
+        </Grid.Resources>
+
+        <Grid.KeyboardAccelerators>
+            <KeyboardAccelerator
+                Key="P"
+                Modifiers="Control"
+                Invoked="PrintKeyboardAccelerator_Invoked" />
+        </Grid.KeyboardAccelerators>
+
+        <!-- The first 48 logical units are the native drag strip. The floating band starts below it. -->
+        <Grid
+            x:Name="AppTitleBarDragRegion"
+            Canvas.ZIndex="30"
+            Height="48"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Stretch"
+            Background="Transparent" />
+
+        <!-- The resting shell stays intentionally quiet; startup affordance lives inside the paper loading surface. -->
+
+        <!-- V2 command band: contextual document title, recent navigation, undo/redo, command search, and compact app menu. -->
         <Border
-            x:Name="TopBar"
-            Grid.Row="0"
-            MinHeight="58"
-            Background="#F0181715"
-            BorderBrush="#2D2B27"
-            BorderThickness="0,0,0,1">
-            <Grid Padding="18,8,14,8" ColumnSpacing="18">
+            x:Name="CommandBand"
+            Canvas.ZIndex="20"
+            Height="58"
+            MaxWidth="686"
+            Margin="24,57,24,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Background="{ThemeResource MspBandBrush}"
+            BorderBrush="{ThemeResource MspBandBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="24">
+            <Grid Padding="12,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="156" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="156" />
                 </Grid.ColumnDefinitions>
 
                 <StackPanel
                     Grid.Column="0"
-                    MinWidth="160"
-                    MaxWidth="560"
+                    Orientation="Horizontal"
                     VerticalAlignment="Center"
-                    Spacing="3">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock
-                            x:Name="DocumentTitleText"
-                            Text="Unbenannt"
-                            Foreground="#FAF9F5"
-                            FontSize="14"
-                            FontWeight="SemiBold"
-                            TextTrimming="CharacterEllipsis" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="7">
-                        <TextBlock
-                            x:Name="SaveStateText"
-                            Text="Gespeichert"
-                            Foreground="#A09D96"
-                            FontSize="11"
-                            TextTrimming="CharacterEllipsis" />
-                        <TextBlock
-                            x:Name="MetadataSeparatorOne"
-                            Text="·"
-                            Foreground="#5E5A52"
-                            FontSize="11" />
-                        <TextBlock
-                            x:Name="DocumentPathText"
-                            Text="Keine Datei geöffnet"
-                            Foreground="#A09D96"
-                            FontSize="11"
-                            TextTrimming="CharacterEllipsis" />
-                    </StackPanel>
+                    Spacing="5">
+                    <Button
+                        x:Name="RecentBandButton"
+                        Style="{StaticResource BandIconButtonStyle}"
+                        Background="{ThemeResource MspAccentSoftBrush}"
+                        Foreground="{ThemeResource MspAccentBrush}"
+                        Click="RecentFilesButton_Click"
+                        TabIndex="0"
+                        AutomationProperties.Name="Zuletzt verwendete Dokumente"
+                        ToolTipService.ToolTip="Zuletzt verwendete Dokumente">
+                        <FontIcon Glyph="&#xE72B;" FontSize="19" />
+                    </Button>
+                    <Border
+                        Width="1"
+                        Height="28"
+                        Margin="3,0,4,0"
+                        VerticalAlignment="Center"
+                        Background="{ThemeResource MspBandDividerBrush}" />
+                    <Button
+                        x:Name="UndoBandButton"
+                        Style="{StaticResource BandIconButtonStyle}"
+                        Foreground="{ThemeResource MspMutedBrush}"
+                        Click="UndoButton_Click"
+                        TabIndex="1"
+                        AutomationProperties.Name="Rückgängig"
+                        ToolTipService.ToolTip="Rückgängig">
+                        <FontIcon Glyph="&#xE7A7;" FontSize="18" />
+                    </Button>
+                    <Button
+                        x:Name="RedoBandButton"
+                        Style="{StaticResource BandIconButtonStyle}"
+                        Foreground="{ThemeResource MspMutedBrush}"
+                        Click="RedoButton_Click"
+                        TabIndex="2"
+                        AutomationProperties.Name="Wiederholen"
+                        ToolTipService.ToolTip="Wiederholen">
+                        <FontIcon Glyph="&#xE7A6;" FontSize="18" />
+                    </Button>
                 </StackPanel>
 
-                <CommandBar
-                    x:Name="MainCommandBar"
+                <StackPanel
+                    Grid.Column="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="9">
+                    <FontIcon Glyph="&#xE8A5;" FontSize="18" Foreground="{ThemeResource MspAccentBrush}" />
+                    <TextBlock
+                        x:Name="CommandBandTitleText"
+                        Text="Markdown Studio Pro"
+                        MaxWidth="300"
+                        TextTrimming="CharacterEllipsis"
+                        Foreground="{ThemeResource MspTextBrush}"
+                        FontFamily="Segoe UI Variable Text"
+                        FontSize="17"
+                        FontWeight="SemiBold"
+                        TextAlignment="Center"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+
+                <StackPanel
                     Grid.Column="2"
-                    DefaultLabelPosition="Collapsed"
-                    IsDynamicOverflowEnabled="True"
-                    IsTabStop="False"
-                    Height="42"
-                    MinWidth="0"
-                    Padding="0"
-                    Background="Transparent"
-                    Foreground="#FAF9F5">
-                    <CommandBar.SecondaryCommands>
-                        <AppBarButton Label="Zuletzt verwendet" Click="RecentFilesButton_Click" />
-                        <AppBarButton Label="Speichern unter" Click="SaveAsButton_Click" />
-                        <AppBarSeparator />
-                        <AppBarButton Label="Quelle bearbeiten" Click="ShowSourceButton_Click" />
-                        <AppBarButton Label="Fokusmodus" Click="FocusModeButton_Click" />
-                        <AppBarSeparator />
-                        <AppBarButton Label="Theme: Hell" Click="ThemeLightButton_Click" />
-                        <AppBarButton Label="Theme: Dunkel" Click="ThemeDarkButton_Click" />
-                        <AppBarButton Label="Theme: Sepia" Click="ThemeSepiaButton_Click" />
-                        <AppBarButton Label="Theme: Midnight" Click="ThemeMidnightButton_Click" />
-                    </CommandBar.SecondaryCommands>
-                    <AppBarButton Label="Neu" Click="NewButton_Click" ToolTipService.ToolTip="Neues Dokument">
-                        <AppBarButton.Icon><FontIcon Glyph="&#xE710;" /></AppBarButton.Icon>
-                    </AppBarButton>
-                    <AppBarButton Label="Öffnen" Click="OpenButton_Click" ToolTipService.ToolTip="Markdown-Datei öffnen">
-                        <AppBarButton.Icon><FontIcon Glyph="&#xE8E5;" /></AppBarButton.Icon>
-                    </AppBarButton>
-                    <AppBarButton Label="Speichern" Click="SaveButton_Click" ToolTipService.ToolTip="Speichern">
-                        <AppBarButton.Icon><FontIcon Glyph="&#xE74E;" /></AppBarButton.Icon>
-                    </AppBarButton>
-                    <AppBarSeparator />
-                    <AppBarButton Label="Format" ToolTipService.ToolTip="Format">
-                        <AppBarButton.Icon><FontIcon Glyph="&#xE8D2;" /></AppBarButton.Icon>
-                        <AppBarButton.Flyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="Überschrift 1" Click="HeadingOneButton_Click" />
-                                <MenuFlyoutItem Text="Überschrift 2" Click="HeadingTwoButton_Click" />
-                                <MenuFlyoutItem Text="Überschrift 3" Click="HeadingThreeButton_Click" />
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Spacing="5">
+                    <Border
+                        Width="1"
+                        Height="28"
+                        Margin="0,0,4,0"
+                        VerticalAlignment="Center"
+                        Background="{ThemeResource MspBandDividerBrush}" />
+                    <Button
+                        x:Name="CommandBandPaletteButton"
+                        Style="{StaticResource BandIconButtonStyle}"
+                        Foreground="{ThemeResource MspMutedBrush}"
+                        Click="PaletteButton_Click"
+                        TabIndex="3"
+                        AutomationProperties.Name="Befehle suchen"
+                        ToolTipService.ToolTip="Befehle suchen (Strg+K)">
+                        <FontIcon Glyph="&#xE721;" FontSize="18" />
+                    </Button>
+                    <Button
+                        x:Name="CommandBandMenuButton"
+                        Style="{StaticResource BandIconButtonStyle}"
+                        Background="{ThemeResource MspBandUtilityBrush}"
+                        Foreground="{ThemeResource MspMutedBrush}"
+                        TabIndex="4"
+                        AutomationProperties.Name="Menü"
+                        ToolTipService.ToolTip="Menü">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedRight" MenuFlyoutPresenterStyle="{StaticResource V2MenuFlyoutPresenterStyle}">
+                                <MenuFlyoutItem Text="Neues Dokument" Click="NewButton_Click" />
+                                <MenuFlyoutItem Text="Öffnen…" Click="OpenButton_Click" />
+                                <MenuFlyoutItem Text="Zuletzt verwendet" Click="RecentFilesButton_Click" />
+                                <MenuFlyoutItem Text="Speichern" Click="SaveButton_Click" />
+                                <MenuFlyoutItem Text="Speichern unter…" Click="SaveAsButton_Click" />
                                 <MenuFlyoutSeparator />
-                                <MenuFlyoutItem Text="Fett" Click="BoldButton_Click" />
-                                <MenuFlyoutItem Text="Kursiv" Click="ItalicButton_Click" />
-                                <MenuFlyoutItem Text="Durchgestrichen" Click="StrikeButton_Click" />
+                                <MenuFlyoutItem Text="Drucken…" Click="PrintPdfButton_Click" />
+                                <MenuFlyoutItem Text="Exportieren…" Click="ExportButton_Click" />
                                 <MenuFlyoutSeparator />
-                                <MenuFlyoutItem Text="Zitat" Click="QuoteButton_Click" />
-                                <MenuFlyoutItem Text="Codeblock" Click="CodeButton_Click" />
-                                <MenuFlyoutItem Text="Inline-Code" Click="InlineCodeButton_Click" />
+                                <MenuFlyoutSubItem Text="Darstellung">
+                                    <ToggleMenuFlyoutItem
+                                        x:Name="ThemeLightMenuItem"
+                                        Text="Hell"
+                                        Click="ThemeLightButton_Click" />
+                                    <ToggleMenuFlyoutItem
+                                        x:Name="ThemeDarkMenuItem"
+                                        Text="Dunkel"
+                                        Click="ThemeDarkButton_Click" />
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutItem Text="Einstellungen" Click="SettingsButton_Click" />
+                                <MenuFlyoutItem Text="Hilfe" Click="TabHelpButton_Click" />
+                                <MenuFlyoutItem Text="Über Markdown Studio Pro" Click="AboutButton_Click" />
                             </MenuFlyout>
-                        </AppBarButton.Flyout>
-                    </AppBarButton>
-                    <AppBarButton Label="Einfügen" ToolTipService.ToolTip="Einfügen">
-                        <AppBarButton.Icon><FontIcon Glyph="&#xE710;" /></AppBarButton.Icon>
-                        <AppBarButton.Flyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="Tabelle" Click="TableButton_Click" />
-                                <MenuFlyoutItem Text="Aufgabenliste" Click="TaskListButton_Click" />
-                                <MenuFlyoutItem Text="Trennlinie" Click="HorizontalRuleButton_Click" />
-                                <MenuFlyoutItem Text="Link" Click="LinkButton_Click" />
-                                <MenuFlyoutSeparator />
-                                <MenuFlyoutItem Text="Tab-Hilfe" Click="TabHelpButton_Click" />
-                            </MenuFlyout>
-                        </AppBarButton.Flyout>
-                    </AppBarButton>
-                    <AppBarButton Label="Export" ToolTipService.ToolTip="Export">
-                        <AppBarButton.Icon><FontIcon Glyph="&#xEDE1;" /></AppBarButton.Icon>
-                        <AppBarButton.Flyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="Markdown-Datei exportieren" Click="ExportMarkdownFileButton_Click" />
-                                <MenuFlyoutItem Text="Markdown kopieren" Click="CopyMarkdownButton_Click" />
-                                <MenuFlyoutItem Text="HTML exportieren" Click="ExportHtmlButton_Click" />
-                                <MenuFlyoutItem Text="PDF drucken" Click="PrintPdfButton_Click" />
-                            </MenuFlyout>
-                        </AppBarButton.Flyout>
-                    </AppBarButton>
-                    <AppBarSeparator />
-                    <AppBarButton Label="Suchen" Click="FindReplaceButton_Click" ToolTipService.ToolTip="Suchen und Ersetzen">
-                        <AppBarButton.Icon><FontIcon Glyph="&#xE721;" /></AppBarButton.Icon>
-                    </AppBarButton>
-                    <AppBarButton Label="Palette" Click="PaletteButton_Click" ToolTipService.ToolTip="Befehlspalette">
-                        <AppBarButton.Icon><FontIcon Glyph="&#xE945;" /></AppBarButton.Icon>
-                    </AppBarButton>
-                    <AppBarSeparator />
-                    <AppBarButton Label="Einstellungen" Click="SettingsButton_Click" ToolTipService.ToolTip="Einstellungen">
-                        <AppBarButton.Icon><FontIcon Glyph="&#xE713;" /></AppBarButton.Icon>
-                    </AppBarButton>
-                    <AppBarButton Label="Über" Click="AboutButton_Click" ToolTipService.ToolTip="Über Markdown Studio Pro">
-                        <AppBarButton.Icon><FontIcon Glyph="&#xE946;" /></AppBarButton.Icon>
-                    </AppBarButton>
-                </CommandBar>
+                        </Button.Flyout>
+                        <FontIcon Glyph="&#xE700;" FontSize="18" />
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
 
-        <Grid Grid.Row="1">
-            <controls:WebView2 x:Name="EditorWebView" />
-
-            <Border
-                x:Name="EditorLoadingOverlay"
-                Background="#181715"
-                IsHitTestVisible="False">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
-                    <ProgressRing IsActive="True" Width="34" Height="34" />
+        <!-- V2 native notification chip: lives below the command band and outside the WebView text zone. -->
+        <Border
+            x:Name="NativeToastHost"
+            Canvas.ZIndex="25"
+            Width="312"
+            Margin="24,149,24,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Background="{ThemeResource MspToastBrush}"
+            BorderBrush="{ThemeResource MspToastBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="10"
+            Visibility="Collapsed"
+            IsHitTestVisible="False">
+            <Grid Padding="12,7,12,7" ColumnSpacing="9">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border
+                    Width="2"
+                    Margin="0,1,0,1"
+                    Background="{ThemeResource MspAccentBrush}"
+                    CornerRadius="1" />
+                <StackPanel Grid.Column="1" Spacing="1">
                     <TextBlock
-                        x:Name="EditorLoadingText"
-                        Text="Editor wird geladen ..."
-                        Foreground="#D8D2C8"
-                        HorizontalAlignment="Center" />
+                        x:Name="NativeToastTitleText"
+                        Foreground="{ThemeResource MspTextBrush}"
+                        FontFamily="Segoe UI Variable Text"
+                        FontSize="12.5"
+                        FontWeight="SemiBold"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        x:Name="NativeToastMessageText"
+                        Foreground="{ThemeResource MspMutedBrush}"
+                        FontFamily="Segoe UI Variable Text"
+                        FontSize="11.5"
+                        TextWrapping="Wrap" />
                 </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Hidden compatibility targets retained for native title/path state. -->
+        <StackPanel Visibility="Collapsed">
+            <TextBlock x:Name="DocumentTitleText" Text="Unbenannt" />
+            <TextBlock x:Name="DocumentPathText" Text="Keine Datei geöffnet" />
+            <TextBlock x:Name="MetadataSeparatorOne" Text="-" />
+        </StackPanel>
+
+        <Grid
+            x:Name="EditorHost"
+            Canvas.ZIndex="10"
+            Background="Transparent"
+            AllowDrop="True"
+            DragEnter="EditorSurface_DragEnter"
+            DragOver="EditorSurface_DragOver"
+            DragLeave="EditorSurface_DragLeave"
+            Drop="EditorSurface_Drop">
+            <Border
+                x:Name="NativePaper"
+                MaxWidth="848"
+                MinWidth="0"
+                Margin="24,152,24,89"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="{ThemeResource MspPaperBrush}"
+                BorderBrush="{ThemeResource MspPaperBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="14">
+                <Grid Background="{ThemeResource MspPaperBrush}">
+                    <controls:WebView2
+                        x:Name="EditorWebView"
+                        Margin="24,96,24,72"
+                        TabIndex="5"
+                        AutomationProperties.Name="Markdown-Dokument"
+                        AllowDrop="True"
+                        DragEnter="EditorSurface_DragEnter"
+                        DragOver="EditorSurface_DragOver"
+                        DragLeave="EditorSurface_DragLeave"
+                        Drop="EditorSurface_Drop" />
+
+                    <Button
+                        x:Name="PaperSaveStatusButton"
+                        Canvas.ZIndex="4"
+                        Margin="0,24,32,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource PaperStatusButtonStyle}"
+                        Click="SaveStatusButton_Click"
+                        TabIndex="4"
+                        AutomationProperties.Name="Lokaler Speicherstatus"
+                        ToolTipService.ToolTip="Lokaler Speicherstatus">
+                        <StackPanel Orientation="Horizontal" Spacing="7">
+                            <FontIcon
+                                x:Name="PaperSaveStateIcon"
+                                Glyph="&#xE74E;"
+                                FontSize="15"
+                                VerticalAlignment="Center" />
+                            <TextBlock
+                                x:Name="SaveStateText"
+                                Text="Gespeichert"
+                                FontFamily="Segoe UI Variable Text"
+                                FontSize="13"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Grid
+                        x:Name="PaperFooter"
+                        Canvas.ZIndex="4"
+                        Height="32"
+                        Margin="32,0,32,18"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            x:Name="SelectionStatusText"
+                            Grid.Column="0"
+                            Margin="0,0,18,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Visibility="Collapsed"
+                            Foreground="{ThemeResource MspMutedBrush}"
+                            FontFamily="Segoe UI Variable Text"
+                            FontSize="12" />
+
+                        <StackPanel
+                            Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Spacing="8">
+                            <TextBlock
+                                x:Name="FooterWordCountText"
+                                Text="0 Wörter"
+                                Foreground="{ThemeResource MspMutedBrush}"
+                                FontFamily="Segoe UI Variable Text"
+                                FontSize="13"
+                                VerticalAlignment="Center" />
+                            <TextBlock
+                                Text="·"
+                                Foreground="{ThemeResource MspMutedBrush}"
+                                FontSize="13"
+                                Opacity="0.58"
+                                VerticalAlignment="Center" />
+                            <TextBlock
+                                Text="Markdown"
+                                Foreground="{ThemeResource MspMutedBrush}"
+                                FontFamily="Segoe UI Variable Text"
+                                FontSize="13"
+                                VerticalAlignment="Center" />
+                            <Button
+                                x:Name="StatisticsButton"
+                                Style="{StaticResource PaperFooterIconButtonStyle}"
+                                Click="StatisticsButton_Click"
+                                TabIndex="6"
+                                AutomationProperties.Name="Dokumentstatistik öffnen"
+                                ToolTipService.ToolTip="Dokumentstatistik">
+                                <FontIcon Glyph="&#xE736;" FontSize="16" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid
+                        x:Name="FileDropOverlay"
+                        Visibility="Collapsed"
+                        IsHitTestVisible="False"
+                        Background="{ThemeResource MspPaperBrush}">
+                        <Rectangle
+                            Margin="28"
+                            Fill="{ThemeResource MspAccentSoftBrush}"
+                            Opacity="0.96"
+                            Stroke="{ThemeResource MspAccentBrush}"
+                            StrokeThickness="2"
+                            StrokeDashArray="6,4"
+                            RadiusX="18"
+                            RadiusY="18" />
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                            <TextBlock
+                                Text="Datei hier ablegen"
+                                Foreground="{ThemeResource MspTextBrush}"
+                                FontFamily="Segoe UI Variable Text"
+                                FontSize="20"
+                                FontWeight="SemiBold"
+                                HorizontalAlignment="Center" />
+                            <TextBlock
+                                Text=".md | .markdown | .txt"
+                                Foreground="{ThemeResource MspMutedBrush}"
+                                FontSize="12"
+                                HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border
+                        x:Name="EditorLoadingOverlay"
+                        Background="{ThemeResource MspPaperBrush}"
+                        IsHitTestVisible="False">
+                        <Grid>
+                            <StackPanel
+                                x:Name="StartupSkeletonLayer"
+                                Width="648"
+                                MaxWidth="648"
+                                Margin="0,126,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Spacing="15"
+                                Opacity="0.10"
+                                Loaded="StartupSkeletonLayer_Loaded">
+                                <StackPanel.Resources>
+                                    <Storyboard x:Key="StartupSkeletonPulse">
+                                        <DoubleAnimation
+                                            Storyboard.TargetProperty="Opacity"
+                                            From="0.08"
+                                            To="0.22"
+                                            Duration="0:0:2.4"
+                                            AutoReverse="True"
+                                            RepeatBehavior="Forever" />
+                                    </Storyboard>
+                                </StackPanel.Resources>
+                                <Border Style="{StaticResource StartupSkeletonBarStyle}" Width="284" Height="10" HorizontalAlignment="Center" />
+                                <Border Style="{StaticResource StartupSkeletonBarStyle}" Width="540" />
+                                <Border Style="{StaticResource StartupSkeletonBarStyle}" Width="496" />
+                                <Border Style="{StaticResource StartupSkeletonBarStyle}" Width="426" />
+                                <Border Style="{StaticResource StartupSkeletonBarStyle}" Width="520" Margin="0,10,0,0" />
+                                <Border Style="{StaticResource StartupSkeletonBarStyle}" Width="348" />
+                            </StackPanel>
+
+                            <TextBlock
+                                x:Name="EditorLoadingText"
+                                Width="460"
+                                Text=""
+                                Visibility="Collapsed"
+                                Foreground="{ThemeResource MspMutedBrush}"
+                                FontFamily="Segoe UI Variable Text"
+                                FontSize="12"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+                </Grid>
             </Border>
         </Grid>
     </Grid>
 </Window>
-

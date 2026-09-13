@@ -8,13 +8,16 @@
 :root {
   color-scheme: light;
   /* V4 Design Tokens – erweitert für Next Level */
-  --primary:#cc785c;
-  --primary-active:#a9583e;
-  --accent:#cc785c;
-  --link:#8b3f2d;
-  --code-fg:#5f2d21;
-  --code-bg:#fff0e6;
-  --code-border:#d9a48d;
+  --primary:#4f84b3;
+  --primary-active:#3a668c;
+  --accent:#4f84b3;
+  --link:#3f6f99;
+  --code-fg:#315f85;
+  --code-bg:#f7fafc;
+  --code-border:#d5e0e8;
+  --code-block-bg:#f6f8fa;
+  --code-block-fg:#20262b;
+  --code-block-border:#dce3e8;
   --quote-bg:#f1e6dc;
   --quote-fg:#2f2a25;
 
@@ -33,6 +36,19 @@
   --muted:#6c6a64;
   --muted-2:#8e8b82;
   --on-dark:#faf9f5;
+
+  /* Dialog surfaces: explicit contrast-safe palette */
+  --dialog-backdrop:rgba(20,20,19,.28);
+  --dialog-surface:#fffdf8;
+  --dialog-border:#d8d0c7;
+  --dialog-text:#141413;
+  --dialog-muted:#625d57;
+  --dialog-control-bg:#fffaf4;
+  --dialog-control-border:#cfc6bd;
+  --dialog-primary-bg:#4f84b3;
+  --dialog-primary-text:#ffffff;
+  --dialog-hover:#f2ebe4;
+  --dialog-focus:#4f84b3;
 
   /* Feedback */
   --success:#5db872;
@@ -59,26 +75,40 @@
 /* Dark overrides */
 [data-theme="dark"] {
   color-scheme: dark;
-  --primary:#ff9f7a;
-  --primary-active:#ff855f;
-  --accent:#7dd3fc;
-  --link:#8bd7ff;
-  --code-fg:#dff4ff;
-  --code-bg:#123042;
-  --code-border:#2b6f91;
-  --quote-bg:#202227;
-  --quote-fg:#f4f4f2;
-  --bg:#151517;
-  --bg-2:#1b1b1e;
-  --text:#f4f4f2;
-  --muted:#b7b1a8;
-  --muted-2:#8f8981;
-  --paper:#242426;
-  --paper-stroke:rgba(244,244,242,.16);
-  --surface:#1b1b1e;
-  --surface-2:#2a2a2d;
-  --surface-dark:#0b0d12;
-  --surface-dark-soft:#151517;
+  --primary:#70a5cf;
+  --primary-active:#5c91bc;
+  --accent:#70a5cf;
+  --link:#8ab8de;
+  --code-fg:#9bc2df;
+  --code-bg:#1c252d;
+  --code-border:#314557;
+  --code-block-bg:#15191d;
+  --code-block-fg:#e8edf1;
+  --code-block-border:#303940;
+  --quote-bg:#232326;
+  --quote-fg:#e9e6e0;
+  --bg:#121315;
+  --bg-2:#18191b;
+  --text:#f2f0ec;
+  --muted:#b5b1aa;
+  --muted-2:#8f8c86;
+  --paper:#1b1c1f;
+  --paper-stroke:#34363a;
+  --surface:#1b1c1f;
+  --surface-2:#25262a;
+  --surface-dark:#0e0f11;
+  --surface-dark-soft:#151619;
+  --dialog-backdrop:rgba(7,8,10,.66);
+  --dialog-surface:#1b1c1f;
+  --dialog-border:#3a3c41;
+  --dialog-text:#f2f0ec;
+  --dialog-muted:#b5b1aa;
+  --dialog-control-bg:#151619;
+  --dialog-control-border:#45474d;
+  --dialog-primary-bg:#70a5cf;
+  --dialog-primary-text:#1b1c1f;
+  --dialog-hover:#25262a;
+  --dialog-focus:#70a5cf;
 }
 
 /* === BASE + LAYOUT === */
@@ -144,80 +174,11 @@ body.focus-mode .document:focus { box-shadow: 0 30px 90px rgba(0,0,0,.22), 0 0 0
 }
 /* Premium lift in focus mode */
 body.focus-mode .document{
-  border-color: rgba(204,120,92,.25);
+  border-color: rgba(79,132,179,.25);
   box-shadow: 0 40px 120px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.9);
 }
 
-/* === STATUSBAR (V4 Phase 1) – subtil in Normalansicht, deutlicher im Fokus-Modus === */
-.statusbar{
-  position: fixed;
-  left: 52px;
-  right: 0;
-  bottom: 0;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 18px 6px 18px;
-  font-size: 12px;
-  color: var(--muted);
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  border-top: 1px solid var(--paper-stroke);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: left .18s var(--ease-out), background .2s var(--ease-out);
-}
-body.tools-open .statusbar{ left: 282px; }
-body.focus-mode .statusbar{
-  left: 0;
-  background: color-mix(in srgb, var(--bg) 96%, transparent);
-  border-top-color: rgba(204,120,92,.18);
-  padding-left: 28px;
-  padding-right: 28px;
-}
-.statusbar .status-left,
-.statusbar .status-right{ display: flex; align-items: center; gap: 6px; }
-.status-sep{ opacity: .5; }
-.save-state{ padding: 1px 7px; border-radius: 999px; font-weight: 600; letter-spacing: .02em; }
-.save-state.dirty{ background: color-mix(in srgb, var(--primary) 14%, transparent); color: var(--primary); }
-.focus-hint{ font-size: 11px; opacity: .7; }
-[data-theme="dark"] .statusbar{ background: color-mix(in srgb, var(--bg) 88%, transparent); }
-
-/* === MEHR THEMES (V4) === */
-[data-theme="sepia"] {
-  --bg: #f4f0e6;
-  --bg-2: #e8e0d1;
-  --paper: #f9f4e9;
-  --paper-stroke: #d4c9b5;
-  --text: #3a2f1f;
-  --muted: #6b5f4d;
-  --primary: #8c6642;
-  --link: #6f4320;
-  --code-fg: #563716;
-  --code-bg: #efe2c8;
-  --code-border: #b8945f;
-  --quote-bg: #eadcc4;
-  --quote-fg: #332817;
-  --surface-dark: #3b3027;
-  --surface-dark-soft: #4a3c31;
-}
-[data-theme="midnight"] {
-  --bg: #0f1115;
-  --bg-2: #161a21;
-  --paper: #1c212a;
-  --paper-stroke: #2a303c;
-  --text: #e6e8ee;
-  --muted: #8a8f9a;
-  --primary: #6ea8ff;
-  --link: #9dccff;
-  --code-fg: #e4f1ff;
-  --code-bg: #12233a;
-  --code-border: #315f99;
-  --quote-bg: #151b25;
-  --quote-fg: #e6e8ee;
-  --surface-dark: #0a0c10;
-  --surface-dark-soft: #11141a;
-}
+/* Light and Dark are the only supported themes. */
 /* Bessere Tabellen Styles */
 .document table {
   border-collapse: separate;
@@ -243,7 +204,7 @@ body.focus-mode .statusbar{
 .document tr:hover td { background: color-mix(in srgb, var(--primary) 5%, transparent); }
 .document td:focus-within, .document th:focus-within { outline: 2px solid var(--primary); outline-offset:-2px; position: relative; z-index: 1; }
 
-.document h1{font-size:2.2rem;line-height:1.1;margin:1.2rem 0 .8rem;letter-spacing:-.04em}.document h2{font-size:1.45rem;margin:1.7rem 0 .7rem;letter-spacing:-.02em}.document h3{font-size:1.15rem;margin:1.3rem 0 .5rem}.document p{margin:.68rem 0}.document a{color:var(--primary)}.document blockquote{margin:1rem 0;padding:.55rem 1rem;border-left:4px solid var(--primary);background:#f5f0e8;border-radius:0 12px 12px 0;color:#3d3d3a}.document code{background:#f5f0e8;border:1px solid #e6dfd8;border-radius:7px;padding:.12rem .34rem;font-family:"Cascadia Code",Consolas,monospace;font-size:.92em}.document code:not(pre code){position:relative;display:inline-flex;align-items:center;max-width:100%;color:#7c3f2f;background:#fff4ea;border-color:#e7c7b8;font-weight:650;line-height:1.42;cursor:text;vertical-align:baseline}.document code:not(pre code):hover{background:#ffece0;border-color:#d9a48d;color:#5f2d21}.document code:not(pre code).copied{background:#edf8f3;border-color:#9ccdbb;color:#245d4a}.document pre{position:relative;background:#1f1e1b;color:#faf9f5;border:1px solid rgba(250,249,245,.10);border-radius:14px;padding:18px;overflow:auto;max-width:100%;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;cursor:text}.document pre.copied{border-color:rgba(155,209,190,.55);box-shadow:0 0 0 2px rgba(155,209,190,.16)}.document pre code{background:transparent;border:0;color:inherit;padding:0;white-space:inherit;overflow-wrap:inherit;word-break:inherit;cursor:text}.document table{border-collapse:collapse;width:100%;max-width:100%;min-width:0;margin:1rem 0;table-layout:fixed}.document th,.document td{border:1px solid #e6dfd8;padding:8px 10px;min-width:0;overflow-wrap:anywhere;word-break:break-word}.document th{background:#f5f0e8;text-align:left}
+.document h1{font-size:2.2rem;line-height:1.1;margin:1.2rem 0 .8rem;letter-spacing:-.04em}.document h2{font-size:1.45rem;margin:1.7rem 0 .7rem;letter-spacing:-.02em}.document h3{font-size:1.15rem;margin:1.3rem 0 .5rem}.document p{margin:.68rem 0}.document a{color:var(--primary)}.document blockquote{margin:1rem 0;padding:.55rem 1rem;border-left:4px solid var(--primary);background:#f5f0e8;border-radius:0 12px 12px 0;color:#3d3d3a}.document code{background:#f5f0e8;border:1px solid #e6dfd8;border-radius:7px;padding:.12rem .34rem;font-family:"Cascadia Code","Cascadia Mono",Consolas,ui-monospace,monospace;font-size:.92em}.document code:not(pre code){position:relative;display:inline;max-width:100%;white-space:break-spaces;overflow-wrap:anywhere;word-break:break-word;-webkit-box-decoration-break:clone;box-decoration-break:clone;color:var(--code-fg);background:var(--code-bg);border-color:var(--code-border);font-weight:600;line-height:1.42;cursor:text;vertical-align:baseline}.document code:not(pre code):hover{background:color-mix(in srgb,var(--code-bg) 82%,var(--primary) 18%);border-color:color-mix(in srgb,var(--code-border) 74%,var(--primary) 26%);color:var(--primary-active)}.document code:not(pre code).copied{background:#edf8f3;border-color:#9ccdbb;color:#245d4a}.document pre{position:relative;background:var(--code-block-bg);color:var(--code-block-fg);border:1px solid var(--code-block-border);border-radius:14px;padding:18px;overflow:auto;max-width:100%;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;cursor:text}.document pre.copied{border-color:rgba(155,209,190,.55);box-shadow:0 0 0 2px rgba(155,209,190,.16)}.document pre code{background:transparent;border:0;color:inherit;padding:0;white-space:inherit;overflow-wrap:inherit;word-break:inherit;cursor:text}.document table{border-collapse:collapse;width:100%;max-width:100%;min-width:0;margin:1rem 0;table-layout:fixed}.document th,.document td{border:1px solid #e6dfd8;padding:8px 10px;min-width:0;overflow-wrap:anywhere;word-break:break-word}.document th{background:#f5f0e8;text-align:left}
 [data-theme="dark"] .document th {
   background: color-mix(in srgb, var(--primary) 24%, #2a2622);
   color: #faf9f5;
@@ -253,10 +214,8 @@ body.focus-mode .statusbar{
   border-color: rgba(250,249,245,.18);
 }
 .document hr{border:0;height:1px;background:color-mix(in srgb,#252523 28%,#e6dfd8 72%);margin:34px 0}.document .page-break{display:flex;align-items:center;gap:14px;margin:46px -8px 44px;color:#6c6a64;font-size:.76rem;font-weight:650;letter-spacing:.11em;text-transform:uppercase;user-select:none;pointer-events:none}.document .page-break:before,.document .page-break:after{content:"";height:1px;flex:1;background:color-mix(in srgb,#252523 16%,#e6dfd8 84%)}.document .dochead{border-bottom:1px solid #e6dfd8;margin-bottom:1.5rem;padding-bottom:1rem}.document .dochead .label{display:none}.document .dochead .tags{font-size:.72rem;letter-spacing:.11em;color:#6c6a64;font-weight:400;text-align:center}.document .dochead h1{margin:.2rem 0 .25rem;text-align:center}.document .dochead p{color:#6c6a64;margin:0;text-align:center}.document p:empty,.document p:has(>br:only-child){min-height:1.5em}.document hr + p:empty,.document hr + p:has(>br:only-child){min-height:2.2em;margin-top:-.35rem;padding-top:.35rem}.task-checkbox{margin-right:.5rem}
-.menu-backdrop{position:fixed;inset:0;z-index:58;background:transparent}.menu-backdrop[hidden],.menu-sheet[hidden]{display:none}.menu-sheet{position:fixed;z-index:70;left:66px;top:10px;width:min(760px,calc(100vw - 112px));max-height:calc(100vh - 96px);overflow:auto;border:1px solid var(--paper-stroke);border-radius:22px;background:color-mix(in srgb,var(--bg-2) 96%,transparent);box-shadow:0 24px 80px rgba(0,0,0,.24);padding:12px}.menu-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--paper-stroke);padding:4px 4px 12px;margin-bottom:12px}.menu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.menu-section{border:1px solid var(--paper-stroke);border-radius:16px;padding:10px}.menu-section h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.menu-list{display:grid;gap:6px}.menu-action{min-height:38px;display:flex;align-items:center;gap:9px;padding:8px 10px;text-align:left}.menu-action strong{display:block;font-size:12.5px}.menu-action span span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.toast-stack{position:fixed;right:18px;bottom:86px;z-index:60;display:grid;gap:8px}.toast{background:rgba(24,23,21,.94);color:#faf9f5;border:1px solid rgba(250,249,245,.12);border-radius:14px;padding:10px 12px;min-width:220px;box-shadow:0 14px 34px rgba(0,0,0,.3)}.toast strong{display:block;font-size:13px}.toast span{display:block;font-size:12px;color:#d8d2c8;margin-top:2px}.apple-hud{position:fixed;left:50%;top:18%;z-index:120;display:flex;align-items:center;gap:9px;min-height:38px;padding:9px 14px;border-radius:999px;background:rgba(246,246,248,.78);color:#1d1d1f;border:1px solid rgba(60,60,67,.16);box-shadow:0 18px 48px rgba(0,0,0,.16),0 1px 0 rgba(255,255,255,.65) inset;backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);font-size:13px;font-weight:650;letter-spacing:-.01em;pointer-events:none;transform:translate(-50%,-8px) scale(.96);opacity:0;animation:appleHudIn 170ms var(--ease-out) forwards,appleHudOut 220ms var(--ease-out) 980ms forwards}.apple-hud::before{content:"";width:17px;height:17px;border-radius:50%;background:linear-gradient(180deg,#34c759,#24a447);box-shadow:0 0 0 1px rgba(0,0,0,.08) inset}.apple-hud::after{content:"";position:absolute;left:20px;top:17px;width:7px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg)}@keyframes appleHudIn{to{opacity:1;transform:translate(-50%,0) scale(1)}}@keyframes appleHudOut{to{opacity:0;transform:translate(-50%,-6px) scale(.98)}}[data-theme="dark"] .apple-hud{background:rgba(42,42,45,.76);color:#f4f4f2;border-color:rgba(244,244,242,.14);box-shadow:0 18px 54px rgba(0,0,0,.38),0 1px 0 rgba(255,255,255,.08) inset}.tab-suggest,.command-menu{position:fixed;z-index:50;display:none;border:1px solid rgba(204,120,92,.3);background:rgba(24,23,21,.96);color:#faf9f5;border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.35)}.tab-suggest{padding:8px 10px;gap:8px;align-items:center}.tab-suggest[data-visible="true"]{display:flex}.tab-suggest kbd{background:rgba(204,120,92,.16);border:1px solid rgba(204,120,92,.26);border-radius:8px;padding:3px 7px}.command-menu{width:min(390px,calc(100vw - 36px));max-height:340px;overflow:auto;padding:8px}.command-menu[data-visible="true"]{display:block}.command-header{padding:6px 7px 8px;color:#a09d96;font-size:11px;text-transform:uppercase;letter-spacing:.06em}.command-item{width:100%;border:1px solid transparent;border-radius:12px;background:transparent;color:inherit;text-align:left;padding:9px 10px;display:grid;grid-template-columns:1fr auto;gap:8px;cursor:pointer}.command-item[aria-selected="true"],.command-item:hover{background:rgba(204,120,92,.14);border-color:rgba(204,120,92,.3)}.command-item strong{display:block}.command-item span{font-size:12px;color:#d8d2c8}.command-item code{color:#fff4ee;background:rgba(204,120,92,.14);border-radius:8px;padding:3px 6px}.help-backdrop{position:fixed;inset:0;background:rgba(24,23,21,.56);z-index:70;display:grid;place-items:center;padding:24px}.help-backdrop[hidden]{display:none}.help-modal{width:min(820px,calc(100vw - 48px));max-height:calc(100vh - 48px);overflow:auto;background:#181715;color:#faf9f5;border:1px solid rgba(250,249,245,.12);border-radius:24px;padding:22px;box-shadow:0 34px 120px rgba(0,0,0,.58)}.help-head{display:flex;justify-content:space-between;gap:16px}.snippet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}.snippet-card{border:1px solid rgba(250,249,245,.12);border-radius:16px;background:transparent;color:inherit;padding:12px;text-align:left;cursor:pointer}.snippet-card:hover{background:rgba(204,120,92,.12)}
-.table-backdrop{position:fixed;inset:0;z-index:75;display:grid;place-items:center;padding:24px;background:rgba(17,17,20,.24);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.table-backdrop[hidden]{display:none}.table-modal{width:min(460px,calc(100vw - 32px));border:1px solid rgba(230,223,216,.82);border-radius:16px;background:rgba(255,253,248,.96);color:#141413;box-shadow:0 18px 52px rgba(20,20,19,.18),0 1px 0 rgba(255,255,255,.72) inset;padding:18px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}.table-modal h2{margin:2px 0 0;font-size:1.05rem;letter-spacing:0}.table-modal p{margin:0;color:#6c6a64;font-size:13px}.table-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0 14px}.table-field{display:grid;gap:6px}.table-field label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#6c6a64}.table-input{width:100%;border:1px solid #e6dfd8;border-radius:8px;background:#fffdf8;color:#141413;padding:10px 12px;font-size:15px;outline:none;transition:border-color 140ms var(--ease-out),box-shadow 140ms var(--ease-out),background 140ms var(--ease-out)}.table-input:focus{border-color:color-mix(in srgb,var(--primary) 48%,#e6dfd8);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 14%,transparent);background:#fff}.table-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.table-error{min-height:18px;color:var(--danger);font-size:12px;opacity:0}.table-error[data-visible="true"]{opacity:1}
-[data-theme="dark"] .table-backdrop{background:rgba(10,10,12,.58)}[data-theme="dark"] .table-modal{background:#242426;color:#f4f4f2;border-color:rgba(244,244,242,.16);box-shadow:0 18px 52px rgba(0,0,0,.44),0 1px 0 rgba(255,255,255,.06) inset}[data-theme="dark"] .table-modal p,[data-theme="dark"] .table-field label{color:#b7b1a8}[data-theme="dark"] .table-input{background:#151517;color:#f4f4f2;border-color:rgba(244,244,242,.18)}[data-theme="dark"] .table-input:focus{background:#1b1b1e;border-color:rgba(125,211,252,.78);box-shadow:0 0 0 3px rgba(125,211,252,.18)}
-[data-theme="dark"] .document{background:#242426;color:#f4f4f2;border-color:rgba(244,244,242,.12);box-shadow:0 24px 80px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.06)}[data-theme="dark"] .document pre{background:#0b0d12;color:#f8fafc;border-color:rgba(125,211,252,.24)}[data-theme="dark"] .document code:not(pre code){background:rgba(125,211,252,.14);color:#bae6fd;border-color:rgba(125,211,252,.22)}[data-theme="dark"] .document blockquote{background:#1b1b1e;color:#ddd9d2}[data-theme="dark"] .document th{background:rgba(125,211,252,.12);color:#f8fafc;border-color:rgba(244,244,242,.18)}[data-theme="dark"] .document td{background:rgba(255,255,255,.035);border-color:rgba(244,244,242,.14)}[data-theme="dark"] .menu-sheet,[data-theme="dark"] .help-modal,[data-theme="dark"] .command-menu{background:#242426;color:#f4f4f2;border-color:rgba(244,244,242,.14)}[data-theme="dark"] .tab-suggest,[data-theme="dark"] .toast{background:#0b0d12;color:#f8fafc;border-color:rgba(125,211,252,.20)}
+.menu-backdrop{position:fixed;inset:0;z-index:58;background:transparent}.menu-backdrop[hidden],.menu-sheet[hidden]{display:none}.menu-sheet{position:fixed;z-index:70;left:66px;top:10px;width:min(760px,calc(100vw - 112px));max-height:calc(100vh - 96px);overflow:auto;border:1px solid var(--paper-stroke);border-radius:22px;background:color-mix(in srgb,var(--bg-2) 96%,transparent);box-shadow:0 24px 80px rgba(0,0,0,.24);padding:12px}.menu-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--paper-stroke);padding:4px 4px 12px;margin-bottom:12px}.menu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.menu-section{border:1px solid var(--paper-stroke);border-radius:16px;padding:10px}.menu-section h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.menu-list{display:grid;gap:6px}.menu-action{min-height:38px;display:flex;align-items:center;gap:9px;padding:8px 10px;text-align:left}.menu-action strong{display:block;font-size:12.5px}.menu-action span span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.toast-stack{position:fixed;right:18px;bottom:86px;z-index:60;display:grid;gap:8px}.toast{background:rgba(24,23,21,.94);color:#faf9f5;border:1px solid rgba(250,249,245,.12);border-radius:14px;padding:10px 12px;min-width:220px;box-shadow:0 14px 34px rgba(0,0,0,.3)}.toast strong{display:block;font-size:13px}.toast span{display:block;font-size:12px;color:#d8d2c8;margin-top:2px}.tab-suggest,.command-menu{position:fixed;z-index:50;display:none;border:1px solid rgba(79,132,179,.3);background:rgba(24,23,21,.96);color:#faf9f5;border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.35)}.tab-suggest{padding:8px 10px;gap:8px;align-items:center}.tab-suggest[data-visible="true"]{display:flex}.tab-suggest kbd{background:rgba(79,132,179,.16);border:1px solid rgba(79,132,179,.26);border-radius:8px;padding:3px 7px}.command-menu{width:min(390px,calc(100vw - 36px));max-height:340px;overflow:auto;padding:8px}.command-menu[data-visible="true"]{display:block}.command-header{padding:6px 7px 8px;color:#a09d96;font-size:11px;text-transform:uppercase;letter-spacing:.06em}.command-item{width:100%;border:1px solid transparent;border-radius:12px;background:transparent;color:inherit;text-align:left;padding:9px 10px;display:grid;grid-template-columns:1fr auto;gap:8px;cursor:pointer}.command-item[aria-selected="true"],.command-item:hover{background:rgba(79,132,179,.14);border-color:rgba(79,132,179,.3)}.command-item strong{display:block}.command-item span{font-size:12px;color:#d8d2c8}.command-item code{color:#fff4ee;background:rgba(79,132,179,.14);border-radius:8px;padding:3px 6px}.help-backdrop,.table-backdrop{position:fixed;inset:0;background:var(--dialog-backdrop);z-index:70;display:grid;place-items:center;padding:24px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}.table-backdrop{z-index:75}.help-backdrop[hidden],.table-backdrop[hidden]{display:none}.help-modal,.table-modal{overflow:auto;background:var(--dialog-surface);color:var(--dialog-text);border:1px solid var(--dialog-border);box-shadow:0 24px 72px rgba(0,0,0,.28);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}.help-modal{width:min(820px,calc(100vw - 48px));max-height:calc(100vh - 48px);border-radius:18px;padding:20px}.table-modal{width:min(460px,calc(100vw - 32px));border-radius:16px;padding:20px}.help-head,.dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}.dialog-heading{min-width:0}.dialog-heading h2,.table-modal h2{margin:0;font-size:1.08rem;line-height:1.25;letter-spacing:-.015em;color:var(--dialog-text)}.dialog-description,.table-modal p{margin:5px 0 0;color:var(--dialog-muted);font-size:13px;line-height:1.45}.dialog-close{width:34px;height:34px;flex:0 0 auto;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--dialog-muted);display:grid;place-items:center;cursor:pointer;transition:background 140ms var(--ease-out),border-color 140ms var(--ease-out),color 140ms var(--ease-out)}.dialog-close:hover{background:var(--dialog-hover);border-color:var(--dialog-control-border);color:var(--dialog-text)}.dialog-close:focus-visible{outline:2px solid var(--dialog-focus);outline-offset:2px}.dialog-close .icon{color:currentColor}.table-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 14px}.table-field{display:grid;gap:7px}.table-field label{font-size:12px;font-weight:600;letter-spacing:0;color:var(--dialog-muted)}.table-input{width:100%;border:1px solid var(--dialog-control-border);border-radius:8px;background:var(--dialog-control-bg);color:var(--dialog-text);padding:10px 12px;font-size:15px;outline:none;transition:border-color 140ms var(--ease-out),box-shadow 140ms var(--ease-out),background 140ms var(--ease-out)}.table-input:focus{border-color:var(--dialog-focus);box-shadow:0 0 0 3px color-mix(in srgb,var(--dialog-focus) 18%,transparent)}.table-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.dialog-button{min-height:36px;min-width:100px;border:1px solid var(--dialog-control-border);border-radius:8px;background:transparent;color:var(--dialog-text);padding:0 14px;font-size:12.5px;font-weight:650;cursor:pointer;transition:background 140ms var(--ease-out),border-color 140ms var(--ease-out),transform 100ms var(--ease-out)}.dialog-button:hover{background:var(--dialog-hover);border-color:color-mix(in srgb,var(--dialog-focus) 34%,var(--dialog-control-border))}.dialog-button:active{transform:translateY(1px)}.dialog-button:focus-visible{outline:2px solid var(--dialog-focus);outline-offset:2px}.dialog-button.primary{background:var(--dialog-primary-bg);border-color:var(--dialog-primary-bg);color:var(--dialog-primary-text)}.dialog-button.primary:hover{background:color-mix(in srgb,var(--dialog-primary-bg) 88%,var(--dialog-text));border-color:color-mix(in srgb,var(--dialog-primary-bg) 88%,var(--dialog-text))}.table-error{min-height:18px;color:var(--danger);font-size:12px;opacity:0}.table-error[data-visible="true"]{opacity:1}.help-modal .menu-action,.help-modal .cmd-button{color:var(--dialog-text);border-color:var(--dialog-control-border)}.help-modal .menu-action span span,.help-modal label,.help-modal #findStatus{color:var(--dialog-muted)!important}.help-modal .menu-action:hover,.help-modal .cmd-button:hover{background:var(--dialog-hover);border-color:color-mix(in srgb,var(--dialog-focus) 34%,var(--dialog-control-border))}.help-modal .cmd-button.primary{background:var(--dialog-primary-bg);border-color:var(--dialog-primary-bg);color:var(--dialog-primary-text)}.help-modal input[type="text"]{background:var(--dialog-control-bg)!important;border-color:var(--dialog-control-border)!important;color:var(--dialog-text)!important}.help-modal input[type="text"]:focus{outline:2px solid var(--dialog-focus);outline-offset:1px}.snippet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}.snippet-card{border:1px solid var(--dialog-control-border);border-radius:12px;background:transparent;color:var(--dialog-text);padding:12px;text-align:left;cursor:pointer}.snippet-card:hover{background:var(--dialog-hover)}
+[data-theme="dark"] .document{background:var(--paper);color:var(--text);border-color:var(--paper-stroke);box-shadow:0 24px 80px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.04)}[data-theme="dark"] .document pre{background:var(--code-block-bg);color:var(--code-block-fg);border-color:var(--code-block-border)}[data-theme="dark"] .document code:not(pre code){background:var(--code-bg);color:var(--code-fg);border-color:var(--code-border)}[data-theme="dark"] .document blockquote{background:var(--quote-bg);color:var(--quote-fg)}[data-theme="dark"] .document th{background:color-mix(in srgb,var(--primary) 14%,var(--paper));color:var(--text);border-color:var(--paper-stroke)}[data-theme="dark"] .document td{background:color-mix(in srgb,var(--paper) 96%,white 4%);border-color:var(--paper-stroke)}[data-theme="dark"] .menu-sheet,[data-theme="dark"] .help-modal,[data-theme="dark"] .command-menu{background:var(--dialog-surface);color:var(--dialog-text);border-color:var(--dialog-border)}[data-theme="dark"] .tab-suggest,[data-theme="dark"] .toast{background:var(--surface-dark);color:var(--text);border-color:var(--paper-stroke)}
 @media(max-width:900px){.app-shell,.app-shell.tools-open{grid-template-columns:1fr;grid-template-areas:"main"}.rail,.tools{display:none}.topbar{display:flex;left:10px;right:10px;bottom:10px;transform:none;justify-content:flex-start;overflow-x:auto;max-width:calc(100vw - 20px);border-radius:18px}.topbar::before{border-radius:17px}.document{width:100%;padding:34px 24px 96px}.editor-frame{padding:10px 10px 92px}.menu-sheet{left:10px;top:64px;width:calc(100vw - 20px)}.menu-grid,.snippet-grid{grid-template-columns:1fr}.toast-stack{right:10px;bottom:86px}.table-modal{width:calc(100vw - 28px)}.table-grid{grid-template-columns:1fr}}
 
 /* === COMMAND PALETTE V4 (Ctrl+K) - Premium Glass Look === */
@@ -317,7 +276,7 @@ body.focus-mode .statusbar{
 .command-palette-item .shortcut{
   font-family: "Cascadia Code", monospace;
   font-size:11px;
-  background: rgba(204,120,92,.12);
+  background: rgba(79,132,179,.12);
   padding:2px 6px;
   border-radius:6px;
   color:var(--primary);
@@ -340,16 +299,25 @@ body.focus-mode .statusbar{
 /* Codeblock Language Labels */
 .document pre {
   position: relative;
-  padding-top: 22px !important;
+  padding: 0 !important;
+}
+.document pre code {
+  display: block;
+  width: 100%;
+  min-height: 64px;
+  padding: 18px !important;
+}
+.document pre[data-lang] code {
+  padding-top: 28px !important;
 }
 .document pre .code-lang {
   position: absolute;
   top: 4px;
   right: 8px;
   font-size: 10px;
-  font-family: "Cascadia Code", Consolas, monospace;
-  background: rgba(0,0,0,0.35);
-  color: #ddd;
+  font-family: "Cascadia Code","Cascadia Mono",Consolas,ui-monospace,monospace;
+  background: color-mix(in srgb,var(--primary) 10%,transparent);
+  color: var(--primary);
   padding: 1px 6px;
   border-radius: 4px;
   pointer-events: none;
@@ -358,115 +326,78 @@ body.focus-mode .statusbar{
   letter-spacing: 0.5px;
 }
 [data-theme="dark"] .document pre .code-lang {
-  background: rgba(255,255,255,0.12);
-  color: #ccc;
+  background: color-mix(in srgb,var(--primary) 14%,transparent);
+  color: var(--primary);
 }
+
+
 </style>
 <style id="msp-windows-shell-overrides">
 :root{
-  --windows-editor-max:900px;
-  --windows-editor-font-size:16px;
-  --windows-editor-line-height:1.68;
+  --windows-editor-max:848px;
+  --windows-editor-font-size:20px;
+  --windows-editor-line-height:1.45;
+  --windows-reference-font-size:20px;
+  --windows-reference-line-height:1.45;
+  --w-editorial-paper:#fefefe;
+  --w-editorial-rule:#d8d8d4;
+  --w-editorial-accent:#4f84b3;
 }
 body.windows-native-shell[data-theme="light"]{
-  --w-app-bg:#f4f1eb;
-  --w-frame-bg:#ede8df;
-  --w-paper:#fffdf8;
-  --w-paper-border:#ded5c9;
-  --w-text:#171614;
-  --w-muted:#5f5a52;
-  --w-line:#d8d2c8;
-  --w-link:#0f5fb8;
-  --w-inline-code:#173b63;
-  --w-inline-code-bg:#e8f1ff;
-  --w-inline-code-border:#8fb0df;
-  --w-pre-bg:#181b20;
-  --w-pre-text:#f8fafc;
-  --w-pre-border:#343a44;
-  --w-quote-bg:#f1f4f8;
-  --w-quote-text:#20242f;
-  --w-quote-border:#8b3f2d;
-  --w-table-head:#eee6de;
-  --w-table-cell:#fffdf8;
-  --w-table-border:#d6ccc1;
-  --w-selection-bg:#2f6fdf;
+  --w-editorial-paper:#fefefe;
+  --w-editorial-rule:#d7d8d4;
+  --w-editorial-accent:#4f84b3;
+  --w-app-bg:var(--w-editorial-paper);
+  --w-frame-bg:var(--w-editorial-paper);
+  --w-paper:var(--w-editorial-paper);
+  --w-paper-border:#ececeb;
+  --w-text:#292a28;
+  --w-muted:#777a76;
+  --w-line:var(--w-editorial-rule);
+  --w-link:#446d92;
+  --w-inline-code:#2f5f87;
+  --w-inline-code-bg:#f8fbfd;
+  --w-inline-code-border:#cbdbe6;
+  --w-pre-bg:#f3f5f7;
+  --w-pre-text:#20262b;
+  --w-pre-border:#d3dbe1;
+  --w-code-block-accent:#4f84b3;
+  --w-quote-bg:transparent;
+  --w-quote-text:#565954;
+  --w-quote-border:#c8c9c5;
+  --w-table-head:#f5f5f3;
+  --w-table-cell:var(--w-editorial-paper);
+  --w-table-border:#ddddda;
+  --w-selection-bg:#4f84b3;
   --w-selection-text:#ffffff;
-  --w-shadow:0 18px 52px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.72);
-}
-body.windows-native-shell[data-theme="sepia"]{
-  --w-app-bg:#eee4d2;
-  --w-frame-bg:#e6dac5;
-  --w-paper:#fff7e6;
-  --w-paper-border:#d8c4a5;
-  --w-text:#21180e;
-  --w-muted:#6b5840;
-  --w-line:#d3bea0;
-  --w-link:#8a3f12;
-  --w-inline-code:#3d2913;
-  --w-inline-code-bg:#f0dfc2;
-  --w-inline-code-border:#c49c68;
-  --w-pre-bg:#241c14;
-  --w-pre-text:#fff4df;
-  --w-pre-border:#5a4734;
-  --w-quote-bg:#f4e8d2;
-  --w-quote-text:#2d2116;
-  --w-quote-border:#9b5a24;
-  --w-table-head:#ead8ba;
-  --w-table-cell:#fff7e6;
-  --w-table-border:#d4bd99;
-  --w-selection-bg:#92551f;
-  --w-selection-text:#ffffff;
-  --w-shadow:0 18px 52px rgba(72,48,24,.22), inset 0 1px 0 rgba(255,255,255,.62);
 }
 body.windows-native-shell[data-theme="dark"]{
-  --w-app-bg:#11100f;
-  --w-frame-bg:#151412;
-  --w-paper:#24221f;
-  --w-paper-border:#403b34;
-  --w-text:#f6f1e8;
-  --w-muted:#c8bfb2;
-  --w-line:#5c554c;
-  --w-link:#8fc5ff;
-  --w-inline-code:#d7e7ff;
-  --w-inline-code-bg:#172236;
-  --w-inline-code-border:#34527c;
-  --w-pre-bg:#111318;
-  --w-pre-text:#f7fbff;
-  --w-pre-border:#3a414c;
-  --w-quote-bg:#2b2a27;
-  --w-quote-text:#eee6da;
-  --w-quote-border:#cc785c;
-  --w-table-head:#332f2a;
-  --w-table-cell:#292622;
-  --w-table-border:#4b453d;
-  --w-selection-bg:#8a4fdf;
+  --w-editorial-paper:#191b1e;
+  --w-editorial-rule:#34383b;
+  --w-editorial-accent:#72a8d1;
+  --w-app-bg:var(--w-editorial-paper);
+  --w-frame-bg:var(--w-editorial-paper);
+  --w-paper:var(--w-editorial-paper);
+  --w-paper-border:#30343a;
+  --w-text:#eef1f3;
+  --w-muted:#a2a8ae;
+  --w-line:var(--w-editorial-rule);
+  --w-link:#8fbde0;
+  --w-inline-code:#add0e9;
+  --w-inline-code-bg:#15222c;
+  --w-inline-code-border:#29465a;
+  --w-pre-bg:#14191e;
+  --w-pre-text:#e7edf2;
+  --w-pre-border:#2d3942;
+  --w-code-block-accent:#72a8d1;
+  --w-quote-bg:transparent;
+  --w-quote-text:#d3d7da;
+  --w-quote-border:#4b5055;
+  --w-table-head:#202327;
+  --w-table-cell:var(--w-editorial-paper);
+  --w-table-border:#34383d;
+  --w-selection-bg:#6297bf;
   --w-selection-text:#ffffff;
-  --w-shadow:0 18px 52px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.04);
-}
-body.windows-native-shell[data-theme="midnight"]{
-  --w-app-bg:#0b0f17;
-  --w-frame-bg:#101620;
-  --w-paper:#171d29;
-  --w-paper-border:#334155;
-  --w-text:#eef4ff;
-  --w-muted:#bac8dc;
-  --w-line:#48576d;
-  --w-link:#78b7ff;
-  --w-inline-code:#d6e8ff;
-  --w-inline-code-bg:#102742;
-  --w-inline-code-border:#315c8b;
-  --w-pre-bg:#090d14;
-  --w-pre-text:#f8fbff;
-  --w-pre-border:#2d394b;
-  --w-quote-bg:#1f2937;
-  --w-quote-text:#e5edf8;
-  --w-quote-border:#5fb3f8;
-  --w-table-head:#202a3a;
-  --w-table-cell:#1a2230;
-  --w-table-border:#3b4a60;
-  --w-selection-bg:#316fd6;
-  --w-selection-text:#ffffff;
-  --w-shadow:0 18px 52px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.04);
 }
 body.windows-native-shell .rail,
 body.windows-native-shell .tools,
@@ -475,44 +406,58 @@ body.windows-native-shell .menu-sheet,
 body.windows-native-shell .menu-backdrop{
   display:none !important;
 }
+html:has(body.windows-native-shell){scrollbar-width:none}
+html:has(body.windows-native-shell)::-webkit-scrollbar{width:0;height:0}
+body.windows-native-shell{
+  scrollbar-width:none;
+  background:var(--w-paper) !important;
+}
+body.windows-native-shell::-webkit-scrollbar{width:0;height:0}
 body.windows-native-shell .app-shell,
 body.windows-native-shell .app-shell.tools-open{
   display:grid !important;
   grid-template-columns:minmax(0,1fr) !important;
   grid-template-areas:"main" !important;
   min-height:100vh;
-  background:var(--w-app-bg);
+  background:var(--w-paper);
 }
 body.windows-native-shell .main{
   min-height:100vh;
+  background:var(--w-paper);
 }
 body.windows-native-shell .editor-frame{
-  min-height:calc(100vh - 34px);
-  padding:28px 28px 64px !important;
-  background:var(--w-frame-bg) !important;
+  min-height:100vh;
+  padding:0 !important;
+  background:var(--w-paper) !important;
+  overflow-x:hidden;
 }
 body.windows-native-shell .document{
-  width:min(var(--windows-editor-max),100%) !important;
-  max-width:100%;
-  min-height:calc(100vh - 158px);
+  width:100% !important;
+  max-width:calc(var(--windows-editor-max,848px) - 48px);
+  min-height:100vh;
   margin:0 auto;
-  padding:54px 64px 84px !important;
-  border-radius:10px !important;
+  padding:32px 76px 88px !important;
+  border-radius:0 !important;
   background:var(--w-paper) !important;
-  border:1px solid var(--w-paper-border) !important;
-  box-shadow:var(--w-shadow) !important;
-  font-size:var(--windows-editor-font-size) !important;
-  line-height:var(--windows-editor-line-height) !important;
+  border:0 !important;
+  box-shadow:none !important;
+  font-family:"Times New Roman",Times,serif;
+  font-size:var(--windows-editor-font-size,var(--windows-reference-font-size)) !important;
+  line-height:var(--windows-editor-line-height,var(--windows-reference-line-height)) !important;
   color:var(--w-text) !important;
   caret-color:var(--w-text);
+  transition:none;
 }
 body.windows-native-shell .document :where(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th){
   color:var(--w-text) !important;
 }
+body.windows-native-shell .document p{
+  margin:.08rem 0 1.12em;
+}
 body.windows-native-shell .document a{
   color:var(--w-link) !important;
-  text-decoration-color:color-mix(in srgb,var(--w-link) 58%,transparent);
-  text-underline-offset:.18em;
+  text-decoration-color:color-mix(in srgb,var(--w-link) 52%,transparent);
+  text-underline-offset:.16em;
 }
 body.windows-native-shell .document code:not(pre code){
   color:var(--w-inline-code) !important;
@@ -523,14 +468,54 @@ body.windows-native-shell .document pre{
   color:var(--w-pre-text) !important;
   background:var(--w-pre-bg) !important;
   border-color:var(--w-pre-border) !important;
+  border-left:3px solid var(--w-code-block-accent) !important;
+  border-radius:10px !important;
 }
 body.windows-native-shell .document pre code{
   color:inherit !important;
+  padding-top:32px !important;
+}
+body.windows-native-shell .document pre:not([data-lang])::before{
+  content:"CODE";
+  position:absolute;
+  top:8px;
+  right:12px;
+  z-index:2;
+  font-family:"Cascadia Code","Cascadia Mono",Consolas,ui-monospace,monospace;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.12em;
+  color:var(--w-code-block-accent);
+  opacity:.8;
+  pointer-events:none;
+  user-select:none;
+}
+body.windows-native-shell .document pre .code-lang{
+  top:8px;
+  right:12px;
+  padding:0;
+  border-radius:0;
+  background:transparent;
+  color:var(--w-code-block-accent);
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  opacity:.8;
 }
 body.windows-native-shell .document blockquote{
+  width:min(52%,338px);
+  margin:44px 0 38px;
+  padding:20px 0 0;
   color:var(--w-quote-text) !important;
   background:var(--w-quote-bg) !important;
-  border-left-color:var(--w-quote-border) !important;
+  border:0 !important;
+  border-top:1px solid var(--w-quote-border) !important;
+  border-radius:0 !important;
+  font-style:italic;
+}
+body.windows-native-shell .document blockquote p{
+  color:var(--w-quote-text) !important;
 }
 body.windows-native-shell .document th{
   color:var(--w-text) !important;
@@ -547,32 +532,1165 @@ body.windows-native-shell .document ::selection{
   background:var(--w-selection-bg);
 }
 body.windows-native-shell .document:focus{
-  box-shadow:var(--w-shadow),0 0 0 2px rgba(204,120,92,.18) !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
 }
 body.windows-native-shell .document > h1:first-child{
-  font-size:2rem;
-  letter-spacing:0;
+  margin:0 0 24px !important;
+  font-family:"Times New Roman",Times,serif;
+  font-size:48px !important;
+  line-height:1.08;
+  letter-spacing:-.025em;
+  font-weight:400;
   text-align:center;
 }
 body.windows-native-shell .document > h1:first-child::after{
   content:"";
   display:block;
   height:1px;
-  background:var(--w-line) !important;
-  width:min(62%,560px);
-  margin:20px auto 0;
-  opacity:1;
+  width:272px;
+  max-width:70%;
+  margin:18px auto 0;
+  background:var(--w-editorial-rule) !important;
+  opacity:.82;
 }
-body.windows-native-shell .statusbar{
-  left:0 !important;
+body.windows-native-shell.focus-mode .editor-frame{
+  padding-top:0 !important;
+}
+body.windows-native-shell.focus-mode .document{
+  max-width:100% !important;
+  box-shadow:none !important;
+}
+.overlay-scrollbar{
+  position:fixed;
+  z-index:95;
+  top:10px;
+  right:3px;
+  bottom:10px;
+  width:12px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 120ms ease-out;
+  outline:none;
+}
+.overlay-scrollbar.scrollable{pointer-events:auto}
+.overlay-scrollbar.visible,
+.overlay-scrollbar:hover,
+.overlay-scrollbar:focus-visible{opacity:1}
+.overlay-scrollbar-thumb{
+  position:absolute;
+  top:0;
+  right:4px;
+  width:3px;
+  min-height:32px;
+  border-radius:999px;
+  background:color-mix(in srgb,var(--w-muted) 42%,transparent);
+  cursor:default;
+  touch-action:none;
+}
+.overlay-scrollbar:hover .overlay-scrollbar-thumb,
+.overlay-scrollbar:focus-visible .overlay-scrollbar-thumb{
+  background:color-mix(in srgb,var(--w-muted) 62%,transparent);
 }
 @media(max-width:900px){
-  body.windows-native-shell .editor-frame{padding:12px 12px 58px !important}
-  body.windows-native-shell .document{padding:34px 24px 76px !important;border-radius:8px !important}
+  body.windows-native-shell .document{padding:28px 44px 78px !important}
+  body.windows-native-shell .document > h1:first-child{font-size:42px !important}
+}
+@media(max-width:640px){
+  body.windows-native-shell .document{padding:24px 28px 74px !important}
+  body.windows-native-shell .document > h1:first-child{font-size:38px !important}
+  body.windows-native-shell .document blockquote{width:min(72%,338px)}
+}
+
+/* === WINDOWS V2 PHASE 5: TRANSIENT SURFACES + ACCESSIBILITY === */
+body.windows-native-shell :where(button,input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--dialog-focus);
+  outline-offset:2px;
+}
+body.windows-native-shell .help-backdrop,
+body.windows-native-shell .table-backdrop{
+  padding:12px;
+}
+body.windows-native-shell .help-modal,
+body.windows-native-shell .table-modal{
+  max-width:calc(100vw - 24px);
+  max-height:calc(100vh - 24px);
+  border-radius:16px;
+  border-color:var(--dialog-border);
+  background:var(--dialog-surface);
+  color:var(--dialog-text);
+}
+body.windows-native-shell #helpBackdrop .help-modal{
+  width:min(640px,calc(100vw - 24px));
+}
+body.windows-native-shell #exportBackdrop .help-modal{
+  width:min(420px,calc(100vw - 24px));
+}
+body.windows-native-shell #findReplaceBackdrop .help-modal{
+  width:min(480px,calc(100vw - 24px));
+}
+body.windows-native-shell .command-menu{
+  top:clamp(12px,12vh,96px);
+  width:min(620px,calc(100vw - 24px));
+  max-height:calc(100vh - 24px);
+  border-color:var(--dialog-border);
+  background:color-mix(in srgb,var(--dialog-surface) 94%,transparent);
+}
+body.windows-native-shell .command-palette-list{
+  max-height:min(320px,calc(100vh - 104px));
+}
+body.windows-native-shell .tab-suggest{
+  max-width:calc(100vw - 24px);
+}
+body.windows-native-shell .toast-stack{
+  left:50%;
+  top:18px;
+  right:auto;
+  bottom:auto;
+  width:min(360px,calc(100vw - 32px));
+  max-width:calc(100vw - 32px);
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+body.windows-native-shell .toast{
+  position:relative;
+  min-width:0;
+  width:100%;
+  padding:10px 14px 10px 16px;
+  overflow:hidden;
+  color:#26323c;
+  background:rgba(250,252,253,.94);
+  border:1px solid rgba(79,132,179,.22);
+  border-radius:14px;
+  box-shadow:0 14px 38px rgba(30,42,52,.14),0 1px 0 rgba(255,255,255,.8) inset;
+  backdrop-filter:blur(22px) saturate(1.18);
+  -webkit-backdrop-filter:blur(22px) saturate(1.18);
+}
+body.windows-native-shell .toast::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:8px;
+  bottom:8px;
+  width:3px;
+  border-radius:999px;
+  background:var(--primary);
+}
+body.windows-native-shell .toast strong{
+  color:inherit;
+  font-size:12.5px;
+  line-height:1.25;
+  font-weight:650;
+}
+body.windows-native-shell .toast span{
+  color:#66727b;
+  font-size:11.5px;
+  line-height:1.35;
+  margin-top:2px;
+}
+body.windows-native-shell[data-theme="dark"] .toast{
+  color:#eef2f5;
+  background:rgba(29,32,36,.94);
+  border-color:rgba(112,165,207,.26);
+  box-shadow:0 16px 42px rgba(0,0,0,.34),0 1px 0 rgba(255,255,255,.05) inset;
+}
+body.windows-native-shell[data-theme="dark"] .toast span{
+  color:#aeb8c0;
+}
+body.windows-native-shell .find-actions{
+  flex-wrap:wrap;
+}
+body.windows-native-shell .find-actions .cmd-button{
+  flex:1 1 96px;
+  justify-content:center;
+}
+@media (max-width:560px){
+  body.windows-native-shell .help-modal,
+  body.windows-native-shell .table-modal{
+    padding:16px;
+  }
+  body.windows-native-shell .table-grid{
+    grid-template-columns:1fr;
+  }
+  body.windows-native-shell #helpBackdrop .snippet-card{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"title" "desc" "command";
+  }
+  body.windows-native-shell #helpBackdrop .snippet-card code{
+    justify-self:start;
+    margin-top:4px;
+  }
+}
+@media (prefers-reduced-motion: reduce){
+  html:focus-within{scroll-behavior:auto}
+  body.windows-native-shell *,
+  body.windows-native-shell *::before,
+  body.windows-native-shell *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+@media (forced-colors: active){
+  body.windows-native-shell .help-modal,
+  body.windows-native-shell .table-modal,
+  body.windows-native-shell .command-menu,
+  body.windows-native-shell .tab-suggest,
+  body.windows-native-shell .toast{
+    background:Canvas !important;
+    color:CanvasText !important;
+    border:1px solid CanvasText !important;
+    box-shadow:none !important;
+  }
+  body.windows-native-shell :where(button,input,select,textarea,[tabindex]):focus-visible{
+    outline-color:Highlight !important;
+  }
+}
+
+/* === FINAL VISUAL + PRINT POLISH (Windows) === */
+/* Suchen & Ersetzen: nur den Editor weichzeichnen, ohne dunklen Schleier. */
+#findReplaceBackdrop{
+  background:transparent;
+  backdrop-filter:blur(11px);
+  -webkit-backdrop-filter:blur(11px);
+}
+
+/* Smart-Tab-Hilfe: ruhige einspaltige Befehlsliste statt Kartenraster. */
+#helpBackdrop .help-modal{
+  width:min(640px,calc(100vw - 48px));
+}
+#helpBackdrop .snippet-grid{
+  grid-template-columns:1fr;
+  gap:0;
+  margin-top:16px;
+  border-top:1px solid var(--dialog-control-border);
+}
+#helpBackdrop .snippet-card{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-areas:"title command" "desc command";
+  align-items:center;
+  column-gap:18px;
+  row-gap:2px;
+  padding:11px 6px;
+  border:0;
+  border-bottom:1px solid var(--dialog-control-border);
+  border-radius:0;
+  background:transparent;
+  color:var(--dialog-text);
+  text-align:left;
+}
+#helpBackdrop .snippet-card strong{
+  grid-area:title;
+  font-size:13px;
+  line-height:1.35;
+  font-weight:650;
+}
+#helpBackdrop .snippet-card p{
+  grid-area:desc;
+  margin:0;
+  color:var(--dialog-muted);
+  font-size:11.5px;
+  line-height:1.4;
+}
+#helpBackdrop .snippet-card code{
+  grid-area:command;
+  align-self:center;
+  min-width:48px;
+  padding:4px 8px;
+  border:1px solid var(--dialog-control-border);
+  border-radius:7px;
+  background:var(--dialog-control-bg);
+  color:var(--dialog-text);
+  font-size:11.5px;
+  font-weight:650;
+  text-align:center;
+  white-space:nowrap;
+}
+#helpBackdrop .snippet-card:hover{
+  background:color-mix(in srgb,var(--dialog-hover) 72%,transparent);
+}
+
+/* === WINDOWS V2 PHASE 5: EDITORIAL TRANSIENT SURFACES === */
+/*
+  The transient UI should read as one light editorial/glass surface rather than
+  a stack of WinUI-style cards. These overrides intentionally change presentation
+  only; command routing, keyboard handling and dialog semantics stay unchanged.
+*/
+body.windows-native-shell .command-menu{
+  top:clamp(18px,10vh,74px);
+  width:min(520px,calc(100vw - 32px));
+  max-height:min(372px,calc(100vh - 32px));
+  padding:0;
+  overflow:hidden;
+  color:#252525;
+  background:rgba(246,246,244,.95);
+  border:1px solid rgba(28,28,28,.11);
+  border-radius:20px;
+  box-shadow:0 22px 64px rgba(24,24,24,.14),0 1px 0 rgba(255,255,255,.78) inset;
+  backdrop-filter:blur(28px) saturate(1.05);
+  -webkit-backdrop-filter:blur(28px) saturate(1.05);
+}
+body.windows-native-shell .command-palette-header{
+  position:relative;
+  padding:11px 16px 8px;
+  background:transparent;
+  border:0;
+}
+body.windows-native-shell .command-palette-header::after{
+  content:"";
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:0;
+  height:1px;
+  background:rgba(28,28,28,.11);
+}
+body.windows-native-shell .command-palette-input{
+  min-height:42px;
+  padding:8px 12px;
+  color:#252525;
+  background:rgba(78,80,76,.045);
+  border:1px solid rgba(28,28,28,.08);
+  border-radius:12px;
+  box-shadow:none;
+  font-size:14.5px;
+}
+body.windows-native-shell .command-palette-input::placeholder{color:#7e7e78}
+body.windows-native-shell .command-palette-input:focus-visible{
+  outline:none;
+  border-color:rgba(79,132,179,.34);
+  box-shadow:0 0 0 1px rgba(79,132,179,.18);
+}
+body.windows-native-shell .command-palette-list{
+  max-height:min(310px,calc(100vh - 100px));
+  padding:8px 8px 10px;
+}
+body.windows-native-shell .command-palette-item{
+  min-height:44px;
+  padding:9px 10px;
+  gap:10px;
+  border:0;
+  border-radius:10px;
+  color:#2a2b29;
+}
+body.windows-native-shell .command-palette-item:hover,
+body.windows-native-shell .command-palette-item.selected{
+  background:rgba(28,28,28,.058);
+  border:0;
+}
+body.windows-native-shell .command-palette-item .icon{
+  width:17px;
+  height:17px;
+  color:#7d7f79;
+}
+body.windows-native-shell .command-palette-item .label{font-weight:520}
+body.windows-native-shell .command-palette-item .desc{
+  color:#6d6f6a;
+  font-size:11.5px;
+}
+body.windows-native-shell .command-palette-item .shortcut{
+  color:#666863;
+  background:rgba(28,28,28,.042);
+  border:0;
+  padding:2px 8px;
+  border-radius:7px;
+  font-size:10.5px;
+  letter-spacing:.01em;
+}
+
+body.windows-native-shell #findReplaceBackdrop,
+body.windows-native-shell #helpBackdrop{
+  background:transparent;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+body.windows-native-shell #findReplaceBackdrop .help-modal,
+body.windows-native-shell #helpBackdrop .help-modal{
+  color:#252525;
+  background:rgba(255,255,255,.93);
+  border:1px solid rgba(28,28,28,.09);
+  border-radius:20px;
+  box-shadow:0 22px 64px rgba(24,24,24,.13),0 1px 0 rgba(255,255,255,.72) inset;
+  backdrop-filter:blur(28px) saturate(1.08);
+  -webkit-backdrop-filter:blur(28px) saturate(1.08);
+}
+body.windows-native-shell #findReplaceBackdrop .help-modal{
+  width:min(430px,calc(100vw - 32px));
+  padding:18px 20px 14px;
+}
+body.windows-native-shell #findReplaceBackdrop .help-head,
+body.windows-native-shell #helpBackdrop .help-head{
+  align-items:flex-start;
+  gap:12px;
+}
+body.windows-native-shell #findReplaceBackdrop .dialog-heading h2,
+body.windows-native-shell #helpBackdrop .dialog-heading h2{
+  font-size:15px;
+  font-weight:650;
+  letter-spacing:-.01em;
+}
+body.windows-native-shell #findReplaceBackdrop .dialog-description,
+body.windows-native-shell #helpBackdrop .dialog-description{
+  margin-top:4px;
+  color:#7b7b76!important;
+  font-size:12px;
+  line-height:1.45;
+}
+body.windows-native-shell #findReplaceBackdrop label,
+body.windows-native-shell #findReplaceBackdrop #findStatus{color:#7b7b76!important}
+body.windows-native-shell #findReplaceBackdrop input[type="text"]{
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid rgba(36,36,36,.16)!important;
+  border-radius:0!important;
+  padding:10px 0 8px!important;
+  color:#252525!important;
+  box-shadow:none!important;
+}
+body.windows-native-shell #findReplaceBackdrop input[type="text"]:focus{
+  outline:none!important;
+  border-bottom-color:rgba(36,36,36,.52)!important;
+  box-shadow:none!important;
+}
+body.windows-native-shell #findReplaceBackdrop .find-actions{
+  margin-top:6px!important;
+  padding-top:10px;
+  border-top:1px solid rgba(28,28,28,.08);
+  gap:4px!important;
+}
+body.windows-native-shell #findReplaceBackdrop .cmd-button{
+  min-width:0!important;
+  min-height:32px;
+  padding:6px 9px!important;
+  color:#4a4a47;
+  background:transparent;
+  border:0;
+  border-radius:8px;
+  box-shadow:none;
+  font-weight:560;
+}
+body.windows-native-shell #findReplaceBackdrop .cmd-button:hover{
+  background:rgba(28,28,28,.045);
+  border:0;
+}
+body.windows-native-shell #findReplaceBackdrop .cmd-button.primary{
+  background:#2d2d2b;
+  color:#fff;
+  border:0;
+  padding-left:11px!important;
+  padding-right:11px!important;
+}
+body.windows-native-shell #findReplaceBackdrop .cmd-button.primary:hover{background:#1f1f1e}
+body.windows-native-shell #findReplaceBackdrop .dialog-close,
+body.windows-native-shell #helpBackdrop .dialog-close{
+  width:28px;
+  height:28px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:#85857f;
+  box-shadow:none;
+}
+body.windows-native-shell #findReplaceBackdrop .dialog-close:hover,
+body.windows-native-shell #helpBackdrop .dialog-close:hover{
+  background:rgba(28,28,28,.05);
+  border:0;
+  color:#363634;
+}
+body.windows-native-shell #findReplaceBackdrop .cmd-button:focus-visible,
+body.windows-native-shell #findReplaceBackdrop .dialog-close:focus-visible,
+body.windows-native-shell #helpBackdrop .dialog-close:focus-visible,
+body.windows-native-shell #helpBackdrop .snippet-card:focus-visible{
+  outline:2px solid rgba(36,36,36,.35);
+  outline-offset:2px;
+}
+
+body.windows-native-shell #helpBackdrop .help-modal{
+  width:min(500px,calc(100vw - 32px));
+  max-height:min(420px,calc(100vh - 24px));
+  padding:18px 20px 12px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+body.windows-native-shell #helpBackdrop .snippet-grid{
+  min-height:0;
+  max-height:min(318px,calc(100vh - 164px));
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  margin-top:12px;
+  padding:0 2px;
+  border-top:1px solid rgba(28,28,28,.085);
+}
+body.windows-native-shell #helpBackdrop .snippet-card{
+  padding:12px 2px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:inset 0 -1px rgba(28,28,28,.075);
+  transition:background 120ms var(--ease-out);
+}
+body.windows-native-shell #helpBackdrop .snippet-card:last-child{box-shadow:none}
+body.windows-native-shell #helpBackdrop .snippet-card:hover{background:rgba(28,28,28,.035)}
+body.windows-native-shell #helpBackdrop .snippet-card strong{
+  font-size:12.75px;
+  font-weight:620;
+  color:#30302e;
+}
+body.windows-native-shell #helpBackdrop .snippet-card p{
+  color:#80807b;
+  font-size:11.25px;
+}
+body.windows-native-shell #helpBackdrop .snippet-card code{
+  color:#6f706b;
+  background:transparent;
+  border:0;
+  border-radius:0;
+  padding:0;
+  min-width:auto;
+  font-size:10.5px;
+  font-weight:560;
+  letter-spacing:.01em;
+}
+
+@media (max-width:560px), (max-height:520px){
+  body.windows-native-shell .command-menu{
+    top:12px;
+    width:min(420px,calc(100vw - 20px));
+    max-height:calc(100vh - 24px);
+  }
+  body.windows-native-shell .command-palette-header{padding:8px 14px 5px}
+  body.windows-native-shell .command-palette-header::after{left:14px;right:14px}
+  body.windows-native-shell .command-palette-list{max-height:calc(100vh - 76px)}
+  body.windows-native-shell #findReplaceBackdrop .help-modal,
+  body.windows-native-shell #helpBackdrop .help-modal{
+    width:min(420px,calc(100vw - 20px));
+    max-height:calc(100vh - 20px);
+    padding:14px 16px 10px;
+  }
+  body.windows-native-shell #helpBackdrop .snippet-grid{max-height:calc(100vh - 138px)}
+}
+
+[data-theme="dark"] body.windows-native-shell .command-menu,
+[data-theme="dark"] body.windows-native-shell #findReplaceBackdrop .help-modal,
+[data-theme="dark"] body.windows-native-shell #helpBackdrop .help-modal{
+  color:#f1f1ef;
+  background:rgba(29,30,33,.90);
+  border-color:rgba(255,255,255,.09);
+  box-shadow:0 22px 64px rgba(0,0,0,.30),0 1px 0 rgba(255,255,255,.05) inset;
+}
+[data-theme="dark"] body.windows-native-shell .command-palette-header::after,
+[data-theme="dark"] body.windows-native-shell #findReplaceBackdrop .find-actions,
+[data-theme="dark"] body.windows-native-shell #helpBackdrop .snippet-grid{border-color:rgba(255,255,255,.08)}
+[data-theme="dark"] body.windows-native-shell .command-palette-input,
+[data-theme="dark"] body.windows-native-shell #findReplaceBackdrop input[type="text"]{
+  color:#f1f1ef!important;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+}
+[data-theme="dark"] body.windows-native-shell .command-palette-input:focus-visible,
+[data-theme="dark"] body.windows-native-shell #findReplaceBackdrop input[type="text"]:focus-visible{
+  border-color:rgba(114,168,209,.34);
+  box-shadow:0 0 0 1px rgba(114,168,209,.18);
+}
+[data-theme="dark"] body.windows-native-shell .command-palette-item{color:#f1f1ef}
+[data-theme="dark"] body.windows-native-shell .command-palette-item:hover,
+[data-theme="dark"] body.windows-native-shell .command-palette-item.selected{background:rgba(255,255,255,.055)}
+[data-theme="dark"] body.windows-native-shell .command-palette-item .desc{color:#b2b2ac}
+[data-theme="dark"] body.windows-native-shell .command-palette-item .shortcut,
+[data-theme="dark"] body.windows-native-shell #helpBackdrop .snippet-card code{
+  color:#c2c2bd;
+  background:rgba(255,255,255,.04);
+}
+[data-theme="dark"] body.windows-native-shell #findReplaceBackdrop .cmd-button{color:#d8d8d4}
+[data-theme="dark"] body.windows-native-shell #findReplaceBackdrop .cmd-button:hover,
+[data-theme="dark"] body.windows-native-shell #helpBackdrop .snippet-card:hover{background:rgba(255,255,255,.05)}
+[data-theme="dark"] body.windows-native-shell #findReplaceBackdrop .cmd-button.primary{background:#ececea;color:#202124}
+[data-theme="dark"] body.windows-native-shell #helpBackdrop .snippet-card{box-shadow:inset 0 -1px rgba(255,255,255,.07)}
+[data-theme="dark"] body.windows-native-shell #helpBackdrop .snippet-card strong{color:#ececea}
+
+
+/* === WINDOWS V2 PHASE 5: FINAL TRANSIENT POLISH === */
+/*
+  Final visual cleanup for the V2 transient surfaces. The help close action
+  remains keyboard-focusable, but reads as a quiet icon instead of a circular
+  control. Scrollable transient regions use a neutral, low-contrast overlay
+  scrollbar instead of inheriting the legacy accent color.
+*/
+body.windows-native-shell #helpBackdrop .dialog-close{
+  width:24px;
+  height:24px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:#85857f;
+  box-shadow:none;
+}
+body.windows-native-shell #helpBackdrop .dialog-close .icon{
+  width:14px;
+  height:14px;
+}
+body.windows-native-shell #helpBackdrop .dialog-close:hover{
+  background:rgba(28,28,28,.035);
+  color:#353533;
+}
+body.windows-native-shell #helpBackdrop .dialog-close:focus-visible{
+  outline:1px solid rgba(36,36,36,.28);
+  outline-offset:1px;
+}
+
+body.windows-native-shell .command-palette-list,
+body.windows-native-shell #helpBackdrop .snippet-grid,
+body.windows-native-shell #findReplaceBackdrop .help-modal{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(64,64,62,.10) transparent;
+}
+body.windows-native-shell .command-palette-list:hover,
+body.windows-native-shell .command-palette-list:focus-within,
+body.windows-native-shell #helpBackdrop .snippet-grid:hover,
+body.windows-native-shell #helpBackdrop .snippet-grid:focus-within,
+body.windows-native-shell #findReplaceBackdrop .help-modal:hover,
+body.windows-native-shell #findReplaceBackdrop .help-modal:focus-within{
+  scrollbar-color:rgba(64,64,62,.28) transparent;
+}
+body.windows-native-shell .command-palette-list::-webkit-scrollbar{width:6px;height:6px}
+body.windows-native-shell #helpBackdrop .snippet-grid::-webkit-scrollbar,
+body.windows-native-shell #findReplaceBackdrop .help-modal::-webkit-scrollbar{width:6px;height:6px}
+body.windows-native-shell .command-palette-list::-webkit-scrollbar-track,
+body.windows-native-shell #helpBackdrop .snippet-grid::-webkit-scrollbar-track,
+body.windows-native-shell #findReplaceBackdrop .help-modal::-webkit-scrollbar-track{background:transparent}
+body.windows-native-shell .command-palette-list::-webkit-scrollbar-thumb,
+body.windows-native-shell #helpBackdrop .snippet-grid::-webkit-scrollbar-thumb,
+body.windows-native-shell #findReplaceBackdrop .help-modal::-webkit-scrollbar-thumb{
+  background:rgba(64,64,62,.10);
+  border-radius:999px;
+}
+body.windows-native-shell .command-palette-list:hover::-webkit-scrollbar-thumb,
+body.windows-native-shell .command-palette-list:focus-within::-webkit-scrollbar-thumb,
+body.windows-native-shell #helpBackdrop .snippet-grid:hover::-webkit-scrollbar-thumb,
+body.windows-native-shell #helpBackdrop .snippet-grid:focus-within::-webkit-scrollbar-thumb,
+body.windows-native-shell #findReplaceBackdrop .help-modal:hover::-webkit-scrollbar-thumb,
+body.windows-native-shell #findReplaceBackdrop .help-modal:focus-within::-webkit-scrollbar-thumb{
+  background:rgba(64,64,62,.28);
+}
+body.windows-native-shell .command-palette-list::-webkit-scrollbar-button{width:0;height:0;display:none}
+body.windows-native-shell #helpBackdrop .snippet-grid::-webkit-scrollbar-button{width:0;height:0;display:none}
+body.windows-native-shell #findReplaceBackdrop .help-modal::-webkit-scrollbar-button{width:0;height:0;display:none}
+
+[data-theme="dark"] body.windows-native-shell .command-palette-list,
+[data-theme="dark"] body.windows-native-shell #helpBackdrop .snippet-grid,
+[data-theme="dark"] body.windows-native-shell #findReplaceBackdrop .help-modal{
+  scrollbar-color:rgba(230,230,226,.12) transparent;
+}
+[data-theme="dark"] body.windows-native-shell .command-palette-list:hover,
+[data-theme="dark"] body.windows-native-shell .command-palette-list:focus-within,
+[data-theme="dark"] body.windows-native-shell #helpBackdrop .snippet-grid:hover,
+[data-theme="dark"] body.windows-native-shell #helpBackdrop .snippet-grid:focus-within,
+[data-theme="dark"] body.windows-native-shell #findReplaceBackdrop .help-modal:hover,
+[data-theme="dark"] body.windows-native-shell #findReplaceBackdrop .help-modal:focus-within{
+  scrollbar-color:rgba(230,230,226,.30) transparent;
+}
+[data-theme="dark"] body.windows-native-shell #helpBackdrop .dialog-close:focus-visible{
+  outline-color:rgba(238,238,234,.34);
+}
+
+/* === WINDOWS V2 PHASE 5: PAPER-CENTERED TRANSIENTS === */
+/*
+  Web transient surfaces are centered against the visible WebView/paper viewport.
+  Size constraints remain responsive; only placement is normalized here.
+*/
+body.windows-native-shell .command-menu{
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+}
+body.windows-native-shell #findReplaceBackdrop,
+body.windows-native-shell #helpBackdrop{
+  place-items:center;
+}
+@media (max-width:560px), (max-height:520px){
+  body.windows-native-shell .command-menu{
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+  }
+}
+
+
+/* === WINDOWS V2 PHASE 7: DARK CALIBRATION === */
+/* Dark-only finish. Light selectors/tokens above remain untouched. */
+body.windows-native-shell[data-theme="dark"] .document :where(p,li,td,th){
+  color:#d9dde1 !important;
+}
+body.windows-native-shell[data-theme="dark"] .document :where(h1,h2,h3,h4,h5,h6){
+  color:var(--w-text) !important;
+}
+body.windows-native-shell[data-theme="dark"] .command-menu,
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .help-modal,
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .help-modal{
+  color:#eef1f3;
+  background:rgba(25,27,30,.96);
+  border-color:rgba(255,255,255,.075);
+  box-shadow:0 22px 64px rgba(0,0,0,.36),0 1px 0 rgba(255,255,255,.035) inset;
+}
+body.windows-native-shell[data-theme="dark"] .command-palette-input{
+  color:#eef1f3;
+  background:rgba(255,255,255,.035);
+  border-color:rgba(255,255,255,.075);
+}
+body.windows-native-shell[data-theme="dark"] .command-palette-input::placeholder{color:#aeb4b9}
+body.windows-native-shell[data-theme="dark"] .command-palette-item{color:#eef1f3}
+body.windows-native-shell[data-theme="dark"] .command-palette-item .icon{color:#9fc4e0}
+body.windows-native-shell[data-theme="dark"] .command-palette-item .desc{color:#b7bdc2}
+body.windows-native-shell[data-theme="dark"] .command-palette-item .shortcut{
+  color:#c7dce9;
+  background:rgba(112,165,207,.10);
+}
+body.windows-native-shell[data-theme="dark"] .command-palette-header::after,
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .find-actions,
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .snippet-grid{
+  border-color:rgba(255,255,255,.065);
+}
+body.windows-native-shell[data-theme="dark"] .command-palette-item:hover,
+body.windows-native-shell[data-theme="dark"] .command-palette-item.selected,
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .cmd-button:hover,
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .snippet-card:hover{
+  background:rgba(255,255,255,.045);
+}
+body.windows-native-shell[data-theme="dark"] .toast{
+  color:#eef1f3;
+  background:rgba(24,27,30,.96);
+  border-color:rgba(114,168,209,.22);
+  box-shadow:0 16px 44px rgba(0,0,0,.38),0 1px 0 rgba(255,255,255,.035) inset;
+}
+body.windows-native-shell[data-theme="dark"] .toast span{color:#a4abb1}
+body.windows-native-shell[data-theme="dark"] .overlay-scrollbar-thumb{
+  background:rgba(185,192,198,.18);
+}
+body.windows-native-shell[data-theme="dark"] .overlay-scrollbar:hover .overlay-scrollbar-thumb,
+body.windows-native-shell[data-theme="dark"] .overlay-scrollbar:focus-visible .overlay-scrollbar-thumb{
+  background:rgba(205,211,216,.34);
+}
+
+/* Drucken ist papierbasiert: Vorschau und Ausgabe bleiben immer hell. */
+@page{margin:16mm 17mm 18mm}
+@media print{
+  html,body{
+    color-scheme:light !important;
+    background:#fff !important;
+    color:#141413 !important;
+  }
+  body.windows-native-shell .app-shell,
+  body.windows-native-shell .main,
+  body.windows-native-shell .editor-frame{
+    display:block !important;
+    min-height:0 !important;
+    background:#fff !important;
+  }
+  body.windows-native-shell .editor-frame{
+    padding:0 !important;
+    overflow:visible !important;
+  }
+  body.windows-native-shell .document{
+    width:auto !important;
+    max-width:none !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    background:#fff !important;
+    color:#141413 !important;
+    caret-color:auto !important;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  body.windows-native-shell .document :where(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th){
+    color:#141413 !important;
+  }
+  /* Dark screen calibration uses a more specific selector with !important.
+     Mirror that specificity in print so paper output always wins. */
+  body.windows-native-shell[data-theme="dark"] .document{
+    color:#141413 !important;
+    background:#fff !important;
+  }
+  body.windows-native-shell[data-theme="dark"] .document :where(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th){
+    color:#141413 !important;
+  }
+  body.windows-native-shell .document a{
+    color:#3f6f99 !important;
+    text-decoration-color:#6e97ba !important;
+  }
+  body.windows-native-shell .document code:not(pre code){
+    color:#315f85 !important;
+    background:#f7fafc !important;
+    border-color:#d5e0e8 !important;
+  }
+  body.windows-native-shell .document pre{
+    color:#20262b !important;
+    background:#f6f8fa !important;
+    border-color:#dce3e8 !important;
+  }
+  body.windows-native-shell .document pre code{
+    color:inherit !important;
+  }
+  body.windows-native-shell .document blockquote{
+    color:#2f2a25 !important;
+    background:#f7f2ec !important;
+    border-left-color:#cc785c !important;
+  }
+  body.windows-native-shell .document th{
+    color:#141413 !important;
+    background:#efe9de !important;
+    border-color:#d8d0c7 !important;
+  }
+  body.windows-native-shell .document td{
+    color:#141413 !important;
+    background:#fff !important;
+    border-color:#d8d0c7 !important;
+  }
+
+  .tab-suggest,.command-menu,.help-backdrop,.table-backdrop,.toast-stack{
+    display:none !important;
+  }
+
+  .document h1,.document h2,.document h3,.document h4,.document h5,.document h6{
+    break-after:avoid-page;
+    page-break-after:avoid;
+  }
+  .document p,.document li{
+    orphans:3;
+    widows:3;
+  }
+  .document pre,.document blockquote,.document table,.document figure{
+    break-inside:avoid-page;
+    page-break-inside:avoid;
+  }
+  .document .dochead,.document tr,.document img{
+    break-inside:avoid-page;
+    page-break-inside:avoid;
+  }
+  .document thead{
+    display:table-header-group;
+  }
+  .document .page-break{
+    display:block !important;
+    height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    break-before:page;
+    page-break-before:always;
+    color:transparent !important;
+  }
+  .document .page-break span,
+  .document .page-break::before,
+  .document .page-break::after{
+    display:none !important;
+  }
+}
+
+
+
+/* === WINDOWS V2 FOLLOW-UP: WEB TRANSIENT SURFACE FAMILY === */
+body.windows-native-shell #findReplaceBackdrop,
+body.windows-native-shell #helpBackdrop,
+body.windows-native-shell #exportBackdrop,
+body.windows-native-shell #tableBackdrop{
+  background:transparent;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  place-items:center;
+}
+body.windows-native-shell #findReplaceBackdrop .help-modal,
+body.windows-native-shell #helpBackdrop .help-modal,
+body.windows-native-shell #exportBackdrop .help-modal,
+body.windows-native-shell #tableBackdrop .table-modal{
+  color:#252525;
+  background:rgba(244,244,242,.95);
+  border:1px solid rgba(28,28,28,.11);
+  border-radius:20px;
+  box-shadow:0 22px 64px rgba(24,24,24,.14),0 1px 0 rgba(255,255,255,.78) inset;
+  backdrop-filter:blur(28px) saturate(1.05);
+  -webkit-backdrop-filter:blur(28px) saturate(1.05);
+}
+body.windows-native-shell #findReplaceBackdrop .help-modal,
+body.windows-native-shell #exportBackdrop .help-modal,
+body.windows-native-shell #tableBackdrop .table-modal{
+  width:min(430px,calc(100vw - 32px));
+  padding:18px 20px 14px;
+}
+body.windows-native-shell #helpBackdrop .help-modal{
+  width:min(640px,calc(100vw - 32px));
+  padding:18px 20px 16px;
+}
+body.windows-native-shell #findReplaceBackdrop .dialog-heading h2,
+body.windows-native-shell #helpBackdrop .dialog-heading h2,
+body.windows-native-shell #exportBackdrop .dialog-heading h2,
+body.windows-native-shell #tableBackdrop .dialog-heading h2{
+  font-size:15px;
+  font-weight:650;
+  letter-spacing:-.01em;
+}
+body.windows-native-shell #findReplaceBackdrop .dialog-description,
+body.windows-native-shell #helpBackdrop .dialog-description,
+body.windows-native-shell #exportBackdrop .dialog-description,
+body.windows-native-shell #tableBackdrop .dialog-heading p,
+body.windows-native-shell #tableBackdrop .table-field label,
+body.windows-native-shell #findReplaceBackdrop label,
+body.windows-native-shell #findReplaceBackdrop #findStatus{
+  color:#72726d !important;
+}
+body.windows-native-shell #findReplaceBackdrop .dialog-description,
+body.windows-native-shell #helpBackdrop .dialog-description,
+body.windows-native-shell #exportBackdrop .dialog-description,
+body.windows-native-shell #tableBackdrop .dialog-heading p{
+  margin-top:4px;
+  font-size:12px;
+  line-height:1.45;
+}
+body.windows-native-shell #findReplaceBackdrop .dialog-close,
+body.windows-native-shell #helpBackdrop .dialog-close,
+body.windows-native-shell #exportBackdrop .dialog-close,
+body.windows-native-shell #tableBackdrop .dialog-close{
+  width:28px;
+  height:28px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#81827d;
+  box-shadow:none;
+}
+body.windows-native-shell #findReplaceBackdrop .dialog-close:hover,
+body.windows-native-shell #helpBackdrop .dialog-close:hover,
+body.windows-native-shell #exportBackdrop .dialog-close:hover,
+body.windows-native-shell #tableBackdrop .dialog-close:hover{
+  background:rgba(28,28,28,.05);
+  color:#343533;
+}
+body.windows-native-shell #findReplaceBackdrop input[type="text"],
+body.windows-native-shell #tableBackdrop .table-input{
+  background:rgba(78,80,76,.045) !important;
+  border:1px solid rgba(28,28,28,.08) !important;
+  border-bottom:1px solid rgba(28,28,28,.08) !important;
+  border-radius:12px !important;
+  padding:10px 12px !important;
+  color:#252525 !important;
+  box-shadow:none !important;
+}
+body.windows-native-shell #findReplaceBackdrop input[type="text"]::placeholder,
+body.windows-native-shell #tableBackdrop .table-input::placeholder{
+  color:#7e7e78;
+}
+body.windows-native-shell #findReplaceBackdrop input[type="text"]:focus,
+body.windows-native-shell #tableBackdrop .table-input:focus{
+  outline:none !important;
+  border-color:rgba(79,132,179,.34) !important;
+  border-bottom-color:rgba(79,132,179,.34) !important;
+  box-shadow:0 0 0 1px rgba(79,132,179,.18) !important;
+}
+body.windows-native-shell #findReplaceBackdrop .find-actions,
+body.windows-native-shell #tableBackdrop .table-actions,
+body.windows-native-shell #helpBackdrop .snippet-grid,
+body.windows-native-shell #exportBackdrop .help-modal > div:last-child{
+  border-top:1px solid rgba(28,28,28,.09);
+}
+body.windows-native-shell #findReplaceBackdrop .find-actions,
+body.windows-native-shell #tableBackdrop .table-actions{
+  margin-top:10px !important;
+  padding-top:10px;
+  gap:6px !important;
+}
+body.windows-native-shell #findReplaceBackdrop .find-navigation{
+  display:inline-flex;
+  gap:0;
+}
+body.windows-native-shell #findReplaceBackdrop .find-navigation .cmd-button{
+  width:36px;
+  min-width:36px;
+  padding:0;
+  justify-content:center;
+  border-radius:0;
+}
+body.windows-native-shell #findReplaceBackdrop .find-navigation .cmd-button:first-child{
+  border-radius:11px 0 0 11px;
+}
+body.windows-native-shell #findReplaceBackdrop .find-navigation .cmd-button:last-child{
+  margin-left:-1px;
+  border-radius:0 11px 11px 0;
+}
+body.windows-native-shell #findReplaceBackdrop .find-navigation .cmd-button:active{
+  transform:translateY(1px);
+}
+body.windows-native-shell #findReplaceBackdrop .find-navigation .cmd-button:disabled{
+  cursor:default;
+  opacity:.48;
+}
+body.windows-native-shell #exportBackdrop .help-modal > div:last-child{
+  display:grid;
+  gap:6px !important;
+  padding:12px 0 4px !important;
+  margin-top:10px;
+}
+body.windows-native-shell #exportBackdrop .menu-action,
+body.windows-native-shell #findReplaceBackdrop .cmd-button,
+body.windows-native-shell #tableBackdrop .dialog-button{
+  min-height:36px;
+  color:#454643;
+  background:rgba(28,28,28,.035);
+  border:1px solid rgba(28,28,28,.08);
+  border-radius:11px;
+  box-shadow:none;
+}
+body.windows-native-shell #exportBackdrop .menu-action{
+  width:100%;
+  gap:10px;
+  padding:10px 12px;
+  justify-content:flex-start;
+}
+body.windows-native-shell #exportBackdrop .menu-action .icon,
+body.windows-native-shell #helpBackdrop .snippet-card code,
+body.windows-native-shell #findReplaceBackdrop .cmd-button .icon{
+  color:#7d7f79;
+}
+body.windows-native-shell #exportBackdrop .menu-action strong{
+  font-size:12.75px;
+  font-weight:620;
+}
+body.windows-native-shell #exportBackdrop .menu-action span span{
+  color:#6d6f6a;
+  font-size:11.5px;
+  margin-top:2px;
+}
+body.windows-native-shell #exportBackdrop .menu-action:hover,
+body.windows-native-shell #findReplaceBackdrop .cmd-button:hover,
+body.windows-native-shell #tableBackdrop .dialog-button:hover{
+  background:rgba(28,28,28,.055);
+  border-color:rgba(28,28,28,.12);
+}
+body.windows-native-shell #findReplaceBackdrop .cmd-button.primary,
+body.windows-native-shell #tableBackdrop .dialog-button.primary{
+  color:var(--dialog-primary-text) !important;
+  background:var(--dialog-primary-bg) !important;
+  border-color:var(--dialog-primary-bg) !important;
+}
+body.windows-native-shell #findReplaceBackdrop .cmd-button.primary:hover,
+body.windows-native-shell #tableBackdrop .dialog-button.primary:hover{
+  background:color-mix(in srgb,var(--dialog-primary-bg) 88%,var(--dialog-text)) !important;
+  border-color:color-mix(in srgb,var(--dialog-primary-bg) 88%,var(--dialog-text)) !important;
+}
+body.windows-native-shell #helpBackdrop .snippet-grid{
+  gap:0;
+  padding:0 4px;
+}
+body.windows-native-shell #helpBackdrop .snippet-card{
+  padding:13px 4px;
+  box-shadow:inset 0 -1px rgba(28,28,28,.08);
+}
+body.windows-native-shell #helpBackdrop .snippet-card:hover{
+  background:rgba(28,28,28,.04);
+}
+body.windows-native-shell #helpBackdrop .snippet-card strong{
+  color:#30312f;
+}
+body.windows-native-shell #helpBackdrop .snippet-card p{
+  color:#74756f;
+}
+body.windows-native-shell #helpBackdrop .snippet-card code{
+  color:#666863;
+  background:rgba(28,28,28,.042);
+  border-radius:7px;
+  padding:2px 8px;
+}
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .help-modal,
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .help-modal,
+body.windows-native-shell[data-theme="dark"] #exportBackdrop .help-modal,
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .table-modal{
+  color:#eef1f3;
+  background:rgba(25,27,30,.96);
+  border-color:rgba(255,255,255,.075);
+  box-shadow:0 22px 64px rgba(0,0,0,.36),0 1px 0 rgba(255,255,255,.035) inset;
+}
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .dialog-description,
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .dialog-description,
+body.windows-native-shell[data-theme="dark"] #exportBackdrop .dialog-description,
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .dialog-heading p,
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .table-field label,
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop label,
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop #findStatus,
+body.windows-native-shell[data-theme="dark"] #exportBackdrop .menu-action span span,
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .snippet-card p{
+  color:#afb4b9 !important;
+}
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .dialog-close,
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .dialog-close,
+body.windows-native-shell[data-theme="dark"] #exportBackdrop .dialog-close,
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .dialog-close{
+  color:#aeb3b8;
+}
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .dialog-close:hover,
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .dialog-close:hover,
+body.windows-native-shell[data-theme="dark"] #exportBackdrop .dialog-close:hover,
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .dialog-close:hover{
+  background:rgba(255,255,255,.05);
+  color:#eef1f3;
+}
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop input[type="text"],
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .table-input{
+  color:#f1f1ef !important;
+  background:rgba(255,255,255,.03) !important;
+  border:1px solid rgba(255,255,255,.07) !important;
+  border-bottom:1px solid rgba(255,255,255,.07) !important;
+}
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop input[type="text"]:focus,
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .table-input:focus{
+  border-color:rgba(114,168,209,.34) !important;
+  border-bottom-color:rgba(114,168,209,.34) !important;
+  box-shadow:0 0 0 1px rgba(114,168,209,.18) !important;
+}
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .find-actions,
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .table-actions,
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .snippet-grid,
+body.windows-native-shell[data-theme="dark"] #exportBackdrop .help-modal > div:last-child{
+  border-color:rgba(255,255,255,.065);
+}
+body.windows-native-shell[data-theme="dark"] #exportBackdrop .menu-action,
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .cmd-button,
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .dialog-button{
+  color:#d8dbe0;
+  background:rgba(255,255,255,.026);
+  border-color:rgba(255,255,255,.07);
+}
+body.windows-native-shell[data-theme="dark"] #exportBackdrop .menu-action:hover,
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .cmd-button:hover,
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .dialog-button:hover,
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .snippet-card:hover{
+  background:rgba(255,255,255,.05);
+}
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .snippet-card{
+  box-shadow:inset 0 -1px rgba(255,255,255,.07);
+}
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .snippet-card strong{
+  color:#eceff1;
+}
+body.windows-native-shell[data-theme="dark"] #helpBackdrop .snippet-card code{
+  color:#c2c7cc;
+  background:rgba(255,255,255,.04);
+}
+body.windows-native-shell[data-theme="dark"] #findReplaceBackdrop .cmd-button.primary,
+body.windows-native-shell[data-theme="dark"] #tableBackdrop .dialog-button.primary{
+  color:var(--dialog-primary-text) !important;
+  background:var(--dialog-primary-bg) !important;
+  border-color:var(--dialog-primary-bg) !important;
 }
 </style>
 </head>
-<body data-theme="dark" class="tools-collapsed">
+<body data-theme="light" class="tools-collapsed">
 <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
 <symbol id="icon-markdown" viewBox="0 0 24 24">
 <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10" />
@@ -685,20 +1803,6 @@ body.windows-native-shell .statusbar{
       <button class="cmd-button primary" type="button" data-command="copyMarkdown"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg>Als MD kopieren</button>
     </header>
     <section class="editor-frame"><article id="editor" class="document" contenteditable="true" spellcheck="false" aria-label="Markdown Dokument"></article></section>
-    <div id="statusbar" class="statusbar" aria-live="polite">
-      <div class="status-left">
-        <span id="statusWords">0 Wörter</span>
-        <span class="status-sep">•</span>
-        <span id="statusChars">0 Zeichen</span>
-        <span class="status-sep">•</span>
-        <span id="statusReadTime">~0 min</span>
-      </div>
-      <div class="status-right">
-        <span id="statusSaveState" class="save-state">Gespeichert</span>
-        <span id="statusAutoSave" style="margin-left:8px;font-size:11px;color:var(--primary);"></span>
-        <span id="statusFocusHint" class="focus-hint" style="display:none">Fokus-Modus • F11 zum Verlassen</span>
-      </div>
-    </div>
   </main>
 </div>
 <div id="menuBackdrop" class="menu-backdrop" hidden></div>
@@ -706,24 +1810,26 @@ body.windows-native-shell .statusbar{
 <button class="menu-action" data-command="openRecent"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-folder"></use></svg><span><strong>Zuletzt verwendet</strong><span>Letzte Dateien</span></span></button></div></section>
 <section class="menu-section"><h3>Zuletzt verwendet</h3><div id="recentList" style="display:grid;gap:4px;max-height:140px;overflow:auto"></div></section><section class="menu-section"><h3>Einfügen</h3><div class="menu-list"><button class="menu-action" data-format="table"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-table"></use></svg><span><strong>Tabelle</strong><span>Direkt editierbar</span></span></button>
 <button class="menu-action" data-command="addTableRow"><span><strong>Zeile +</strong></span></button><button class="menu-action" data-command="addTableCol"><span><strong>Spalte +</strong></span></button><button class="menu-action" data-command="delTableRow"><span><strong>Zeile -</strong></span></button><button class="menu-action" data-command="delTableCol"><span><strong>Spalte -</strong></span></button><button class="menu-action" data-format="task"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-checkbox"></use></svg><span><strong>Aufgaben</strong><span>Checkboxen</span></span></button><button class="menu-action" data-format="quote"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-quote"></use></svg><span><strong>Zitat</strong><span>Blockquote</span></span></button><button class="menu-action" data-format="code"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg><span><strong>Code</strong><span>Codeblock</span></span></button><button class="menu-action" data-command="findReplace"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg><span><strong>Suchen &amp; Ersetzen</strong><span>Strg+F</span></span></button></div></section><section class="menu-section"><h3>Ausgabe</h3><div class="menu-list"><button class="menu-action" data-command="copyMarkdown"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg><span><strong>Markdown kopieren</strong><span>Zwischenablage</span></span></button><button class="menu-action" data-command="exportHtml"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-export"></use></svg><span><strong>HTML exportieren</strong><span>HTML-Datei</span></span></button><button class="menu-action" data-command="showSource"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg><span><strong>Quelle anzeigen</strong><span>Markdown-Text</span></span></button><button class="menu-action" data-command="showTabHelp"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-help"></use></svg><span><strong>Tab-Hilfe</strong><span>Snippets</span></span></button></div></section></div></section>
+<div id="overlayScrollbar" class="overlay-scrollbar" role="scrollbar" aria-label="Dokument scrollen" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" tabindex="0">
+  <div id="overlayScrollbarThumb" class="overlay-scrollbar-thumb"></div>
+</div>
 <div id="toasts" class="toast-stack" aria-live="polite"></div>
-<div id="tabSuggest" class="tab-suggest"><kbd>Tab</kbd><span id="tabSuggestText"></span></div>
-<div id="commandMenu" class="command-menu" role="listbox" aria-label="Befehlspalette">
+<div id="tabSuggest" class="tab-suggest" role="status" aria-live="polite"><kbd>Tab</kbd><span id="tabSuggestText"></span></div>
+<div id="commandMenu" class="command-menu" role="dialog" aria-label="Befehlspalette">
   <div class="command-palette-header">
-    <input id="commandPaletteInput" class="command-palette-input" type="text" placeholder="Befehl suchen... (z.B. Fokus, Speichern, Tabelle)" autocomplete="off" />
+    <input id="commandPaletteInput" class="command-palette-input" type="text" aria-label="Befehl suchen" aria-controls="commandPaletteList" placeholder="Befehl suchen... (z.B. Fokus, Speichern, Tabelle)" autocomplete="off" />
   </div>
-  <div id="commandPaletteList" class="command-palette-list"></div>
+  <div id="commandPaletteList" class="command-palette-list" role="listbox" aria-label="Verfügbare Befehle"></div>
 </div>
 
 <div id="tableBackdrop" class="table-backdrop" hidden>
   <section id="tableDialog" class="table-modal" role="dialog" aria-modal="true" aria-labelledby="tableTitle">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
-      <div>
-        <div style="color:var(--primary);font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Tabelle</div>
-        <h2 id="tableTitle">Größe wählen</h2>
-        <p>Wie viele Spalten und Zeilen soll die neue Tabelle haben?</p>
+    <div class="dialog-head">
+      <div class="dialog-heading">
+        <h2 id="tableTitle">Tabelle einfügen</h2>
+        <p>Wähle die Anzahl der Spalten und Zeilen.</p>
       </div>
-      <button class="icon-button" id="tableClose" type="button" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
+      <button id="tableClose" type="button" class="dialog-close" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
     </div>
     <form id="tableForm" autocomplete="off">
       <div class="table-grid">
@@ -738,8 +1844,8 @@ body.windows-native-shell .statusbar{
       </div>
       <div id="tableError" class="table-error" aria-live="polite"></div>
       <div class="table-actions">
-        <button id="tableCancel" class="menu-action" type="button" style="min-width:110px;justify-content:center">Abbrechen</button>
-        <button id="tableInsert" class="cmd-button primary" type="submit">Einfügen</button>
+        <button id="tableCancel" class="dialog-button" type="button">Abbrechen</button>
+        <button id="tableInsert" class="dialog-button primary" type="submit">Einfügen</button>
       </div>
     </form>
   </section>
@@ -747,13 +1853,13 @@ body.windows-native-shell .statusbar{
 
 <!-- Export Chooser (bessere Exportdialoge) -->
 <div id="exportBackdrop" class="help-backdrop" hidden>
-  <section class="help-modal" role="dialog" aria-modal="true" style="max-width:420px">
+  <section class="help-modal" role="dialog" aria-modal="true" aria-labelledby="exportTitle" style="max-width:420px">
     <div class="help-head">
-      <div>
-        <div style="color:var(--primary);font-size:12px;text-transform:uppercase;letter-spacing:.08em">Export</div>
-        <h2 style="margin:4px 0 0">Wie möchtest du exportieren?</h2>
+      <div class="dialog-heading">
+        <h2 id="exportTitle">Exportieren</h2>
+        <p class="dialog-description">Wähle ein Format für dein Dokument.</p>
       </div>
-      <button class="icon-button" id="exportClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
+      <button class="dialog-close" id="exportClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
     </div>
     <div style="display:grid;gap:8px;padding:4px 0 12px">
       <button class="menu-action" data-export="md" style="width:100%"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span><strong>Markdown (.md)</strong><span>Reiner Text mit Formatierung</span></span></button>
@@ -765,23 +1871,23 @@ body.windows-native-shell .statusbar{
 
 <!-- Find & Replace Modal -->
 <div id="findReplaceBackdrop" class="help-backdrop" hidden>
-  <section class="help-modal" role="dialog" aria-modal="true" style="max-width:480px">
+  <section class="help-modal" role="dialog" aria-modal="true" aria-labelledby="findTitle" style="max-width:480px">
     <div class="help-head">
-      <div>
-        <div style="color:var(--primary);font-size:12px;text-transform:uppercase;letter-spacing:.08em">Suchen &amp; Ersetzen</div>
-        <h2 style="margin:2px 0 0;font-size:1.1rem">Find &amp; Replace</h2>
+      <div class="dialog-heading">
+        <h2 id="findTitle">Suchen und Ersetzen</h2>
+        <p class="dialog-description">Suche im aktuellen Dokument und ersetze Treffer gezielt.</p>
       </div>
-      <button class="icon-button" id="findClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
+      <button class="dialog-close" id="findClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button>
     </div>
 
     <div style="display:grid;gap:10px;padding:8px 4px">
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:2px">Suchen nach</label>
-        <input id="findInput" type="text" style="width:100%;background:var(--bg-2);border:1px solid var(--paper-stroke);border-radius:8px;padding:6px 10px;color:var(--text);font-size:14px" placeholder="Text suchen...">
+        <label for="findInput" style="font-size:12px;color:var(--dialog-muted);display:block;margin-bottom:4px;font-weight:600">Suchen nach</label>
+        <input id="findInput" type="text" style="width:100%;background:var(--dialog-control-bg);border:1px solid var(--dialog-control-border);border-radius:8px;padding:8px 10px;color:var(--dialog-text);font-size:14px" placeholder="Text suchen...">
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:2px">Ersetzen durch</label>
-        <input id="replaceInput" type="text" style="width:100%;background:var(--bg-2);border:1px solid var(--paper-stroke);border-radius:8px;padding:6px 10px;color:var(--text);font-size:14px" placeholder="Ersetzungstext">
+        <label for="replaceInput" style="font-size:12px;color:var(--dialog-muted);display:block;margin-bottom:4px;font-weight:600">Ersetzen durch</label>
+        <input id="replaceInput" type="text" style="width:100%;background:var(--dialog-control-bg);border:1px solid var(--dialog-control-border);border-radius:8px;padding:8px 10px;color:var(--dialog-text);font-size:14px" placeholder="Ersetzungstext">
       </div>
 
       <div style="display:flex;gap:12px;align-items:center;font-size:12px">
@@ -793,8 +1899,11 @@ body.windows-native-shell .statusbar{
         </label>
       </div>
 
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
-        <button id="findNextBtn" class="cmd-button" style="min-width:90px">Weitersuchen</button>
+      <div class="find-actions" style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+        <div class="find-navigation" role="group" aria-label="Treffernavigation">
+          <button id="findPreviousBtn" class="cmd-button" type="button" aria-label="Vorheriger Treffer" title="Vorheriger Treffer"><span aria-hidden="true">←</span></button>
+          <button id="findNextBtn" class="cmd-button" type="button" aria-label="Nächster Treffer" title="Nächster Treffer"><span aria-hidden="true">→</span></button>
+        </div>
         <button id="replaceBtn" class="cmd-button" style="min-width:90px">Ersetzen</button>
         <button id="replaceAllBtn" class="cmd-button primary" style="min-width:110px">Alle ersetzen</button>
       </div>
@@ -803,7 +1912,7 @@ body.windows-native-shell .statusbar{
     </div>
   </section>
 </div>
-<div id="helpBackdrop" class="help-backdrop" hidden><section class="help-modal" role="dialog" aria-modal="true"><div class="help-head"><div><div style="color:var(--primary);font-size:12px;text-transform:uppercase;letter-spacing:.08em">Smart-Tab</div><h2>Befehle schreiben, Tab drücken</h2><p style="color:#d8d2c8">Schreibe einen Begriff in eine leere Zeile und drücke Tab. Mit <code>help</code> öffnest du Vorschläge.</p></div><button class="icon-button" id="helpClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button></div><div id="helpSnippets" class="snippet-grid"></div></section></div>
+<div id="helpBackdrop" class="help-backdrop" hidden><section class="help-modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="help-head"><div class="dialog-heading"><h2 id="helpTitle">Smart-Tab-Befehle</h2><p class="dialog-description">Schreibe einen Begriff in eine leere Zeile und drücke Tab. Mit <code>help</code> öffnest du Vorschläge.</p></div><button class="dialog-close" id="helpClose" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button></div><div id="helpSnippets" class="snippet-grid"></div></section></div>
 <script>
 const editor = document.getElementById('editor');
 const outline = document.getElementById('outline');
@@ -814,6 +1923,8 @@ const toasts = document.getElementById('toasts');
 const tabSuggest = document.getElementById('tabSuggest');
 const tabSuggestText = document.getElementById('tabSuggestText');
 const commandMenu = document.getElementById('commandMenu'); // TODO V4: wird für echte Command Palette wiederverwendet
+const overlayScrollbar = document.getElementById('overlayScrollbar');
+const overlayScrollbarThumb = document.getElementById('overlayScrollbarThumb');
 const helpBackdrop = document.getElementById('helpBackdrop');
 const helpClose = document.getElementById('helpClose');
 const helpSnippets = document.getElementById('helpSnippets');
@@ -879,13 +1990,20 @@ function post(type, payload={}){ if(window.chrome?.webview) chrome.webview.postM
 function escapeHtml(v){ return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 const CARET_BOUNDARY='\u200b';
 function cleanCaretBoundaries(value){ return String(value ?? '').replace(/\u200b/g,''); }
-function inlineMarkdown(text){ return escapeHtml(text).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>').replace(/~~([^~]+)~~/g,'<s>$1</s>').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>'); }
+function formatInlineMarkdown(text){ return escapeHtml(text).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>').replace(/~~([^~]+)~~/g,'<s>$1</s>').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>'); }
+function inlineMarkdown(text){ return String(text ?? '').split(/(`[^`\n]*`)/g).map(part=>/^`[^`\n]*`$/.test(part)?`<code>${escapeHtml(part.slice(1,-1))}</code>`:formatInlineMarkdown(part)).join(''); }
 // inlineMarkdownNoCode wurde in V3 nicht mehr verwendet – entfernt in V4 Hygiene
-function parseFrontMatter(lines){ if(lines[0] !== '---') return null; const data={tags:[]}; let i=1, listKey=null; for(;i<lines.length;i++){ const line=lines[i]; if(line.trim()==='---') break; const item=line.match(/^\s*-\s+["']?(.*?)["']?\s*$/); if(item && listKey==='tags'){ data.tags.push(item[1].trim()); continue; } const m=line.match(/^([A-Za-z0-9_-]+):\s*["']?(.*?)["']?\s*$/); if(m){ const key=m[1].toLowerCase(); const value=m[2].trim(); listKey=value ? null : key; if(key==='tags') data.tags=value ? value.split(/[|,]/).map(x=>x.trim()).filter(Boolean) : []; else data[key]=value; } else listKey=null; } return i < lines.length ? {data, end:i+1} : null; }
+function parseFrontMatter(lines){ if(lines[0] !== '---') return null; const data={tags:[]}; let i=1, listKey=null; for(;i<lines.length;i++){ const line=lines[i]; if(line.trim()==='---') break; const item=line.match(/^\s*-\s+["']?(.*?)["']?\s*$/); if(item && listKey==='tags'){ data.tags.push(item[1].trim()); continue; } const m=line.match(/^([A-Za-z0-9_-]+):\s*["']?(.*?)["']?\s*$/); if(m){ const key=m[1].toLowerCase(); const value=m[2].trim(); listKey=value ? null : key; if(key==='tags') data.tags=value ? value.split(/[|,]/).map(x=>x.trim()).filter(Boolean) : []; else data[key]=value; } else listKey=null; } return i < lines.length ? {data, rawLines:lines.slice(1,i), end:i+1} : null; }
+
+function paragraphHtml(lines){ let html='', previousHardbreak=false; lines.forEach((raw,index)=>{ const hardbreak=/ {2,}$/.test(raw); const text=hardbreak?raw.replace(/ {2,}$/,''):raw.trimEnd(); if(index && !previousHardbreak) html+=' '; html+=inlineMarkdown(text); if(hardbreak) html+='<br data-markdown-hardbreak="true">'; previousHardbreak=hardbreak; }); return html; }
+function listLineInfo(line){ const m=String(line).match(/^(\s*)([-*]|(\d+)\.)\s+(.+)$/); if(!m) return null; const content=m[4]; const task=content.match(/^\[([ xX])\]\s+(.*)$/); return {indent:m[1].replace(/\t/g,'  ').length, ordered:Boolean(m[3]), number:m[3]?Number(m[3]):null, content:task?task[2]:content, task:task?task[1].toLowerCase()==='x':null}; }
+function parseMarkdownList(lines,start,indent){ const first=listLineInfo(lines[start]); if(!first) return null; const ordered=first.ordered; let i=start, items=[]; while(i<lines.length){ const info=listLineInfo(lines[i]); if(!info || info.indent!==indent || info.ordered!==ordered) break; i++; let nested=''; while(i<lines.length){ const child=listLineInfo(lines[i]); if(!child || child.indent<=indent) break; const parsed=parseMarkdownList(lines,i,child.indent); if(!parsed) break; nested+=parsed.html; i=parsed.end; } const checkbox=info.task===null?'':`<input type="checkbox" class="task-checkbox" ${info.task?'checked':''}> `; items.push(`<li>${checkbox}${inlineMarkdown(info.content)}${nested}</li>`); } const tag=ordered?'ol':'ul'; const startAttr=ordered&&first.number!==1?` start="${first.number}"`:''; return {html:`<${tag}${startAttr} data-markdown-indent="${indent}">${items.join('')}</${tag}>`,end:i}; }
+function splitTableRow(line){ let value=String(line).trim(); if(value.startsWith('|')) value=value.slice(1); if(value.endsWith('|')) value=value.slice(0,-1); return value.split('|').map(cell=>cell.trim()); }
+function tableAlignment(cell){ const value=String(cell).trim(); const left=value.startsWith(':'), right=value.endsWith(':'); return left&&right?'center':left?'left':right?'right':''; }
 
 /* === Markdown Parse (MD → rich DOM) – Kernstück, vorsichtig erweitern! === */
-function markdownToHtml(md){ try { const lines=String(md ?? '').replace(/\r\n?/g,'\n').split('\n'); let i=0, out=[]; const fm=parseFrontMatter(lines); if(fm){ i=fm.end; const fmTitle=String(fm.data.title||'Dokument'); const date=fm.data.created||fm.data.date||new Date().toISOString().slice(0,10); const tags=Array.isArray(fm.data.tags)?fm.data.tags.filter(Boolean):[]; while(i<lines.length && !lines[i].trim()) i++; if(lines[i] && lines[i].match(/^#\s+(.+)$/) && lines[i].replace(/^#\s+/,'').trim()===fmTitle.trim()) i++; out.push(`<header class="dochead" data-title="${escapeHtml(fm.data.title||'')}" data-subtitle="${escapeHtml(fm.data.subtitle||'')}" data-author="${escapeHtml(fm.data.author||'Markdown Studio')}" data-date="${escapeHtml(date)}" data-tags="${escapeHtml(tags.join('|'))}"><h1 contenteditable="true">${escapeHtml(fmTitle)}</h1>${tags.length?`<div class="tags" contenteditable="false">${escapeHtml(tags.join(' | '))}</div>`:''}${fm.data.subtitle?`<p contenteditable="false">${escapeHtml(fm.data.subtitle)}</p>`:''}</header>`); }
-function closeParagraph(buf){ if(buf.length){ out.push(`<p>${inlineMarkdown(buf.join(' '))}</p>`); buf.length=0; }}
+function markdownToHtml(md){ try { const lines=String(md ?? '').replace(/\r\n?/g,'\n').split('\n'); let i=0, out=[]; const fm=parseFrontMatter(lines); if(fm){ i=fm.end; const fmTitle=String(fm.data.title||'Dokument'); const date=fm.data.created||fm.data.date||new Date().toISOString().slice(0,10); const tags=Array.isArray(fm.data.tags)?fm.data.tags.filter(Boolean):[]; while(i<lines.length && !lines[i].trim()) i++; if(lines[i] && lines[i].match(/^#\s+(.+)$/) && lines[i].replace(/^#\s+/,'').trim()===fmTitle.trim()) i++; out.push(`<header class="dochead" data-title="${escapeHtml(fm.data.title||'')}" data-subtitle="${escapeHtml(fm.data.subtitle||'')}" data-author="${escapeHtml(fm.data.author||'Markdown Studio')}" data-date="${escapeHtml(date)}" data-tags="${escapeHtml(tags.join('|'))}" data-frontmatter="${escapeHtml(JSON.stringify(fm.rawLines))}"><h1 contenteditable="true">${escapeHtml(fmTitle)}</h1>${tags.length?`<div class="tags" contenteditable="false">${escapeHtml(tags.join(' | '))}</div>`:''}${fm.data.subtitle?`<p contenteditable="false">${escapeHtml(fm.data.subtitle)}</p>`:''}</header>`); }
+function closeParagraph(buf){ if(buf.length){ out.push(`<p>${paragraphHtml(buf)}</p>`); buf.length=0; }}
 let p=[]; while(i<lines.length){ let line=lines[i]; const oneLineCode=line.match(/^\s*```\s*([\s\S]*?)\s*```\s*$/); if(oneLineCode){ closeParagraph(p); out.push(`<pre><code>${escapeHtml(oneLineCode[1])}</code></pre>`); i++; continue; } if(/^\s*```/.test(line)){
   closeParagraph(p);
   const langMatch = line.match(/^\s*```([a-zA-Z0-9_+-]*)/);
@@ -899,19 +2017,23 @@ let p=[]; while(i<lines.length){ let line=lines[i]; const oneLineCode=line.match
  if(/^\s*<!--\s*page-break\s*-->\s*$/.test(line)){ closeParagraph(p); out.push('<div class="page-break" contenteditable="false"><span>Neue Seite</span></div>'); i++; continue; }
  if(/^\s*([-*_])\1\1+\s*$/.test(line)){ closeParagraph(p); out.push('<hr>'); i++; continue; }
  const h=line.match(/^(#{1,6})\s+(.+)$/); if(h){ closeParagraph(p); out.push(`<h${h[1].length}>${inlineMarkdown(h[2])}</h${h[1].length}>`); i++; continue; }
- if(/^>\s?/.test(line)){ closeParagraph(p); let q=[]; while(i<lines.length && /^>\s?/.test(lines[i])) q.push(lines[i++].replace(/^>\s?/,'')); out.push(`<blockquote><p>${inlineMarkdown(q.join(' '))}</p></blockquote>`); continue; }
- if(/^\s*[-*]\s+\[[ xX]\]\s+/.test(line)){ closeParagraph(p); out.push('<ul>'); while(i<lines.length && /^\s*[-*]\s+\[[ xX]\]\s+/.test(lines[i])){ const checked=/\[[xX]\]/.test(lines[i]); out.push(`<li><input type="checkbox" class="task-checkbox" ${checked?'checked':''}> ${inlineMarkdown(lines[i].replace(/^\s*[-*]\s+\[[ xX]\]\s+/,''))}</li>`); i++; } out.push('</ul>'); continue; }
- if(/^\s*[-*]\s+/.test(line)){ closeParagraph(p); out.push('<ul>'); while(i<lines.length && /^\s*[-*]\s+/.test(lines[i])) out.push(`<li>${inlineMarkdown(lines[i++].replace(/^\s*[-*]\s+/,''))}</li>`); out.push('</ul>'); continue; }
- if(/^\s*\d+\.\s+/.test(line)){ closeParagraph(p); out.push('<ol>'); while(i<lines.length && /^\s*\d+\.\s+/.test(lines[i])) out.push(`<li>${inlineMarkdown(lines[i++].replace(/^\s*\d+\.\s+/,''))}</li>`); out.push('</ol>'); continue; }
- if(line.includes('|') && i+1<lines.length && /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(lines[i+1])){ closeParagraph(p); const headers=line.split('|').map(x=>x.trim()).filter(Boolean); i+=2; out.push('<table><thead><tr>'+headers.map(h=>`<th>${inlineMarkdown(h)}</th>`).join('')+'</tr></thead><tbody>'); while(i<lines.length && lines[i].includes('|') && lines[i].trim()){ const cells=lines[i++].split('|').map(x=>x.trim()).filter(Boolean); out.push('<tr>'+cells.map(c=>`<td>${inlineMarkdown(c)}</td>`).join('')+'</tr>'); } out.push('</tbody></table>'); continue; }
- if(!line.trim()){ closeParagraph(p); i++; continue; } p.push(line.trim()); i++; } closeParagraph(p); return out.join('\n') || '<p><br></p>'; } catch(e){ return `<pre><code>${escapeHtml(md)}</code></pre>`; } }
-function childrenMarkdown(node){ return Array.from(node.childNodes).map(n=>{ if(n.nodeType===Node.TEXT_NODE) return cleanCaretBoundaries(n.textContent); if(n.nodeType!==Node.ELEMENT_NODE) return ''; const tag=n.tagName.toLowerCase(); const inner=childrenMarkdown(n); if(tag==='strong'||tag==='b') return `**${inner}**`; if(tag==='em'||tag==='i') return `*${inner}*`; if(tag==='s'||tag==='strike') return `~~${inner}~~`; if(tag==='code') return '`'+cleanCaretBoundaries(n.textContent)+'`'; if(tag==='a') return `[${inner}](${n.getAttribute('href')||''})`; if(tag==='br') return ''; return inner; }).join(''); }
-function blockMarkdown(node){ const tag=node.tagName?.toLowerCase(); if(!tag) return ''; if(tag==='header' && node.classList.contains('dochead')){ const lines=['---']; const title=node.querySelector('h1')?.textContent||node.dataset.title||''; const subtitle=node.dataset.subtitle||node.querySelector('p')?.textContent||''; const author=node.dataset.author||'Markdown Studio'; const date=node.dataset.date||''; const tags=(node.dataset.tags||'').split('|').map(x=>x.trim()).filter(Boolean); if(title) lines.push('title: "'+title.replace(/"/g,'\\"')+'"'); if(subtitle) lines.push('subtitle: "'+subtitle.replace(/"/g,'\\"')+'"'); if(author) lines.push('author: "'+author.replace(/"/g,'\\"')+'"'); if(tags.length){ lines.push('tags:'); tags.forEach(tag=>lines.push('  - '+tag)); } if(date) lines.push('created: "'+date.replace(/"/g,'\\"')+'"'); lines.push('---'); if(title) lines.push('\n# '+title); return lines.join('\n'); } if(tag==='div' && node.classList.contains('page-break')) return '<!-- page-break -->'; if(/^h[1-6]$/.test(tag)) return '#'.repeat(Number(tag[1]))+' '+childrenMarkdown(node).trim(); if(tag==='p') return childrenMarkdown(node).trim(); if(tag==='blockquote') return childrenMarkdown(node).split('\n').map(x=>'> '+x).join('\n'); if(tag==='hr') return '---'; if(tag==='pre') {
+ if(/^>\s?/.test(line)){ closeParagraph(p); let paragraphs=[[]]; while(i<lines.length && /^>\s?/.test(lines[i])){ const value=lines[i++].replace(/^>\s?/,''); if(!value.trim()) { if(paragraphs.at(-1).length) paragraphs.push([]); } else paragraphs.at(-1).push(value); } const quoteHtml=paragraphs.filter(part=>part.length).map(part=>`<p>${paragraphHtml(part)}</p>`).join(''); out.push(`<blockquote>${quoteHtml}</blockquote>`); continue; }
+ const listInfo=listLineInfo(line); if(listInfo){ closeParagraph(p); const parsed=parseMarkdownList(lines,i,listInfo.indent); out.push(parsed.html); i=parsed.end; continue; }
+ if(line.includes('|') && i+1<lines.length && /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(lines[i+1])){ closeParagraph(p); const headers=splitTableRow(line); const alignments=splitTableRow(lines[i+1]).map(tableAlignment); const columnCount=headers.length; i+=2; out.push(`<table data-alignments="${escapeHtml(alignments.join('|'))}"><thead><tr>`+headers.map(h=>`<th>${inlineMarkdown(h)}</th>`).join('')+'</tr></thead><tbody>'); while(i<lines.length && lines[i].includes('|') && lines[i].trim()){ const cells=splitTableRow(lines[i++]); while(cells.length<columnCount) cells.push(''); out.push('<tr>'+cells.slice(0,columnCount).map(c=>`<td>${inlineMarkdown(c)}</td>`).join('')+'</tr>'); } out.push('</tbody></table>'); continue; }
+ if(!line.trim()){ closeParagraph(p); i++; continue; } p.push(line.trimStart()); i++; } closeParagraph(p); return out.join('\n') || '<p><br></p>'; } catch(e){ return `<pre><code>${escapeHtml(md)}</code></pre>`; } }
+function childMarkdown(n){ if(n.nodeType===Node.TEXT_NODE) return cleanCaretBoundaries(n.textContent); if(n.nodeType!==Node.ELEMENT_NODE) return ''; const tag=n.tagName.toLowerCase(); const inner=childrenMarkdown(n); if(tag==='strong'||tag==='b') return `**${inner}**`; if(tag==='em'||tag==='i') return `*${inner}*`; if(tag==='s'||tag==='strike') return `~~${inner}~~`; if(tag==='code') return '`'+cleanCaretBoundaries(n.textContent)+'`'; if(tag==='a') return `[${inner}](${n.getAttribute('href')||''})`; if(tag==='br') return n.hasAttribute('data-markdown-hardbreak')?'  \n':''; return inner; }
+function childrenMarkdown(node){ return Array.from(node.childNodes).map(childMarkdown).join(''); }
+function listItemMarkdown(li){ return Array.from(li.childNodes).filter(n=>!(n.nodeType===Node.ELEMENT_NODE && (n.matches('input[type="checkbox"]') || n.matches('ul,ol')))).map(childMarkdown).join('').trim(); }
+function listMarkdown(node,prefix=''){ const ordered=node.tagName.toLowerCase()==='ol'; const start=ordered?(Number(node.getAttribute('start'))||1):1; const parentIndent=Number(node.dataset.markdownIndent||0); return Array.from(node.children).filter(li=>li.tagName==='LI').map((li,index)=>{ const cb=Array.from(li.children).find(child=>child.matches('input[type="checkbox"]')); const marker=ordered?`${start+index}. `:'- '; const task=cb?`[${cb.checked?'x':' '}] `:''; const lines=[prefix+marker+task+listItemMarkdown(li)]; Array.from(li.children).filter(child=>child.matches('ul,ol')).forEach(child=>{ const childIndent=Number(child.dataset.markdownIndent); const step=Number.isFinite(childIndent)&&childIndent>parentIndent?childIndent-parentIndent:2; lines.push(listMarkdown(child,prefix+' '.repeat(step))); }); return lines.join('\n'); }).join('\n'); }
+function serializeFrontMatter(node,title){ let raw=[]; try{ raw=JSON.parse(node.dataset.frontmatter||'[]'); }catch{} if(raw.length){ let titleUpdated=false; raw=raw.map(line=>{ if(/^title\s*:/i.test(line)){ titleUpdated=true; return 'title: "'+title.replace(/"/g,'\\"')+'"'; } return line; }); if(title&&!titleUpdated) raw.unshift('title: "'+title.replace(/"/g,'\\"')+'"'); return ['---',...raw,'---',...(title?['','# '+title]:[])].join('\n'); } const lines=['---']; const subtitle=node.dataset.subtitle||node.querySelector('p')?.textContent||''; const author=node.dataset.author||'Markdown Studio'; const date=node.dataset.date||''; const tags=(node.dataset.tags||'').split('|').map(x=>x.trim()).filter(Boolean); if(title) lines.push('title: "'+title.replace(/"/g,'\\"')+'"'); if(subtitle) lines.push('subtitle: "'+subtitle.replace(/"/g,'\\"')+'"'); if(author) lines.push('author: "'+author.replace(/"/g,'\\"')+'"'); if(tags.length){ lines.push('tags:'); tags.forEach(tag=>lines.push('  - '+tag)); } if(date) lines.push('created: "'+date.replace(/"/g,'\\"')+'"'); lines.push('---'); if(title) lines.push('\n# '+title); return lines.join('\n'); }
+function blockMarkdown(node){ const tag=node.tagName?.toLowerCase(); if(!tag) return ''; if(tag==='header' && node.classList.contains('dochead')){ const title=node.querySelector('h1')?.textContent||node.dataset.title||''; return serializeFrontMatter(node,title); } if(tag==='div' && node.classList.contains('page-break')) return '<!-- page-break -->'; if(/^h[1-6]$/.test(tag)) return '#'.repeat(Number(tag[1]))+' '+childrenMarkdown(node).trim(); if(tag==='p') return childrenMarkdown(node).trim(); if(tag==='blockquote'){ const parts=Array.from(node.children).map(blockMarkdown).filter(Boolean); return parts.map(part=>part.split('\n').map(line=>'> '+line).join('\n')).join('\n>\n'); } if(tag==='hr') return '---'; if(tag==='pre') {
   const lang = node.getAttribute('data-lang') || '';
   const prefix = lang ? '```' + lang : '```';
-  return prefix + '\n' + cleanCaretBoundaries(node.textContent||'').replace(/\n$/,'') + '\n```';
-} if(tag==='ul') return Array.from(node.children).map(li=>{ const cb=li.querySelector('input[type="checkbox"]'); if(cb) return `- [${cb.checked?'x':' '}] ${cleanCaretBoundaries(li.textContent).trim()}`; return '- '+childrenMarkdown(li).trim(); }).join('\n'); if(tag==='ol') return Array.from(node.children).map((li,idx)=>(idx+1)+'. '+childrenMarkdown(li).trim()).join('\n'); if(tag==='table'){ const rows=Array.from(node.querySelectorAll('tr')).map(tr=>Array.from(tr.children).map(c=>childrenMarkdown(c).trim())); if(!rows.length) return ''; const header='| '+rows[0].join(' | ')+' |'; const sep='| '+rows[0].map(()=> '---').join(' | ')+' |'; const body=rows.slice(1).map(r=>'| '+r.join(' | ')+' |').join('\n'); return [header,sep,body].filter(Boolean).join('\n'); } return childrenMarkdown(node).trim(); }
-function toMarkdown(){ return cleanCaretBoundaries(Array.from(editor.children).map(blockMarkdown).filter(Boolean).join('\n\n').replace(/\n{3,}/g,'\n\n')+'\n'); }
+  const code = node.querySelector('code');
+  const codeText = cleanCaretBoundaries(code?.textContent ?? node.textContent ?? '').replace(/\n$/,'');
+  return prefix + '\n' + codeText + '\n```';
+} if(tag==='ul'||tag==='ol') return listMarkdown(node); if(tag==='table'){ const rows=Array.from(node.querySelectorAll('tr')).map(tr=>Array.from(tr.children).map(c=>childrenMarkdown(c).trim())); if(!rows.length) return ''; const alignments=(node.dataset.alignments||'').split('|'); const header='| '+rows[0].join(' | ')+' |'; const sep='| '+rows[0].map((_,index)=>alignments[index]==='left'?':---':alignments[index]==='center'?':---:':alignments[index]==='right'?'---:':'---').join(' | ')+' |'; const body=rows.slice(1).map(r=>'| '+r.join(' | ')+' |').join('\n'); return [header,sep,body].filter(Boolean).join('\n'); } return childrenMarkdown(node).trim(); }
+function toMarkdown(){ return cleanCaretBoundaries(Array.from(editor.children).map(blockMarkdown).filter(Boolean).join('\n\n')+'\n'); }
 function documentHtml(){ return '<!doctype html>\n<html lang="de"><head><meta charset="utf-8"><title>Markdown Export</title><style>body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;max-width:900px;margin:48px auto;padding:0 28px;line-height:1.65;color:#141413;background:#faf9f5}pre,code{font-family:Cascadia Code,Consolas,monospace}pre{background:#181715;color:#faf9f5;padding:16px 18px;border-radius:14px;overflow:auto}code{background:#f5f0e8;border:1px solid #e6dfd8;border-radius:7px;padding:.12rem .34rem}blockquote{border-left:4px solid #cc785c;background:#f5f0e8;margin-left:0;padding:10px 14px;border-radius:0 12px 12px 0}table{border-collapse:collapse;width:100%}th,td{border:1px solid #e6dfd8;padding:8px 10px}th{background:#efe9de}.page-break{break-before:page;border-top:1px solid #e6dfd8;margin:42px 0;padding-top:12px;color:#6c6a64;font-size:12px}</style></head><body>\n'+editor.innerHTML.replace(/\u200b/g,'')+'\n</body></html>\n'; }
 function setMarkdown(md, options = {}){
   suppressChange=true;
@@ -991,6 +2113,51 @@ function insertTextIntoCodeBlock(pre, text, scroll=true){
  return true;
 }
 function inlineCodeFromSelection(){ const sel=getSelection(); if(!sel.rangeCount) return null; const range=sel.getRangeAt(0); const nodes=[sel.anchorNode, sel.focusNode, range.startContainer, range.endContainer].filter(Boolean); for(const raw of nodes){ let n=raw.nodeType===3 ? raw.parentElement : raw; const code=n?.matches?.('code') ? n : n?.closest?.('code'); if(code && editor.contains(code) && !code.closest('pre')) return code; } const full=range.commonAncestorContainer.nodeType===1 ? range.commonAncestorContainer : range.commonAncestorContainer.parentElement; const selectedCode=full?.matches?.('code') ? full : full?.querySelector?.('code'); if(selectedCode && editor.contains(selectedCode) && !selectedCode.closest('pre') && range.intersectsNode(selectedCode)) return selectedCode; let before=range.startContainer; if(sel.isCollapsed && before?.nodeType===3 && range.startOffset===0) before=before.previousSibling; else if(sel.isCollapsed && before?.nodeType===1) before=before.childNodes[Math.max(0,range.startOffset-1)] || before.previousSibling; const prevCode=before?.nodeType===1 && before.matches?.('code') ? before : null; return prevCode && editor.contains(prevCode) && !prevCode.closest('pre') ? prevCode : null; }
+function inlineCodeRangeInfo(code){
+ const sel=getSelection();
+ if(!code || !sel.rangeCount) return null;
+ const range=sel.getRangeAt(0);
+ if(!code.contains(range.startContainer) || !code.contains(range.endContainer)) return null;
+ return {range};
+}
+function insertTextIntoInlineCode(code, text){
+ const info=inlineCodeRangeInfo(code);
+ if(!info) return false;
+ const insertValue=String(text ?? '');
+ if(!insertValue) return false;
+ const {range}=info;
+ const before=range.cloneRange();
+ before.selectNodeContents(code);
+ before.setEnd(range.startContainer, range.startOffset);
+ const caretOffset=before.toString().length + insertValue.length;
+ range.deleteContents();
+ range.insertNode(document.createTextNode(insertValue));
+ code.normalize();
+ const caretRange=rangeFromTextOffsets(code, caretOffset, caretOffset);
+ const sel=getSelection();
+ sel.removeAllRanges();
+ sel.addRange(caretRange);
+ editor.focus();
+ rememberSelection();
+ emitChange();
+ return true;
+}
+function handleCodeTextInput(e){
+ if(e.inputType!=='insertText' || typeof e.data!=='string' || !e.data || e.isComposing) return false;
+ const pre=codeBlockFromSelection();
+ if(pre && editor.contains(pre) && codeRangeInfo(pre)){
+  e.preventDefault();
+  e.stopPropagation();
+  return insertTextIntoCodeBlock(pre, e.data, true);
+ }
+ const code=inlineCodeFromSelection();
+ if(code && editor.contains(code) && !code.closest('pre') && inlineCodeRangeInfo(code)){
+  e.preventDefault();
+  e.stopPropagation();
+  return insertTextIntoInlineCode(code, e.data);
+ }
+ return false;
+}
 function exitInlineCode(code, scroll=false){
  if(!code || !editor.contains(code) || code.closest('pre')) return false;
  return placeCaretAfterInlineElement(code, scroll);
@@ -1015,7 +2182,156 @@ function handleTitleTab(e){ if(e.key!=='Tab'||e.shiftKey||e.ctrlKey||e.metaKey||
 
 function replaceWithRule(block){ const hr=document.createElement('hr'); const p=document.createElement('p'); p.innerHTML='<br>'; block.replaceWith(hr,p); placeCaret(p); emitChange(); }
 function currentBlock(){ const sel=getSelection(); if(!sel.rangeCount) return null; let n=sel.anchorNode; if(n.nodeType===3) n=n.parentElement; return n?.closest('p,div,h1,h2,h3,h4,h5,h6,li,blockquote,td,th,pre') || null; }
+function captureEditorSelection(){
+ const sel=getSelection();
+ if(!sel.rangeCount || !editorOwnsRange(sel.getRangeAt(0))) return null;
+ const range=sel.getRangeAt(0);
+ const before=document.createRange();
+ before.selectNodeContents(editor);
+ try{ before.setEnd(range.startContainer,range.startOffset); }catch{ return null; }
+ const throughEnd=document.createRange();
+ throughEnd.selectNodeContents(editor);
+ try{ throughEnd.setEnd(range.endContainer,range.endOffset); }catch{ return null; }
+ return {start:before.toString().length,end:throughEnd.toString().length};
+}
+function restoreEditorSelection(snapshot){
+ if(!snapshot) return false;
+ const range=rangeFromTextOffsets(editor,snapshot.start,snapshot.end);
+ const sel=getSelection();
+ sel.removeAllRanges();
+ sel.addRange(range);
+ editor.focus({preventScroll:true});
+ return true;
+}
+function nodePathFrom(root,node){
+ if(!root || !node) return null;
+ const path=[];
+ let current=node;
+ while(current && current!==root){
+  const parent=current.parentNode;
+  if(!parent) return null;
+  const index=Array.prototype.indexOf.call(parent.childNodes,current);
+  if(index<0) return null;
+  path.unshift(index);
+  current=parent;
+ }
+ return current===root ? path : null;
+}
+function nodeFromPath(root,path){
+ if(!root || !Array.isArray(path)) return null;
+ let current=root;
+ for(const index of path){
+  current=current?.childNodes?.[index] || null;
+  if(!current) return null;
+ }
+ return current;
+}
+function nodeMarkup(node){
+ const template=document.createElement('template');
+ template.content.appendChild(node.cloneNode(true));
+ return template.innerHTML;
+}
+function htmlChildNodes(html){
+ const template=document.createElement('template');
+ template.innerHTML=html;
+ return Array.from(template.content.childNodes);
+}
+function sameElementAttributes(left,right){
+ if(left.nodeType!==Node.ELEMENT_NODE || right.nodeType!==Node.ELEMENT_NODE) return false;
+ const leftAttrs=Array.from(left.attributes,attr=>[attr.name,attr.value]);
+ const rightAttrs=Array.from(right.attributes,attr=>[attr.name,attr.value]);
+ return JSON.stringify(leftAttrs)===JSON.stringify(rightAttrs);
+}
+function runProgrammaticMutation(mutate){
+ const beforeHtml=editor.innerHTML;
+ const beforeNodes=htmlChildNodes(beforeHtml);
+ const previousSuppress=suppressChange;
+ let result;
+ suppressChange=true;
+ try{ result=mutate(); }
+ finally{ suppressChange=previousSuppress; }
+ const afterHtml=editor.innerHTML;
+ const afterNodes=Array.from(editor.childNodes,node=>node.cloneNode(true));
+ const afterSelection=captureEditorSelection();
+ if(afterHtml===beforeHtml) return result;
+
+ const beforeMarkup=beforeNodes.map(nodeMarkup);
+ const afterMarkup=afterNodes.map(nodeMarkup);
+ let unchangedStart=0;
+ while(unchangedStart<beforeMarkup.length && unchangedStart<afterMarkup.length && beforeMarkup[unchangedStart]===afterMarkup[unchangedStart]) unchangedStart++;
+ let unchangedEnd=0;
+ while(
+  unchangedEnd<beforeMarkup.length-unchangedStart &&
+  unchangedEnd<afterMarkup.length-unchangedStart &&
+  beforeMarkup[beforeMarkup.length-1-unchangedEnd]===afterMarkup[afterMarkup.length-1-unchangedEnd]
+ ) unchangedEnd++;
+ const beforeChanged=beforeNodes.slice(unchangedStart,beforeNodes.length-unchangedEnd);
+ const afterChanged=afterNodes.slice(unchangedStart,afterNodes.length-unchangedEnd);
+
+ suppressChange=true;
+ try{
+  editor.innerHTML=beforeHtml;
+  editor.focus({preventScroll:true});
+  let committed=false;
+  if(beforeChanged.length===1 && afterChanged.length===1 && beforeChanged[0].nodeType===Node.ELEMENT_NODE && afterChanged[0].nodeType===Node.ELEMENT_NODE){
+   const beforeElement=beforeChanged[0];
+   const afterElement=afterChanged[0];
+   const target=editor.childNodes[unchangedStart];
+   const range=document.createRange();
+   range.selectNodeContents(target);
+   const sel=getSelection();
+   sel.removeAllRanges();
+   sel.addRange(range);
+   let tableBoundary=unchangedStart+1;
+   while(tableBoundary<beforeNodes.length && beforeNodes[tableBoundary].nodeType===Node.TEXT_NODE && !beforeNodes[tableBoundary].textContent.trim()) tableBoundary++;
+   if(
+    beforeElement.tagName==='TABLE' && afterElement.tagName==='TABLE' &&
+    beforeNodes[tableBoundary]?.nodeType===Node.ELEMENT_NODE &&
+    afterNodes[tableBoundary]?.nodeType===Node.ELEMENT_NODE &&
+    ['P','DIV'].includes(beforeNodes[tableBoundary].tagName) &&
+    beforeNodes.slice(unchangedStart+1,tableBoundary+1).every((node,index)=>nodeMarkup(node)===nodeMarkup(afterNodes[unchangedStart+1+index]))
+   ){
+    range.setStart(editor,unchangedStart);
+    range.setEnd(editor,tableBoundary+1);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    committed=document.execCommand('insertHTML',false,afterNodes.slice(unchangedStart,tableBoundary+1).map(nodeMarkup).join(''));
+   } else if(beforeElement.tagName===afterElement.tagName && sameElementAttributes(beforeElement,afterElement)){
+    committed=document.execCommand('insertHTML',false,afterElement.innerHTML);
+   } else if(
+    ['P','DIV','H1','H2','H3','H4','H5','H6'].includes(beforeElement.tagName) &&
+    ['P','DIV','H1','H2','H3','H4','H5','H6'].includes(afterElement.tagName) &&
+    beforeElement.innerHTML===afterElement.innerHTML &&
+    sameElementAttributes(beforeElement,afterElement)
+   ){
+    committed=document.execCommand('formatBlock',false,afterElement.tagName.toLowerCase());
+   }
+  }
+  if(!committed){
+   const range=document.createRange();
+   range.setStart(editor,unchangedStart);
+   range.setEnd(editor,beforeNodes.length-unchangedEnd);
+   const sel=getSelection();
+   sel.removeAllRanges();
+   sel.addRange(range);
+   const changedHtml=afterChanged.map(nodeMarkup).join('');
+   committed=document.execCommand('insertHTML',false,changedHtml);
+  }
+  if(!committed) editor.innerHTML=afterHtml;
+ } finally {
+  suppressChange=previousSuppress;
+ }
+ ensureTail();
+ hydrateTasks();
+ hydrateCopyTargets();
+ restoreEditorSelection(afterSelection);
+ rememberSelection();
+ updateAll();
+ emitChange();
+ return result;
+}
 function insertHtml(html, focus='p,li,td,th,code,h1'){
+ return runProgrammaticMutation(()=>{
  restoreSelection();
  const block=currentBlock() || editor.lastElementChild;
  const t=document.createElement('template');
@@ -1027,6 +2343,8 @@ function insertHtml(html, focus='p,li,td,th,code,h1'){
  hydrateCopyTargets();
  placeCaret(focusTarget);
  emitChange();
+ return true;
+ });
 }
 function nodeElement(raw){ return raw?.nodeType===Node.TEXT_NODE ? raw.parentElement : raw; }
 function editorOwnsNode(raw){ const el=nodeElement(raw); return !!el && (el===editor || editor.contains(el)); }
@@ -1095,6 +2413,7 @@ function insertTextAfterInlineElement(el, value=' '){
  editor.focus();
 }
 function setBlockTag(tag){
+ return runProgrammaticMutation(()=>{
  const block=currentBlock();
  if(!block || block.closest('pre,table') || !['P','DIV','H1','H2','H3','H4','H5','H6'].includes(block.tagName)) return false;
  const next=document.createElement(tag.toLowerCase());
@@ -1103,8 +2422,10 @@ function setBlockTag(tag){
  placeCaret(next);
  emitChange();
  return true;
+ });
 }
 function applyInlineFormat(tag, attrs={}, placeholder='Text'){
+ return runProgrammaticMutation(()=>{
  restoreSelection();
  editor.focus();
  const sel=getSelection();
@@ -1129,6 +2450,7 @@ function applyInlineFormat(tag, attrs={}, placeholder='Text'){
  hydrateCopyTargets();
  emitChange();
  return true;
+ });
 }
 function runFormat(fmt){
  restoreSelection();
@@ -1192,19 +2514,45 @@ function handleQuoteExit(e){
  emitChange();
  return true;
 }
+function normalizeHistorySelection(){
+  const selection=getSelection();
+  if(selection.rangeCount && !selection.isCollapsed && editorOwnsRange(selection.getRangeAt(0))){
+   const range=selection.getRangeAt(0).cloneRange();
+   range.collapse(false);
+   selection.removeAllRanges();
+   selection.addRange(range);
+   editor.focus({preventScroll:true});
+   return true;
+  }
+  return false;
+}
+function runHistoryCommand(historyCommand){
+  if(!['undo','redo'].includes(historyCommand)) return false;
+  restoreSelection();
+  editor.focus({preventScroll:true});
+  const changed=document.execCommand(historyCommand);
+  if(changed) normalizeHistorySelection();
+  rememberSelection();
+  updateAll();
+  updateOverlayScrollbar();
+  if(changed) emitChange();
+  return changed;
+}
 function runCommand(cmd){
   const c = CONST.COMMANDS;
   // Schließe Menü bei den meisten Aktionen (außer lokalen UI-Toggles)
   if (![c.TOGGLE_TOOLS, c.TOGGLE_THEME, c.CLOSE_MENU, 'showTabHelp'].includes(cmd)) closeMenu(false);
 
-  if (cmd === c.NEW)           post('new', {markdown: toMarkdown()});
+  if (cmd === 'undo')          runHistoryCommand('undo');
+  else if (cmd === 'redo')     runHistoryCommand('redo');
+  else if (cmd === c.NEW)      post('new', {markdown: toMarkdown()});
   else if (cmd === c.OPEN)     post('open', {markdown: toMarkdown()});
-  else if (cmd === c.SAVE)     { post('save', {markdown: toMarkdown()}); markClean(); }
-  else if (cmd === c.SAVE_AS)  { post('saveAs', {markdown: toMarkdown()}); markClean(); }
+  else if (cmd === c.SAVE)     post('save', {markdown: toMarkdown()});
+  else if (cmd === c.SAVE_AS)  post('saveAs', {markdown: toMarkdown()});
   else if (cmd === c.COPY_MD)  post('copyMarkdown', {markdown: toMarkdown()});
   else if (cmd === 'exportMarkdownFile') post('exportMarkdownFile', {markdown: toMarkdown()});
-  else if (cmd === c.EXPORT_HTML) showExportDialog();
-  else if (cmd === 'printPdf') printForPdf();
+  else if (cmd === c.EXPORT_HTML) post('exportHtml', {html: documentHtml()});
+  else if (cmd === 'printPdf') post('printPdf');
   else if (cmd === c.SHOW_SOURCE) post('showSource', {markdown: toMarkdown()});
   else if (cmd === c.TOGGLE_THEME) toggleTheme();
   else if (cmd === c.TOGGLE_TOOLS) toggleTools();
@@ -1221,18 +2569,107 @@ function runCommand(cmd){
   else if (cmd === 'findReplace') showFindReplace();
   else if (cmd === c.CLOSE_MENU)   closeMenu(true);
 }
+function semanticEditorText(){
+ return Array.from(editor.children).map(block=>{
+   if(block.tagName==='PRE') return cleanCaretBoundaries(block.querySelector('code')?.innerText ?? block.innerText ?? '');
+   return cleanCaretBoundaries(block.innerText || '');
+ }).join('\n');
+}
 function documentStats(){
- const text=cleanCaretBoundaries(editor.innerText||'');
+ const text=semanticEditorText();
  const words=(text.trim().match(/\S+/g)||[]).length;
  return { words, chars:text.length };
 }
+function selectionStatsFromText(value){
+ const text=cleanCaretBoundaries(value).replace(/\u00a0/g,' ');
+ return { words:(text.trim().match(/\S+/g)||[]).length, chars:text.length };
+}
+function currentSelectionStats(){
+ const sel=getSelection();
+ if(!sel || !sel.rangeCount || sel.isCollapsed) return null;
+ const range=sel.getRangeAt(0);
+ if(!editorOwnsRange(range)) return null;
+ return selectionStatsFromText(sel.toString());
+}
 function emitChange(){ if(suppressChange) return; clearTimeout(changeTimer); changeTimer=setTimeout(()=>{ updateAll(); markDirty(); const markdown=toMarkdown(); post('changed',{markdown, stats:documentStats()}); },120); }
-let statusDirty = false;
-function markDirty(){ statusDirty = true; updateStatusBar(); }
-function markClean(){ statusDirty = false; updateStatusBar(); }
+let statusSaveState = 'saved';
+let lastPresentationStateJson = '';
+function applySaveState(state){
+ if(!['saved','unsaved','saving'].includes(state)) return;
+ statusSaveState = state;
+}
+function markDirty(){ applySaveState('unsaved'); }
+function markClean(){ applySaveState('saved'); }
+
+function currentPresentationState(){
+  const words = parseInt(wordCount?.textContent || '0', 10) || 0;
+  const chars = parseInt(charCount?.textContent || '0', 10) || 0;
+  const headings = parseInt(headingCount?.textContent || '0', 10) || 0;
+  const selection = currentSelectionStats();
+  const goal = Math.max(0, parseInt(targetWordCount, 10) || 0);
+  return {
+    words,
+    chars,
+    readMinutes: Math.max(1, Math.round(words / 200)),
+    headings,
+    goal,
+    goalPercent: goal > 0 ? Math.min(100, Math.round((words / goal) * 100)) : 0,
+    hasSelection: selection !== null,
+    selectionWords: selection?.words || 0,
+    selectionChars: selection?.chars || 0,
+    focusMode: document.body.classList.contains('focus-mode')
+  };
+}
+function emitPresentationState(force=false){
+  const state = currentPresentationState();
+  const serialized = JSON.stringify(state);
+  if(force || serialized !== lastPresentationStateJson){
+    lastPresentationStateJson = serialized;
+    post('presentationState', state);
+  }
+  return state;
+}
+function getStatisticsSnapshot(){
+  const text = semanticEditorText();
+  const words = (text.trim().match(/\S+/g) || []).length;
+  const chars = text.length;
+  const selection = currentSelectionStats();
+  const headings = Array.from(editor.querySelectorAll('h1,h2,h3'));
+  const goal = Math.max(0, parseInt(targetWordCount, 10) || 0);
+  return {
+    words,
+    chars,
+    readMinutes: Math.max(1, Math.round(words / 200)),
+    headings: headings.length,
+    goal,
+    goalPercent: goal > 0 ? Math.min(100, Math.round((words / goal) * 100)) : 0,
+    hasSelection: selection !== null,
+    selectionWords: selection?.words || 0,
+    selectionChars: selection?.chars || 0,
+    outline: headings.map((heading,index)=>({
+      index,
+      level: Number(heading.tagName.slice(1)) || 1,
+      text: cleanCaretBoundaries(heading.innerText || '').trim() || 'Unbenannte Überschrift'
+    }))
+  };
+}
+function scrollToStatisticsHeading(index){
+  const headings = editor.querySelectorAll('h1,h2,h3');
+  const heading = headings[Number(index)];
+  if(!heading) return false;
+  heading.scrollIntoView({block:'center'});
+  const range = document.createRange();
+  range.selectNodeContents(heading);
+  range.collapse(true);
+  const selection = getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  editor.focus();
+  return true;
+}
 
 function updateAll(){
-  const text=cleanCaretBoundaries(editor.innerText||'');
+  const text=semanticEditorText();
   wordCount.textContent=(text.trim().match(/\S+/g)||[]).length;
   charCount.textContent=text.length;
   const heads=Array.from(editor.querySelectorAll('h1,h2,h3'));
@@ -1240,57 +2677,25 @@ function updateAll(){
   outline.innerHTML=heads.map((h,i)=>`<button type="button" data-index="${i}">${escapeHtml(cleanCaretBoundaries(h.innerText))}</button>`).join('') || '<button type="button">Keine Überschriften</button>';
   updateStatusBar();
   addCodeLabels();
+  requestAnimationFrame(updateOverlayScrollbar);
 }
 
 function updateStatusBar(){
-  const wEl = document.getElementById('statusWords');
-  const cEl = document.getElementById('statusChars');
-  const readEl = document.getElementById('statusReadTime');
-  const saveEl = document.getElementById('statusSaveState');
-  const focusHint = document.getElementById('statusFocusHint');
-  if (!wEl || !cEl || !saveEl) return;
-
-  const words = wordCount ? wordCount.textContent : '0';
-  const chars = charCount ? charCount.textContent : '0';
-  const wNum = parseInt(words) || 0;
-  if (targetWordCount > 0) {
-    const pct = Math.min(100, Math.round((wNum / targetWordCount) * 100));
-    wEl.textContent = `${words} / ${targetWordCount} Wörter (${pct}%)`;
-  } else {
-    wEl.textContent = words + ' Wörter';
-  }
-  cEl.textContent = chars + ' Zeichen';
-
-  if (readEl) {
-    const w = parseInt(words) || 0;
-    const mins = Math.max(1, Math.round(w / 200));
-    readEl.textContent = '~' + mins + ' min';
-  }
-
-  if (statusDirty) {
-    saveEl.textContent = 'Ungespeichert';
-    saveEl.classList.add('dirty');
-  } else {
-    saveEl.textContent = 'Gespeichert';
-    saveEl.classList.remove('dirty');
-  }
-
-  if (focusHint) {
-    const inFocus = document.body.classList.contains('focus-mode');
-    focusHint.style.display = inFocus ? 'inline' : 'none';
-  }
-
-  // Auto-Save indicator
-  const autoEl = document.getElementById('statusAutoSave');
-  if (autoEl) {
-    autoEl.textContent = autoSaveEnabledClient ? 'Auto-Save' : '';
-    autoEl.style.opacity = autoSaveEnabledClient ? '1' : '0.5';
-  }
+  emitPresentationState();
 }
 function hydrateTasks(){ editor.querySelectorAll('.task-checkbox').forEach(cb=>{ cb.contentEditable=false; cb.onchange=emitChange; }); }
-function notify(title,message=''){ const toast=document.createElement('div'); toast.className='toast'; toast.innerHTML=`<strong>${escapeHtml(title)}</strong>${message?`<span>${escapeHtml(message)}</span>`:''}`; toasts.appendChild(toast); setTimeout(()=>toast.remove(),3200); if (/gespeichert|saved/i.test(title + ' ' + message)) { markClean(); } }
-function appleFeedback(message='Kopiert'){ document.querySelectorAll('.apple-hud').forEach(el=>el.remove()); const hud=document.createElement('div'); hud.className='apple-hud'; hud.textContent=message; document.body.appendChild(hud); setTimeout(()=>hud.remove(),1300); }
-function hydrateCopyTargets(){ editor.querySelectorAll('code').forEach(code=>{ if(code.closest('pre')){ code.setAttribute('contenteditable','true'); return; } code.title='Doppelklick kopiert Inline-Code'; code.dataset.copyTarget='inline'; }); editor.querySelectorAll('pre').forEach(pre=>{ pre.setAttribute('contenteditable','true'); pre.title='Bearbeiten: normal klicken. Kopieren: Doppelklick. Strg+A im Codeblock markiert nur diesen Codeblock.'; pre.dataset.copyTarget='block'; const code=pre.querySelector('code'); if(code) code.setAttribute('contenteditable','true'); }); }
+function notify(title,message=''){
+  if(document.body.classList.contains('windows-native-shell') && window.chrome?.webview){
+    post('nativeNotify',{title:String(title ?? ''),message:String(message ?? '')});
+    return;
+  }
+  const toast=document.createElement('div');
+  toast.className='toast';
+  toast.innerHTML=`<strong>${escapeHtml(title)}</strong>${message?`<span>${escapeHtml(message)}</span>`:''}`;
+  toasts.appendChild(toast);
+  setTimeout(()=>toast.remove(),2800);
+}
+function hydrateCopyTargets(){ editor.querySelectorAll('pre').forEach(pre=>{ pre.removeAttribute('contenteditable'); pre.title='Bearbeiten: normal klicken. Kopieren: Doppelklick. Strg+A im Codeblock markiert nur diesen Codeblock.'; pre.dataset.copyTarget='block'; const code=pre.querySelector('code'); if(code) code.removeAttribute('contenteditable'); }); editor.querySelectorAll('code').forEach(code=>{ code.removeAttribute('contenteditable'); if(code.closest('pre')) return; code.title='Doppelklick kopiert Inline-Code'; code.dataset.copyTarget='inline'; }); }
 
 function addCodeLabels() {
   editor.querySelectorAll('pre[data-lang]').forEach(pre => {
@@ -1298,12 +2703,13 @@ function addCodeLabels() {
     const lang = pre.getAttribute('data-lang');
     const label = document.createElement('span');
     label.className = 'code-lang';
+    label.contentEditable = 'false';
     label.textContent = lang;
     pre.insertBefore(label, pre.firstChild);
   });
 }
 async function copyText(text){ if(navigator.clipboard?.writeText){ try{ await navigator.clipboard.writeText(text); return true; }catch{} } const area=document.createElement('textarea'); area.value=text; area.setAttribute('readonly',''); area.style.position='fixed'; area.style.left='-9999px'; area.style.top='0'; document.body.appendChild(area); area.select(); const ok=document.execCommand('copy'); area.remove(); return ok; }
-async function copyElementText(el,label, subtle=false){ const text=el.matches('pre') ? ((el.querySelector('code')?.innerText) ?? el.innerText ?? '') : (el.innerText ?? el.textContent ?? ''); if(!text) return; const ok=await copyText(text); if(ok){ el.classList.add('copied'); setTimeout(()=>el.classList.remove('copied'),1200); if(subtle) appleFeedback('Kopiert'); else notify(label,'In die Zwischenablage kopiert.'); } else notify('Kopieren fehlgeschlagen','Bitte manuell markieren und kopieren.'); }
+async function copyElementText(el,label){ const text=el.matches('pre') ? ((el.querySelector('code')?.innerText) ?? el.innerText ?? '') : (el.innerText ?? el.textContent ?? ''); if(!text) return; const ok=await copyText(text); if(ok){ el.classList.add('copied'); setTimeout(()=>el.classList.remove('copied'),1200); notify('Kopiert','In die Zwischenablage kopiert.'); } else notify('Kopieren fehlgeschlagen','Bitte manuell markieren und kopieren.'); }
 function removeBlockAndFocus(block){ const fallback=block.nextElementSibling || block.previousElementSibling; if(!fallback){ block.outerHTML='<p><br></p>'; placeCaret(editor.lastElementChild); } else { block.remove(); ensureTail(); placeCaret(fallback.isConnected ? fallback : editor.lastElementChild); } emitChange(); }
 function handleDeleteStructures(e){ if(!['Backspace','Delete'].includes(e.key) || e.ctrlKey || e.metaKey || e.altKey) return false; const sel=getSelection(); if(!sel.rangeCount) return false; const block=currentBlock(); const pre=block?.closest?.('pre'); if(pre && editor.contains(pre)){ const text=(pre.innerText||pre.textContent||'').replace(/\u00a0/g,''); const selected=sel.toString(); const allSelected=selected && selected.trim()===text.trim(); if(!text.trim() || text.trim()==='code' || allSelected){ e.preventDefault(); removeBlockAndFocus(pre); return true; } }
  if(e.key==='Backspace' && block?.matches?.('p,div') && !block.textContent.trim() && block.previousElementSibling?.tagName==='PRE'){ e.preventDefault(); block.previousElementSibling.remove(); ensureTail(); placeCaret(block); emitChange(); return true; }
@@ -1332,21 +2738,25 @@ function openMenu(event){
 function closeMenu(restore){ menuSheet.hidden=true; menuBackdrop.hidden=true; if(restore) editor.focus(); }
 function toggleTheme(){
   const current = document.body.dataset.theme || 'dark';
-  const cycle = ['light', 'dark', 'sepia', 'midnight'];
+  const cycle = ['light', 'dark'];
   let idx = cycle.indexOf(current);
   if (idx === -1) idx = 1;
   const next = cycle[(idx + 1) % cycle.length];
-  applyTheme(next);
-  post('updateSetting', { key: 'theme', value: next });
+  requestThemeChange(next);
 }
-function applyTheme(t){
-  if (t === 'clean') t = 'light';
+function applyTheme(t,persist=true){
+  if (t === 'clean' || t === 'sepia') t = 'light';
+  else if (t === 'midnight') t = 'dark';
+  else if (t !== 'light' && t !== 'dark') t = 'light';
   document.body.dataset.theme = t;
-  localStorage.setItem('markdownStudioTheme', t);
-  // Checkbox nur für light/dark (backward compat)
-  if (themeInput) themeInput.checked = (t === 'dark' || t === 'midnight');
+  if (persist) localStorage.setItem('markdownStudioTheme', t);
+  if (themeInput) themeInput.checked = (t === 'dark');
 }
-function applyTools(open,persist=true){ document.body.classList.toggle('tools-open',open); document.body.classList.toggle('tools-collapsed',!open); document.querySelectorAll('[data-command="toggleTools"]').forEach(b=>{ b.setAttribute('aria-pressed',String(open)); b.setAttribute('title',open?'Werkzeuge einklappen':'Werkzeuge ausklappen'); }); document.getElementById('toolsCollapse').textContent=open?'Einklappen':'Ausklappen'; if(persist) localStorage.setItem('markdownStudioToolsOpen',open?'true':'false'); post('updateSetting', { key: 'toolsOpen', value: open }); }
+function requestThemeChange(theme){
+  applyTheme(theme, false);
+  post('updateSetting', { key: 'theme', value: document.body.dataset.theme });
+}
+function applyTools(open,persist=true){ document.body.classList.toggle('tools-open',open); document.body.classList.toggle('tools-collapsed',!open); document.querySelectorAll('[data-command="toggleTools"]').forEach(b=>{ b.setAttribute('aria-pressed',String(open)); b.setAttribute('title',open?'Werkzeuge einklappen':'Werkzeuge ausklappen'); }); document.getElementById('toolsCollapse').textContent=open?'Einklappen':'Ausklappen'; if(persist){ localStorage.setItem('markdownStudioToolsOpen',open?'true':'false'); post('updateSetting', { key: 'toolsOpen', value: open }); } }
 function toggleTools(){ applyTools(!document.body.classList.contains('tools-open')); }
 
 /* === FOCUS MODE (V4 Phase 1) === */
@@ -1358,16 +2768,18 @@ function applyFocusMode(enabled, persist = true) {
     b.setAttribute('aria-pressed', String(enabled));
     b.setAttribute('title', enabled ? 'Fokus-Modus verlassen (F11)' : 'Fokus-Modus (F11)');
   });
-  if (persist) localStorage.setItem('markdownStudioFocusMode', enabled ? 'true' : 'false');
+  if (persist) {
+    localStorage.setItem('markdownStudioFocusMode', enabled ? 'true' : 'false');
+    post('updateSetting', { key: 'focusMode', value: enabled });
+  }
   updateStatusBar();
   if (enabled) setTimeout(typewriterScroll, 60);
-  post('updateSetting', { key: 'focusMode', value: enabled });
 }
 
 function applySettings(settings) {
   if (!settings) return;
   if (settings.theme) {
-    applyTheme(settings.theme);
+    applyTheme(settings.theme, false);
   }
   if (typeof settings.toolsOpen === 'boolean') {
     applyTools(settings.toolsOpen, false);
@@ -1393,6 +2805,7 @@ function applySettings(settings) {
   document.documentElement.style.setProperty('--windows-editor-max', editorWidth + 'px');
   document.documentElement.style.setProperty('--windows-editor-font-size', fontSize + 'px');
   document.documentElement.style.setProperty('--windows-editor-line-height', String(lineHeight));
+  requestAnimationFrame(updateOverlayScrollbar);
 }
 
 let autoSaveEnabledClient = false;
@@ -1444,12 +2857,14 @@ function showFindReplace(initialQuery = '') {
   status.textContent = '';
 
   // wire buttons
+  const previousBtn = document.getElementById('findPreviousBtn');
   const nextBtn = document.getElementById('findNextBtn');
   const repBtn = document.getElementById('replaceBtn');
   const repAllBtn = document.getElementById('replaceAllBtn');
   const closeBtn = document.getElementById('findClose');
 
   const cleanup = () => {
+    previousBtn.onclick = null;
     nextBtn.onclick = null;
     repBtn.onclick = null;
     repAllBtn.onclick = null;
@@ -1478,24 +2893,36 @@ function showFindReplace(initialQuery = '') {
     findState.wholeWord = wholeCb.checked;
     findMatches();
     if (findState.matches.length > 0) {
-      status.textContent = `${findState.matches.length} Treffer`;
       selectMatch(0);
     } else {
       status.textContent = 'Keine Treffer';
+      clearFindSelection();
     }
   };
 
-  nextBtn.onclick = () => {
+  const syncSearchFromControls = () => {
+    const controlsChanged = findState.query !== findInput.value
+      || findState.caseSensitive !== caseCb.checked
+      || findState.wholeWord !== wholeCb.checked;
+    if (controlsChanged) doSearch();
+  };
+
+  const moveSelection = step => {
+    syncSearchFromControls();
     if (!findState.query) { doSearch(); return; }
     if (findState.matches.length === 0) {
       doSearch();
       return;
     }
-    findState.currentIndex = (findState.currentIndex + 1) % findState.matches.length;
+    findState.currentIndex = (findState.currentIndex + step + findState.matches.length) % findState.matches.length;
     selectMatch(findState.currentIndex);
   };
 
+  previousBtn.onclick = () => moveSelection(-1);
+  nextBtn.onclick = () => moveSelection(1);
+
   repBtn.onclick = () => {
+    syncSearchFromControls();
     if (findState.currentIndex < 0 || !findState.matches.length) return;
     const match = findState.matches[findState.currentIndex];
     replaceInMatch(match, replaceInput.value);
@@ -1506,8 +2933,11 @@ function showFindReplace(initialQuery = '') {
   };
 
   repAllBtn.onclick = () => {
+    syncSearchFromControls();
     if (!findState.query) return;
     const count = replaceAll(findState.query, replaceInput.value, findState.caseSensitive, findState.wholeWord);
+    findMatches();
+    clearFindSelection();
     status.textContent = `${count} Ersetzungen`;
     updateAll();
     emitChange();
@@ -1528,7 +2958,7 @@ function showFindReplace(initialQuery = '') {
 
   // initial search if query present
   if (findInput.value) {
-    setTimeout(doSearch, 10);
+    doSearch();
   }
 
   setTimeout(() => findInput.focus(), 50);
@@ -1536,6 +2966,7 @@ function showFindReplace(initialQuery = '') {
 
 function findMatches() {
   findState.matches = [];
+  findState.currentIndex = -1;
   const q = findState.query;
   if (!q) return;
 
@@ -1571,7 +3002,10 @@ function findMatches() {
 }
 
 function selectMatch(index) {
-  if (index < 0 || index >= findState.matches.length) return;
+  if (index < 0 || index >= findState.matches.length) {
+    findState.currentIndex = -1;
+    return false;
+  }
   const match = findState.matches[index];
   const range = document.createRange();
   try {
@@ -1580,12 +3014,24 @@ function selectMatch(index) {
     const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
+    findState.currentIndex = index;
+    const status = document.getElementById('findStatus');
+    if (status) status.textContent = `${index + 1} von ${findState.matches.length} Treffern`;
     // scroll into view
     const rect = range.getBoundingClientRect();
     if (rect.top < 80 || rect.bottom > window.innerHeight - 80) {
       range.startContainer.parentElement?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
-  } catch (e) {}
+    return true;
+  } catch (e) {
+    findState.currentIndex = -1;
+    return false;
+  }
+}
+
+function clearFindSelection() {
+  const selection = window.getSelection();
+  if (selection?.rangeCount && editor.contains(selection.anchorNode)) selection.removeAllRanges();
 }
 
 function replaceInMatch(match, replacement) {
@@ -1688,30 +3134,42 @@ const paletteCommands = [
   { id: 'focus', label: 'Fokus-Modus umschalten', desc: 'Ablenkungsfrei schreiben', shortcut: 'F11', action: () => toggleFocusMode() },
   { id: 'new', label: 'Neues Dokument', desc: 'Leeres Dokument starten', action: () => runCommand(CONST.COMMANDS.NEW) },
   { id: 'open', label: 'Öffnen', desc: 'Textdatei laden', action: () => runCommand(CONST.COMMANDS.OPEN) },
+  { id: 'recent', label: 'Zuletzt verwendet', desc: 'Letzte Dateien öffnen', action: () => runCommand('openRecent') },
   { id: 'save', label: 'Speichern', desc: 'Aktuelles Dokument speichern', shortcut: 'Strg+S', action: () => runCommand(CONST.COMMANDS.SAVE) },
   { id: 'saveas', label: 'Speichern unter', desc: 'Als neue Datei speichern', action: () => runCommand(CONST.COMMANDS.SAVE_AS) },
-  { id: 'copy', label: 'Als Markdown kopieren', desc: 'In die Zwischenablage', action: () => runCommand(CONST.COMMANDS.COPY_MD) },
-  { id: 'export', label: 'HTML exportieren', desc: 'Als .html speichern', action: () => runCommand(CONST.COMMANDS.EXPORT_HTML) },
+  { id: 'undo', label: 'Rückgängig', desc: 'Letzte Änderung zurücknehmen', action: () => runCommand('undo') },
+  { id: 'redo', label: 'Wiederholen', desc: 'Zurückgenommene Änderung wiederholen', action: () => runCommand('redo') },
+  { id: 'findReplace', label: 'Suchen & Ersetzen', desc: 'Im Dokument suchen und ersetzen', shortcut: 'Strg+F', action: () => showFindReplace() },
   { id: 'source', label: 'Markdown-Quelle anzeigen', desc: 'Rohtext im Dialog', action: () => runCommand(CONST.COMMANDS.SHOW_SOURCE) },
-  { id: 'theme', label: 'Theme wechseln', desc: 'Hell / Dunkel umschalten', action: () => toggleTheme() },
-  { id: 'tools', label: 'Werkzeuge umschalten', desc: 'Seitenleiste ein/aus', action: () => toggleTools() },
-  { id: 'help', label: 'Tab-Befehle anzeigen', desc: 'Smart-Tab Übersicht', action: () => showHelp() },
-  { id: 'table', label: 'Tabelle einfügen', desc: 'Spalten und Zeilen abfragen', action: () => runFormat(CONST.FORMATS.TABLE) },
-  { id: 'task', label: 'Aufgabenliste einfügen', desc: 'Checkboxen', action: () => runCommand(CONST.FORMATS.TASK) },
+  { id: 'h1', label: 'Überschrift 1', desc: 'Block als H1 formatieren', action: () => runFormat('h1') },
+  { id: 'h2', label: 'Überschrift 2', desc: 'Block als H2 formatieren', action: () => runFormat('h2') },
+  { id: 'h3', label: 'Überschrift 3', desc: 'Block als H3 formatieren', action: () => runFormat('h3') },
+  { id: 'bold', label: 'Fett', desc: 'Auswahl fett formatieren', shortcut: 'Strg+B', action: () => runFormat('bold') },
+  { id: 'italic', label: 'Kursiv', desc: 'Auswahl kursiv formatieren', shortcut: 'Strg+I', action: () => runFormat('italic') },
+  { id: 'strike', label: 'Durchgestrichen', desc: 'Auswahl durchstreichen', action: () => runFormat('strike') },
+  { id: 'inlineCode', label: 'Inline-Code', desc: 'Auswahl als Inline-Code formatieren', action: () => runFormat('inlineCode') },
+  { id: 'code', label: 'Codeblock', desc: 'Codeblock einfügen', action: () => runFormat('code') },
+  { id: 'quote', label: 'Zitat', desc: 'Blockzitat einfügen', action: () => runFormat('quote') },
+  { id: 'task', label: 'Aufgabenliste einfügen', desc: 'Checkboxen', action: () => runFormat(CONST.FORMATS.TASK) },
+  { id: 'hr', label: 'Trennlinie', desc: 'Horizontale Trennlinie einfügen', action: () => runFormat('hr') },
   { id: 'link', label: 'Link einfügen', desc: 'Hyperlink mit URL', action: () => runFormat('link') },
-  { id: 'theme-light', label: 'Theme: Hell', desc: 'Klassisches helles Design', action: () => applyTheme('light') },
-  { id: 'theme-dark', label: 'Theme: Dunkel', desc: 'Dunkles Design', action: () => applyTheme('dark') },
-  { id: 'theme-sepia', label: 'Theme: Sepia', desc: 'Warmes Papier für langes Lesen', action: () => applyTheme('sepia') },
-  { id: 'theme-midnight', label: 'Theme: Midnight', desc: 'Dunkel und modern', action: () => applyTheme('midnight') },
-  { id: 'export', label: 'Exportieren...', desc: 'MD, HTML oder PDF', action: () => showExportDialog() },
-  { id: 'recent', label: 'Zuletzt verwendet', desc: 'Letzte Dateien öffnen', action: () => runCommand('openRecent') },
+  { id: 'table', label: 'Tabelle einfügen', desc: 'Spalten und Zeilen abfragen', action: () => runFormat(CONST.FORMATS.TABLE) },
   { id: 'addRow', label: 'Tabelle: Zeile hinzufügen', desc: 'Unter aktueller Zeile', action: () => runCommand('addTableRow') },
   { id: 'addCol', label: 'Tabelle: Spalte hinzufügen', desc: 'Rechts der aktuellen Spalte', action: () => runCommand('addTableCol') },
   { id: 'delRow', label: 'Tabelle: Zeile löschen', desc: 'Aktuelle Zeile entfernen', action: () => runCommand('delTableRow') },
   { id: 'delCol', label: 'Tabelle: Spalte löschen', desc: 'Aktuelle Spalte entfernen', action: () => runCommand('delTableCol') },
-  { id: 'toggleAutoSave', label: 'Auto-Speichern umschalten', desc: 'Opt-in automatisches Speichern', action: () => toggleAutoSave() },
+  { id: 'copy', label: 'Als Markdown kopieren', desc: 'In die Zwischenablage', action: () => runCommand(CONST.COMMANDS.COPY_MD) },
+  { id: 'export-md', label: 'Markdown-Datei exportieren', desc: 'Als Markdown-Datei speichern', action: () => runCommand('exportMarkdownFile') },
+  { id: 'export-html', label: 'HTML exportieren', desc: 'Als .html speichern', action: () => runCommand(CONST.COMMANDS.EXPORT_HTML) },
+  { id: 'print-pdf', label: 'PDF drucken', desc: 'Druckdialog für PDF öffnen', action: () => runCommand('printPdf') },
+  { id: 'theme', label: 'Theme wechseln', desc: 'Hell / Dunkel umschalten', action: () => toggleTheme() },
+  { id: 'theme-light', label: 'Theme: Hell', desc: 'Helles Design aktivieren', action: () => requestThemeChange('light') },
+  { id: 'theme-dark', label: 'Theme: Dunkel', desc: 'Dunkles Design aktivieren', action: () => requestThemeChange('dark') },
+  { id: 'toggleAutoSave', label: 'Auto-Speichern umschalten', desc: 'Automatisches Speichern ein/aus', action: () => toggleAutoSave() },
   { id: 'setWordGoal', label: 'Wortziel setzen', desc: 'Ziel für Wörterzahl festlegen', action: () => setWordGoal() },
-  { id: 'findReplace', label: 'Suchen & Ersetzen', desc: 'Find & Replace (Strg+F)', action: () => showFindReplace() },
+  { id: 'help', label: 'Smart-Tab-Hilfe', desc: 'Tab-Befehle und Snippets anzeigen', shortcut: 'F1', action: () => showHelp() },
+  { id: 'settings', label: 'Einstellungen', desc: 'App- und Editor-Einstellungen öffnen', action: () => post('openSettings') },
+  { id: 'about', label: 'Über Markdown Studio Pro', desc: 'Informationen zur Anwendung', action: () => post('showAbout') },
 ];
 
 let paletteSelectedIndex = 0;
@@ -1744,8 +3202,8 @@ function showCommandPalette() {
 
   const onKey = (e) => {
     if (e.key === 'Escape') { hideCommandPalette(); e.preventDefault(); }
-    else if (e.key === 'ArrowDown') { paletteSelectedIndex = Math.min(paletteSelectedIndex + 1, paletteFiltered.length - 1); renderPaletteList(list); e.preventDefault(); }
-    else if (e.key === 'ArrowUp') { paletteSelectedIndex = Math.max(paletteSelectedIndex - 1, 0); renderPaletteList(list); e.preventDefault(); }
+    else if (e.key === 'ArrowDown') { setPaletteSelectedIndex(list, Math.min(paletteSelectedIndex + 1, paletteFiltered.length - 1), true); e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { setPaletteSelectedIndex(list, Math.max(paletteSelectedIndex - 1, 0), true); e.preventDefault(); }
     else if (e.key === 'Enter') { executeSelectedPaletteItem(); e.preventDefault(); }
   };
   input.onkeydown = onKey;
@@ -1783,12 +3241,13 @@ function showExportDialog() {
   if (!backdrop) {
     // fallback
     const choice = prompt('Export als: md / html / pdf', 'md');
-    if (choice === 'md') runCommand(CONST.COMMANDS.COPY_MD);
+    if (choice === 'md') runCommand('exportMarkdownFile');
     else if (choice === 'html') runCommand(CONST.COMMANDS.EXPORT_HTML);
-    else if (choice === 'pdf') printForPdf();
+    else if (choice === 'pdf') runCommand('printPdf');
     return;
   }
   backdrop.hidden = false;
+  requestAnimationFrame(() => backdrop.querySelector('[data-export]')?.focus());
 
   const close = () => { backdrop.hidden = true; editor.focus(); };
 
@@ -1800,22 +3259,30 @@ function showExportDialog() {
       close();
       const type = btn.getAttribute('data-export');
       if (type === 'md') {
-        runCommand(CONST.COMMANDS.COPY_MD);
+        runCommand('exportMarkdownFile');
       } else if (type === 'html') {
         runCommand(CONST.COMMANDS.EXPORT_HTML);
       } else if (type === 'pdf') {
-        printForPdf();
+        runCommand('printPdf');
       }
     };
   });
 }
 
-function printForPdf() {
-  // Temporär Print-Styles verbessern und drucken
-  const oldTitle = document.title;
-  document.title = 'Markdown Export';
-  window.print();
-  setTimeout(() => { document.title = oldTitle; }, 500);
+
+function setPaletteSelectedIndex(listEl, index, ensureVisible=false) {
+  if (!paletteFiltered.length) {
+    paletteSelectedIndex = 0;
+    return;
+  }
+  paletteSelectedIndex = Math.max(0, Math.min(index, paletteFiltered.length - 1));
+  const items = Array.from(listEl.querySelectorAll('.command-palette-item'));
+  items.forEach((item, itemIndex) => {
+    const selected = itemIndex === paletteSelectedIndex;
+    item.classList.toggle('selected', selected);
+    item.setAttribute('aria-selected', selected ? 'true' : 'false');
+  });
+  if (ensureVisible) items[paletteSelectedIndex]?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'auto' });
 }
 
 function renderPaletteList(listEl) {
@@ -1831,6 +3298,8 @@ function renderPaletteList(listEl) {
   paletteFiltered.forEach((cmd, i) => {
     const item = document.createElement('div');
     item.className = 'command-palette-item' + (i === paletteSelectedIndex ? ' selected' : '');
+    item.setAttribute('role', 'option');
+    item.setAttribute('aria-selected', i === paletteSelectedIndex ? 'true' : 'false');
     item.innerHTML = `
       <svg class="icon" aria-hidden="true"><use href="#icon-${cmd.id === 'focus' ? 'focus' : cmd.id === 'table' ? 'table' : cmd.id === 'task' ? 'checkbox' : 'wand'}"></use></svg>
       <span class="label">${cmd.label}</span>
@@ -1842,8 +3311,7 @@ function renderPaletteList(listEl) {
       cmd.action();
     };
     item.onmouseenter = () => {
-      paletteSelectedIndex = i;
-      renderPaletteList(listEl);
+      setPaletteSelectedIndex(listEl, i, false);
     };
     listEl.appendChild(item);
   });
@@ -1860,10 +3328,31 @@ function rawCommand(text){ return String(text||'').replace(/\u00a0/g,' ').trim()
 function normalizeCommand(text){ return rawCommand(text).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
 function currentTextCommand(){ const block=currentBlock(); const sel=getSelection(); if(!block || block.closest('table') || block.closest('pre') || !sel.isCollapsed) return null; if(!['P','DIV','H1','H2','H3','H4','H5','H6'].includes(block.tagName)) return null; const raw=rawCommand(block.textContent||''); const text=normalizeCommand(raw); return {block,text,raw}; }
 function smartCodeCommandKey(command){ const raw=typeof command==='object' && command ? command.raw : rawCommand(command); const key=cleanCaretBoundaries(rawCommand(raw)).toUpperCase(); return key==='INL' || key==='CODE' ? key : null; }
-function matchSnippet(command){ const raw=typeof command==='object' && command ? command.raw : rawCommand(command); const key=typeof command==='object' && command ? command.text : normalizeCommand(raw); if(!key) return null; if(key==='?'||key==='hilfe'||key==='help') return {action:'help'}; const smartKey=smartCodeCommandKey(command); const normalized=snippets.map(s=>({...s, normalizedKeys:s.keys.map(normalizeCommand)})); const exact=normalized.find(s=>s.exactOnly ? (smartKey && s.keys.some(k=>String(k).toUpperCase()===smartKey)) : s.normalizedKeys.includes(key)); if(exact) return e
-    xact; return key.length>1 ? normalized.find(s=>!s.exactOnly && s.normalizedKeys.some(k=>k.startsWith(key))) : null; }
-function updateAssist(){ const ctx=currentTextCommand(); const m=ctx && matchSnippet(ctx); if(!m || m.action==='help'){ tabSuggest.dataset.visible='false'; tabSuggest.style.display='none'; return; } try{ tabSuggestText.textContent=m.label; const sel=getSelection(); if(!sel.rangeCount) return; const r=sel.getRangeAt(0).getBoundingClientRect(); tabSuggest.style.left=Math.min(Math.max(r.left,18),innerWidth-360)+'px'; tabSuggest.style.top=(r.bottom+10)+'px'; tabSuggest.style.display='flex'; tabSuggest.dataset.visible='true'; }catch{ tabSuggest.style.display='none'; } }
-function showHelp(){ helpSnippets.innerHTML=snippets.map((s,i)=>`<button class="snippet-card" data-i="${i}"><strong>${escapeHtml(s.label)}</strong><p>${escapeHtml(s.description)}</p><code>${escapeHtml(s.keys[0])}</code></button>`).join(''); helpBackdrop.hidden=false; }
+function matchSnippet(command){ const raw=typeof command==='object' && command ? command.raw : rawCommand(command); const key=typeof command==='object' && command ? command.text : normalizeCommand(raw); if(!key) return null; if(key==='?'||key==='hilfe'||key==='help') return {action:'help'}; const smartKey=smartCodeCommandKey(command); const exact=snippets.find(s=>s.exactOnly ? (smartKey && s.keys.some(k=>String(k).toUpperCase()===smartKey)) : s.keys.some(k=>normalizeCommand(k)===key)); if(exact) return exact; return key.length>1 ? snippets.find(s=>!s.exactOnly && s.keys.some(k=>normalizeCommand(k).startsWith(key))) : null; }
+function updateAssist(){ const ctx=currentTextCommand(); const m=ctx && matchSnippet(ctx); if(!m || m.action==='help'){ tabSuggest.dataset.visible='false'; tabSuggest.style.display='none'; return; } try{ tabSuggestText.textContent=m.label; const sel=getSelection(); if(!sel.rangeCount) return; const r=sel.getRangeAt(0).getBoundingClientRect(); const maxLeft=Math.max(12,innerWidth-Math.min(360,innerWidth-24)); const maxTop=Math.max(12,innerHeight-56); tabSuggest.style.left=Math.min(Math.max(r.left,12),maxLeft)+'px'; tabSuggest.style.top=Math.min(r.bottom+10,maxTop)+'px'; tabSuggest.style.display='flex'; tabSuggest.dataset.visible='true'; }catch{ tabSuggest.style.display='none'; } }
+
+function transientFocusableElements(container){
+  return Array.from(container.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'))
+    .filter(el=>!el.hidden && el.getAttribute('aria-hidden')!=='true');
+}
+function handleTransientDialogKeyboard(container, closeAction, event){
+  if(event.key==='Escape'){
+    event.preventDefault();
+    event.stopPropagation();
+    closeAction();
+    return;
+  }
+  if(event.key!=='Tab') return;
+  const focusable=transientFocusableElements(container);
+  if(!focusable.length) return;
+  const first=focusable[0];
+  const last=focusable[focusable.length-1];
+  if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
+  else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
+}
+
+function closeHelp(returnFocus=true){ helpBackdrop.hidden=true; if(returnFocus) requestAnimationFrame(()=>editor.focus()); }
+function showHelp(){ helpSnippets.innerHTML=snippets.map((s,i)=>`<button class="snippet-card" data-i="${i}"><strong>${escapeHtml(s.label)}</strong><p>${escapeHtml(s.description)}</p><code>${escapeHtml(s.keys[0])}</code></button>`).join(''); helpBackdrop.hidden=false; requestAnimationFrame(()=>helpClose.focus()); }
 function handleTableTab(e){ if(e.key!=='Tab'||e.ctrlKey||e.metaKey||e.altKey) return false; const cell=currentBlock()?.closest?.('td,th'); if(!cell || !editor.contains(cell)) return false; e.preventDefault(); const cells=Array.from(cell.closest('table').querySelectorAll('th,td')); let idx=cells.indexOf(cell)+(e.shiftKey?-1:1); if(idx<0) idx=0; if(idx>=cells.length){ const table=cell.closest('table'); const cols=table.querySelector('tr')?.children.length || 2; const tr=document.createElement('tr'); for(let i=0;i<cols;i++) tr.insertAdjacentHTML('beforeend','<td><br></td>'); (table.tBodies[0] || table.createTBody()).appendChild(tr); idx=cells.length; cells.push(...Array.from(tr.children)); ensureTail(); } placeCaret(cells[idx]); emitChange(); return true; }
 
 /* === Bessere Tabellen (V4 Pro-Features) === */
@@ -1873,6 +3362,7 @@ function getCurrentTableCell() {
 }
 
 function addTableRow() {
+  return runProgrammaticMutation(() => {
   const cell = getCurrentTableCell();
   if (!cell) return false;
   const table = cell.closest('table');
@@ -1889,9 +3379,11 @@ function addTableRow() {
   placeCaret(newRow.firstElementChild);
   emitChange();
   return true;
+  });
 }
 
 function addTableColumn() {
+  return runProgrammaticMutation(() => {
   const cell = getCurrentTableCell();
   if (!cell) return false;
   const table = cell.closest('table');
@@ -1912,9 +3404,11 @@ function addTableColumn() {
   if (newCurrentRowCell) placeCaret(newCurrentRowCell);
   emitChange();
   return true;
+  });
 }
 
 function deleteTableRow() {
+  return runProgrammaticMutation(() => {
   const cell = getCurrentTableCell();
   if (!cell) return false;
   const row = cell.parentElement;
@@ -1926,23 +3420,26 @@ function deleteTableRow() {
   if (nextRow) placeCaret(nextRow.cells[0] || nextRow);
   emitChange();
   return true;
+  });
 }
 
 function deleteTableColumn() {
+  return runProgrammaticMutation(() => {
   const cell = getCurrentTableCell();
   if (!cell) return false;
   const table = cell.closest('table');
   if (!table || table.rows[0].cells.length <= 1) return false; // keep at least one col
-  const colIndex = Array.from(cell.parentElement.children).indexOf(cell);
+  const currentRow = cell.parentElement;
+  const colIndex = Array.from(currentRow.children).indexOf(cell);
   Array.from(table.rows).forEach(tr => {
     if (tr.cells[colIndex]) tr.cells[colIndex].remove();
   });
   // focus left cell or first
-  const currentRow = cell.parentElement;
   const target = currentRow.cells[Math.max(0, colIndex - 1)] || currentRow.cells[0];
   if (target) placeCaret(target);
   emitChange();
   return true;
+  });
 }
 function handleCodeEnter(e){
  if(e.key!=='Enter'||e.ctrlKey||e.metaKey||e.altKey||e.isComposing) return false;
@@ -1979,22 +3476,28 @@ function handleCodeTab(e){
  emitChange();
  return true;
 }
+function parseTableDimension(value,min,max){
+ const text=String(value ?? '').trim();
+ if(!/^\d+$/.test(text)) return null;
+ const number=Number(text);
+ return Number.isSafeInteger(number) && number>=min && number<=max ? number : null;
+}
 function tableHtml(cols=2, rows=2){
- cols=Math.max(1, Math.min(12, parseInt(cols,10) || 2));
- rows=Math.max(1, Math.min(50, parseInt(rows,10) || 2));
+ cols=parseTableDimension(cols,1,12) ?? 2;
+ rows=parseTableDimension(rows,1,50) ?? 2;
  const head='<thead><tr>'+Array.from({length:cols},(_,i)=>`<th>Spalte ${i+1}</th>`).join('')+'</tr></thead>';
  const body='<tbody>'+Array.from({length:rows},()=>'<tr>'+Array.from({length:cols},()=>'<td><br></td>').join('')+'</tr>').join('')+'</tbody>';
  return `<table>${head}${body}</table><p><br></p>`;
 }
 function readTableSize(){
- const cols = Math.max(1, Math.min(12, parseInt(tableColsInput?.value, 10) || 2));
- const rows = Math.max(1, Math.min(50, parseInt(tableRowsInput?.value, 10) || 2));
+ const cols = parseTableDimension(tableColsInput?.value, 1, 12) ?? 2;
+ const rows = parseTableDimension(tableRowsInput?.value, 1, 50) ?? 2;
  return { cols, rows };
 }
 function validateTableSize(showMessage=false){
- const cols = parseInt(tableColsInput?.value, 10);
- const rows = parseInt(tableRowsInput?.value, 10);
- const ok = Number.isInteger(cols) && cols >= 1 && cols <= 12 && Number.isInteger(rows) && rows >= 1 && rows <= 50;
+ const cols = parseTableDimension(tableColsInput?.value, 1, 12);
+ const rows = parseTableDimension(tableRowsInput?.value, 1, 50);
+ const ok = cols !== null && rows !== null;
  if (tableError) {
   tableError.textContent = ok ? '' : 'Bitte gültige Werte zwischen 1 und 12 Spalten sowie 1 und 50 Zeilen eingeben.';
   tableError.dataset.visible = ok ? 'false' : 'true';
@@ -2054,6 +3557,7 @@ function handleInlineCodeExit(e){
  return true;
 }
 function insertInlineCodeAtSelection(){
+ return runProgrammaticMutation(()=>{
  restoreSelection();
  editor.focus();
  const sel=getSelection();
@@ -2079,6 +3583,7 @@ function insertInlineCodeAtSelection(){
  rememberSelection();
  emitChange();
  return true;
+ });
 }
 function handleInlineCommandTab(e){
  if(e.key!=='Tab'||e.shiftKey||e.ctrlKey||e.metaKey||e.altKey) return false;
@@ -2103,7 +3608,35 @@ function handleInlineCommandTab(e){
  emitChange();
  return true;
 }
-function insertSnippetNodes(block, snippet){ const t=document.createElement('template'); t.innerHTML=snippet.html; const nodes=Array.from(t.content.childNodes); block.replaceWith(...nodes); const first=nodes.find(n=>n.nodeType===1); const focus=first?.matches?.(snippet.focus)?first:first?.querySelector?.(snippet.focus)||first; if(focus){ if(focus.tagName==='CODE' || focus.tagName==='A' || /^H[1-6]$/.test(focus.tagName)) selectContents(focus); else placeCaret(focus); } ensureTail(); hydrateTasks(); hydrateCopyTargets(); emitChange(); return true; }
+function insertSnippetNodes(block, snippet){
+ let focusPath=null;
+ const result=runProgrammaticMutation(()=>{
+  const t=document.createElement('template');
+  t.innerHTML=snippet.html;
+  const nodes=Array.from(t.content.childNodes);
+  block.replaceWith(...nodes);
+  const first=nodes.find(n=>n.nodeType===1);
+  const focus=first?.matches?.(snippet.focus)?first:first?.querySelector?.(snippet.focus)||first;
+  if(focus){
+   focusPath=nodePathFrom(editor,focus);
+   if(focus.tagName==='CODE' || focus.tagName==='A' || /^H[1-6]$/.test(focus.tagName)) selectContents(focus);
+   else placeCaret(focus);
+  }
+  ensureTail();
+  hydrateTasks();
+  hydrateCopyTargets();
+  emitChange();
+  return true;
+ });
+ const liveFocus=nodeFromPath(editor,focusPath);
+ if(liveFocus && editor.contains(liveFocus)){
+  if(liveFocus.tagName==='CODE' || liveFocus.tagName==='A' || /^H[1-6]$/.test(liveFocus.tagName)) selectContents(liveFocus);
+  else placeCaret(liveFocus);
+  rememberSelection();
+  updateAssist();
+ }
+ return result;
+}
 function exactCommandSnippet(ctx){ const smartKey=smartCodeCommandKey(ctx); if(!smartKey) return null; return snippets.find(s=>s.exactOnly && s.keys.some(k=>String(k).toUpperCase()===smartKey)) || null; }
 function handleTab(e){ if(handleTableTab(e)) return true; if(e.key!=='Tab'||e.shiftKey||e.ctrlKey||e.metaKey||e.altKey) return false; const ctx=currentTextCommand(); if(!ctx) return false; const exact=exactCommandSnippet(ctx); if(exact){ e.preventDefault(); return exact===snippets[0] ? insertTablePrompt(ctx.block) : insertSnippetNodes(ctx.block, exact); } const m=matchSnippet(ctx); if(!m) return false; e.preventDefault(); if(m.action==='help'){ ctx.block.innerHTML='<br>'; showHelp(); emitChange(); return true; } return m===snippets[0] ? insertTablePrompt(ctx.block) : insertSnippetNodes(ctx.block, m); }
 function handleCodeSelectAll(e){ const key=e.key.toLowerCase(); if(!(e.ctrlKey||e.metaKey) || key!=='a') return false; const pre=codeBlockFromSelection(); if(!pre || !editor.contains(pre)) return false; e.preventDefault(); selectContents(pre.querySelector('code') || pre); return true; }
@@ -2214,6 +3747,14 @@ function liveShortcuts(){
  if(!['P','DIV'].includes(block.tagName)) return;
  let m=raw.match(/^(#{1,6})\s+(.*)$/);
  if(m){ const h=document.createElement('h'+m[1].length); h.innerHTML=m[2] ? inlineMarkdown(m[2]) : '<br>'; block.replaceWith(h); placeCaret(h); emitChange(); return; }
+ if(/^\s*``\s*$/.test(raw)){
+  block.innerHTML='<code>INLINE</code>&nbsp;';
+  hydrateCopyTargets();
+  const inline=block.querySelector?.('code');
+  if(inline) selectContents(inline); else placeCaret(block);
+  emitChange();
+  return;
+ }
  m=raw.match(/^\s*`([^`\n]+)`\s*$/);
  if(m){ block.innerHTML='<code>'+escapeHtml(m[1])+'</code>&nbsp;'; hydrateCopyTargets(); placeCaret(block); emitChange(); return; }
  if(/^([-*_])\1\1+\s*$/.test(text)){ replaceWithRule(block); return; }
@@ -2287,8 +3828,88 @@ function liveInlineMarkdown(){
  }
  return false;
 }
+let overlayScrollbarHideTimer=0;
+let overlayScrollbarDragging=false;
+let overlayScrollbarPointerOffset=0;
+function overlayScrollMetrics(){
+  const doc=document.documentElement;
+  const max=Math.max(0,doc.scrollHeight-window.innerHeight);
+  const track=Math.max(0,overlayScrollbar?.clientHeight||0);
+  const ratio=doc.scrollHeight>0?Math.min(1,window.innerHeight/doc.scrollHeight):1;
+  const thumb=Math.min(track,Math.max(32,track*ratio));
+  return {max,track,thumb,travel:Math.max(0,track-thumb)};
+}
+function updateOverlayScrollbar(){
+  if(!overlayScrollbar||!overlayScrollbarThumb) return;
+  const m=overlayScrollMetrics();
+  const scrollable=m.max>1 && m.travel>0;
+  overlayScrollbar.classList.toggle('scrollable',scrollable);
+  overlayScrollbar.setAttribute('aria-valuemax',String(Math.round(m.max)));
+  overlayScrollbar.setAttribute('aria-valuenow',String(Math.round(Math.min(m.max,Math.max(0,window.scrollY)))));
+  if(!scrollable){
+    overlayScrollbar.classList.remove('visible');
+    overlayScrollbarThumb.style.height='0px';
+    overlayScrollbarThumb.style.transform='translateY(0px)';
+    return;
+  }
+  const top=(Math.min(m.max,Math.max(0,window.scrollY))/m.max)*m.travel;
+  overlayScrollbarThumb.style.height=m.thumb+'px';
+  overlayScrollbarThumb.style.transform='translateY('+top+'px)';
+}
+function revealOverlayScrollbar(){
+  if(!overlayScrollbar?.classList.contains('scrollable')) return;
+  overlayScrollbar.classList.add('visible');
+  clearTimeout(overlayScrollbarHideTimer);
+  if(!overlayScrollbar.matches(':hover') && document.activeElement!==overlayScrollbar && !overlayScrollbarDragging){
+    overlayScrollbarHideTimer=setTimeout(()=>overlayScrollbar.classList.remove('visible'),1000);
+  }
+}
+function scrollFromOverlayPointer(clientY){
+  const m=overlayScrollMetrics();
+  if(!m.max||!m.travel) return;
+  const rect=overlayScrollbar.getBoundingClientRect();
+  const thumbTop=Math.max(0,Math.min(m.travel,clientY-rect.top-overlayScrollbarPointerOffset));
+  window.scrollTo({top:(thumbTop/m.travel)*m.max,left:0,behavior:'auto'});
+}
+overlayScrollbar?.addEventListener('pointerdown',e=>{
+  if(!overlayScrollbar.classList.contains('scrollable')) return;
+  const m=overlayScrollMetrics();
+  const rect=overlayScrollbarThumb.getBoundingClientRect();
+  overlayScrollbarDragging=true;
+  overlayScrollbar.setPointerCapture(e.pointerId);
+  overlayScrollbarPointerOffset=e.clientY>=rect.top&&e.clientY<=rect.bottom?e.clientY-rect.top:m.thumb/2;
+  scrollFromOverlayPointer(e.clientY);
+  revealOverlayScrollbar();
+  e.preventDefault();
+});
+overlayScrollbar?.addEventListener('pointermove',e=>{ if(overlayScrollbarDragging){ scrollFromOverlayPointer(e.clientY); e.preventDefault(); } });
+overlayScrollbar?.addEventListener('pointerup',e=>{ if(!overlayScrollbarDragging) return; overlayScrollbarDragging=false; try{overlayScrollbar.releasePointerCapture(e.pointerId);}catch{} revealOverlayScrollbar(); });
+overlayScrollbar?.addEventListener('pointercancel',()=>{ overlayScrollbarDragging=false; revealOverlayScrollbar(); });
+overlayScrollbar?.addEventListener('pointerenter',revealOverlayScrollbar);
+overlayScrollbar?.addEventListener('pointerleave',revealOverlayScrollbar);
+overlayScrollbar?.addEventListener('focus',revealOverlayScrollbar);
+overlayScrollbar?.addEventListener('blur',revealOverlayScrollbar);
+overlayScrollbar?.addEventListener('keydown',e=>{
+  const m=overlayScrollMetrics();
+  if(!m.max) return;
+  let next=null;
+  if(e.key==='ArrowDown') next=window.scrollY+48;
+  else if(e.key==='ArrowUp') next=window.scrollY-48;
+  else if(e.key==='PageDown') next=window.scrollY+Math.max(120,window.innerHeight*.82);
+  else if(e.key==='PageUp') next=window.scrollY-Math.max(120,window.innerHeight*.82);
+  else if(e.key==='Home') next=0;
+  else if(e.key==='End') next=m.max;
+  if(next===null) return;
+  e.preventDefault();
+  window.scrollTo({top:Math.max(0,Math.min(m.max,next)),left:0,behavior:'auto'});
+  revealOverlayScrollbar();
+});
+window.addEventListener('scroll',()=>{ updateOverlayScrollbar(); revealOverlayScrollbar(); },{passive:true});
+window.addEventListener('resize',()=>{ updateOverlayScrollbar(); revealOverlayScrollbar(); });
+
 /* === EVENT WIRING & INITIALIZATION (V4: hier später auch Command Palette + Focus Mode Events) === */
-editor.addEventListener('input',()=>{ liveShortcuts(); liveInlineMarkdown(); ensureTail(); hydrateTasks(); hydrateCopyTargets(); updateAssist(); rememberSelection(); emitChange(); typewriterScroll(); });
+editor.addEventListener('beforeinput',e=>{ if(handleCodeTextInput(e)) return; });
+editor.addEventListener('input',e=>{ if(['historyUndo','historyRedo'].includes(e.inputType)) normalizeHistorySelection(); liveShortcuts(); liveInlineMarkdown(); ensureTail(); hydrateTasks(); hydrateCopyTargets(); updateAssist(); rememberSelection(); emitChange(); typewriterScroll(); });
 function copyCodeTargetFromEvent(e, requireModifier=true){
  const hasModifier = e.ctrlKey || e.metaKey || e.altKey;
  if(requireModifier && !hasModifier) return false;
@@ -2298,7 +3919,7 @@ function copyCodeTargetFromEvent(e, requireModifier=true){
 	 if(pre && editor.contains(pre)){
 	  e.preventDefault();
 	  e.stopPropagation();
-	  copyElementText(pre,'Codeblock kopiert', !requireModifier);
+	  copyElementText(pre,'Codeblock kopiert');
 	  requestAnimationFrame(()=>placeCaret(codeEditableFromPre(pre) || pre));
 	  return true;
 	 }
@@ -2306,7 +3927,7 @@ function copyCodeTargetFromEvent(e, requireModifier=true){
 	 if(code && editor.contains(code) && !code.closest('pre')){
 	  e.preventDefault();
 	  e.stopPropagation();
-	  copyElementText(code,'Inline-Code kopiert', !requireModifier);
+	  copyElementText(code,'Inline-Code kopiert');
 	  requestAnimationFrame(()=>placeCaretAfterInlineElement(code, false));
 	  return true;
 	 }
@@ -2330,7 +3951,7 @@ editor.addEventListener('keyup',()=>{ rememberSelection(); updateAssist(); typew
 editor.addEventListener('pointerdown',e=>{ focusTitleForDirectEdit(e); }, true);
 editor.addEventListener('click',e=>{ focusTitleForDirectEdit(e); if(e.target?.tagName==='HR'){ const p=insertParagraphAfter(e.target); placeCaret(p); rememberSelection(); return; } rememberSelection(); updateAssist(); });
 editor.addEventListener('blur',()=>{ tabSuggest.style.display='none'; });
-editor.addEventListener('keydown',e=>{ if(!tableBackdrop.hidden && e.key==='Escape'){ e.preventDefault(); closeTableDialog(); return; } if(handleInlineFormatExit(e)) return; if(handleQuoteExit(e)) return; if(handleCodeSelectAll(e)) return; if(handleEditorSelectAll(e)) return; if(handleBodySelectionDelete(e)) return; if(handleDeleteStructures(e)) return; if(handleTitleTab(e)) return; if(handleInlineCodeExit(e)) return; if(handleCodeEnter(e)) return; if(handleCodeTab(e)) return; if(handleInlineCommandTab(e)) return; if(handleTab(e)) return; const key=e.key.toLowerCase(); if((e.ctrlKey||e.metaKey)&&key==='b'){ e.preventDefault(); runFormat('bold'); } if((e.ctrlKey||e.metaKey)&&key==='i'){ e.preventDefault(); runFormat('italic'); } if((e.ctrlKey||e.metaKey)&&e.altKey&&key==='1'){ e.preventDefault(); runFormat('h1'); } if((e.ctrlKey||e.metaKey)&&e.altKey&&key==='2'){ e.preventDefault(); runFormat('h2'); } if((e.ctrlKey||e.metaKey)&&key==='k'){ e.preventDefault(); showCommandPalette(); } if((e.ctrlKey||e.metaKey)&&key==='e'){ e.preventDefault(); runCommand('exportHtml'); } if(e.key==='F1'||((e.ctrlKey||e.metaKey)&&key==='/')){ e.preventDefault(); showHelp(); }
+editor.addEventListener('keydown',e=>{ if(!tableBackdrop.hidden && e.key==='Escape'){ e.preventDefault(); closeTableDialog(); return; } if(handleInlineFormatExit(e)) return; if(handleQuoteExit(e)) return; if(handleCodeSelectAll(e)) return; if(handleEditorSelectAll(e)) return; if(handleBodySelectionDelete(e)) return; if(handleDeleteStructures(e)) return; if(handleTitleTab(e)) return; if(handleInlineCodeExit(e)) return; if(handleCodeEnter(e)) return; if(handleCodeTab(e)) return; if(handleInlineCommandTab(e)) return; if(handleTab(e)) return; const key=e.key.toLowerCase(); if((e.ctrlKey||e.metaKey)&&key==='b'){ e.preventDefault(); runFormat('bold'); } if((e.ctrlKey||e.metaKey)&&key==='i'){ e.preventDefault(); runFormat('italic'); } if((e.ctrlKey||e.metaKey)&&e.altKey&&key==='1'){ e.preventDefault(); runFormat('h1'); } if((e.ctrlKey||e.metaKey)&&e.altKey&&key==='2'){ e.preventDefault(); runFormat('h2'); } if((e.ctrlKey||e.metaKey)&&key==='k'){ e.preventDefault(); showCommandPalette(); } if((e.ctrlKey||e.metaKey)&&key==='e'){ e.preventDefault(); showExportDialog(); } if(e.key==='F1'||((e.ctrlKey||e.metaKey)&&key==='/')){ e.preventDefault(); showHelp(); }
   if(e.key==='F11'){ e.preventDefault(); toggleFocusMode(); }
   if(!helpBackdrop.hidden && e.key==='Escape'){ helpBackdrop.hidden=true; }
   if(!menuSheet.hidden && e.key==='Escape'){ e.preventDefault(); closeMenu(true); }});
@@ -2342,8 +3963,9 @@ document.addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&key==='s'){ e.preventDefault(); runCommand('save'); } 
   if((e.ctrlKey||e.metaKey)&&key==='f'){ e.preventDefault(); showFindReplace(); }
   if((e.ctrlKey||e.metaKey)&&key==='h'){ e.preventDefault(); showFindReplace(); }
+  if((e.ctrlKey||e.metaKey)&&key==='p'){ e.preventDefault(); runCommand('printPdf'); }
 });
-document.addEventListener('selectionchange',()=>rememberSelection());
+document.addEventListener('selectionchange',()=>{ rememberSelection(); updateStatusBar(); });
 document.querySelectorAll('[data-command]').forEach(b=>b.addEventListener('click',()=>runCommand(b.dataset.command)));
 document.querySelectorAll('[data-format]').forEach(b=>{
  b.addEventListener('pointerdown',()=>rememberSelection());
@@ -2353,10 +3975,14 @@ document.querySelectorAll('[data-menu-panel]').forEach(b=>b.addEventListener('cl
 menuBackdrop.addEventListener('click',()=>closeMenu(false));
 document.addEventListener('pointerdown',e=>{ if(menuSheet.hidden) return; if(menuSheet.contains(e.target)) return; if(e.target.closest?.('[data-menu-panel]')) return; closeMenu(false); }, true);
 window.addEventListener('resize',()=>{ if(!menuSheet.hidden) positionMenu(document.querySelector('[data-menu-panel]')); });
-helpClose.addEventListener('click',()=>helpBackdrop.hidden=true);
-helpBackdrop.addEventListener('click',e=>{ if(e.target===helpBackdrop) helpBackdrop.hidden=true; });
-helpSnippets.addEventListener('click',e=>{ const card=e.target.closest('[data-i]'); if(!card) return; helpBackdrop.hidden=true; const s=snippets[Number(card.dataset.i)]; if(s===snippets[0]) insertTablePrompt(); else insertHtml(s.html,s.focus); });
+helpClose.addEventListener('click',()=>closeHelp(true));
+helpBackdrop.addEventListener('click',e=>{ if(e.target===helpBackdrop) closeHelp(true); });
+helpBackdrop.addEventListener('keydown',e=>handleTransientDialogKeyboard(helpBackdrop,()=>closeHelp(true),e));
+helpSnippets.addEventListener('click',e=>{ const card=e.target.closest('[data-i]'); if(!card) return; closeHelp(false); const s=snippets[Number(card.dataset.i)]; if(s===snippets[0]) insertTablePrompt(); else insertHtml(s.html,s.focus); });
 tableBackdrop.addEventListener('click',e=>{ if(e.target===tableBackdrop) closeTableDialog(); });
+tableBackdrop.addEventListener('keydown',e=>handleTransientDialogKeyboard(tableBackdrop,closeTableDialog,e));
+document.getElementById('exportBackdrop').addEventListener('keydown',e=>handleTransientDialogKeyboard(document.getElementById('exportBackdrop'),()=>document.getElementById('exportClose').click(),e));
+document.getElementById('findReplaceBackdrop').addEventListener('keydown',e=>handleTransientDialogKeyboard(document.getElementById('findReplaceBackdrop'),()=>document.getElementById('findClose').click(),e));
 tableCancel.addEventListener('click',closeTableDialog);
 document.getElementById('tableClose').addEventListener('click',closeTableDialog);
 document.getElementById('tableForm').addEventListener('submit',e=>{ e.preventDefault(); submitTableDialog(); });
@@ -2365,12 +3991,14 @@ tableRowsInput.addEventListener('input',()=>validateTableSize(false));
 outline.addEventListener('click',e=>{ const b=e.target.closest('button[data-index]'); if(!b) return; const h=editor.querySelectorAll('h1,h2,h3')[Number(b.dataset.index)]; h?.scrollIntoView({block:'center'}); });
 themeInput.addEventListener('change',toggleTheme);
 document.body.classList.add('windows-native-shell');
-if(window.chrome?.webview){ chrome.webview.addEventListener('message',ev=>{ const msg=ev.data||{}; if(msg.type==='setMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='setMarkdownBase64') setMarkdownBase64(msg.base64||'', msg); if(msg.type==='setSourceMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='notify') notify(msg.title||'',msg.message||''); if(msg.type==='applySettings') applySettings(msg); }); }
-applyTheme(localStorage.getItem('markdownStudioTheme') || 'dark');
-applyTools(localStorage.getItem('markdownStudioToolsOpen') === 'true', false);
-applyFocusMode(localStorage.getItem('markdownStudioFocusMode') === 'true', false);
-ensureTail(); hydrateTasks(); hydrateCopyTargets(); updateAll();
-window.markdownStudio={setMarkdown,setMarkdownBase64,notify,toMarkdown,documentStats,applySettings,focusInitialTitle,focusBodyStart};
+if(window.chrome?.webview){ chrome.webview.addEventListener('message',ev=>{ const msg=ev.data||{}; if(msg.type==='setMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='setMarkdownBase64') setMarkdownBase64(msg.base64||'', msg); if(msg.type==='setSourceMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='notify') notify(msg.title||'',msg.message||''); if(msg.type==='applySettings') applySettings(msg); if(msg.type==='saveState') applySaveState(msg.state); }); }
+// Native settings are authoritative on Windows V2. Start from V2 defaults and
+// wait for the host settings message instead of replaying stale localStorage.
+applyTheme('light', false);
+applyTools(false, false);
+applyFocusMode(false, false);
+ensureTail(); hydrateTasks(); hydrateCopyTargets(); updateAll(); updateOverlayScrollbar();
+window.markdownStudio={setMarkdown,setMarkdownBase64,notify,toMarkdown,documentStats,applySettings,applySaveState,focusInitialTitle,focusBodyStart,getStatisticsSnapshot,scrollToStatisticsHeading};
 post('ready');
 </script>
 </body>

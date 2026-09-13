@@ -27,6 +27,7 @@
     <!-- WinUI generates the Program/Main entry point from App.xaml.
          Keep stale Program.cs files out of compilation when this patch is applied over Stage 1. -->
     <Compile Remove="Program.cs" />
+    <Compile Remove="tests\**\*.cs" />
     <None Include="Program.cs" Condition="Exists('Program.cs')" />
   </ItemGroup>
 
