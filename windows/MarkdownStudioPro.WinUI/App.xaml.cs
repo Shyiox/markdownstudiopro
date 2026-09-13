@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 
 namespace MarkdownStudioPro.WinUI;
@@ -18,31 +18,88 @@ public partial class App : Application
 
     public App(string[] args)
     {
-        launchArgs = args;
-        InitializeComponent();
-        UnhandledException += OnUnhandledException;
+        Diagnostics.Initialize();
+        Diagnostics.StepStart("App.ctor");
+
+        try
+        {
+            launchArgs = args;
+
+            Diagnostics.StepStart("App.InitializeComponent");
+            try
+            {
+                InitializeComponent();
+                Diagnostics.StepOk("App.InitializeComponent");
+            }
+            catch (Exception ex)
+            {
+                Diagnostics.StepFailed("App.InitializeComponent", ex);
+                throw;
+            }
+
+            UnhandledException += OnUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
+            TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+            Diagnostics.StepOk("App.ctor");
+        }
+        catch (Exception ex)
+        {
+            Diagnostics.StepFailed("App.ctor", ex);
+            throw;
+        }
     }
 
     private static void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-        try
+        Diagnostics.LogException("Application.UnhandledException", e.Exception);
+    }
+
+    private static void OnAppDomainUnhandledException(object? sender, System.UnhandledExceptionEventArgs e)
+    {
+        if (e.ExceptionObject is Exception ex)
         {
-            var logPath = Path.Combine(AppContext.BaseDirectory, "winui-unhandled-error.log");
-            File.WriteAllText(logPath, e.Exception.ToString(), Encoding.UTF8);
+            Diagnostics.LogException("AppDomain.CurrentDomain.UnhandledException", ex);
         }
-        catch
+        else
         {
-            // Avoid recursive startup failures while logging.
+            Diagnostics.Warning(
+                "AppDomain.CurrentDomain.UnhandledException",
+                $"Non-Exception payload; terminating={e.IsTerminating}");
         }
+    }
+
+    private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        Diagnostics.LogException("TaskScheduler.UnobservedTaskException", e.Exception);
     }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        window = new MainWindow(ResolveInitialFilePath(args.Arguments));
-        window.Activate();
+        Diagnostics.StepStart("App.OnLaunched");
+
+        try
+        {
+            var initialRequest = ResolveInitialFileRequest(args.Arguments);
+            Diagnostics.Info("Launch.HasExplicitFile", initialRequest.HasExplicitIntent.ToString());
+
+            Diagnostics.StepStart("App.MainWindowConstruct");
+            window = new MainWindow(initialRequest.FilePath, initialRequest.HasExplicitIntent);
+            Diagnostics.StepOk("App.MainWindowConstruct");
+
+            Diagnostics.StepStart("App.WindowActivate");
+            window.Activate();
+            Diagnostics.StepOk("App.WindowActivate");
+
+            Diagnostics.StepOk("App.OnLaunched");
+        }
+        catch (Exception ex)
+        {
+            Diagnostics.StepFailed("App.OnLaunched", ex);
+            throw;
+        }
     }
 
-    private string? ResolveInitialFilePath(string? activationArguments)
+    private LaunchFileRequest ResolveInitialFileRequest(string? activationArguments)
     {
         var activationCandidates = string.IsNullOrWhiteSpace(activationArguments)
             ? Array.Empty<string>()
@@ -54,16 +111,7 @@ public partial class App : Application
             .SelectMany(ExpandCommandLineCandidate)
             .ToList();
 
-        foreach (var candidate in candidates)
-        {
-            var resolved = ResolveFilePathCandidate(candidate);
-            if (resolved is not null)
-            {
-                return resolved;
-            }
-        }
-
-        return null;
+        return StartupDocumentPolicy.ResolveLaunchRequest(candidates, ResolveFilePathCandidate);
     }
 
     private static string? ResolveFilePathCandidate(string? value)
@@ -79,7 +127,7 @@ public partial class App : Application
             candidate = uri.LocalPath;
         }
 
-        return System.IO.File.Exists(candidate) ? System.IO.Path.GetFullPath(candidate) : null;
+        return File.Exists(candidate) ? Path.GetFullPath(candidate) : null;
     }
 
     private static string[] ExpandCommandLineCandidate(string value)
