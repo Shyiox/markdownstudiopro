@@ -1,48 +1,65 @@
-# Markdown Studio Pro - Windows Stand
+# Markdown Studio Pro - Windows Baseline
 
-## Ziel
+## Confirmed baseline
 
-Die Windows-Version bleibt eine eigenständige WinUI-3-App, orientiert sich aber an der macOS-App als Lead-Version. Ziel ist Parität dort, wo sie unter Windows sinnvoll und stabil umsetzbar ist.
+The current Windows edition is based on **WinUI 3 + WebView2** and the completed Editorial Pro / QoL pass. This document records the confirmed technical baseline for future Windows work.
 
-## Aktueller Schwerpunkt
+## Interface
 
-- WinUI-3-Shell mit nativer CommandBar
-- WebView2-Editor als Kern des Markdown-Erlebnisses
-- Ruhige, produktive Schreiboberfläche ohne doppelte Toolbars
-- Saubere Datei- und Dirty-State-Logik
-- Robuste Theme-Kontraste
-- Self-contained Windows-Build fuer .NET
+- Native top document/toolbar shell without an additional sidebar
+- Light and Dark themes; Dark follows the earlier Midnight visual direction
+- Dynamic document title and a cleanly centered first H1
+- Refined dialogs and contrast handling
+- Find & Replace uses a soft background blur instead of a heavy dark overlay
+- Smart-Tab command help uses a calmer, compact single-column layout
 
-## Wichtige Änderungen
+## File and session behavior
 
-- Neues Logo in Windows-Assets und App-Icon eingebunden
-- App-Name und Logo aus der Topbar entfernt; Fokus liegt auf Dokument und Aktionen
-- Dokumenttitel, Speicherstatus und Pfad in der nativen Shell sichtbar
-- Wort-/Zeichenstatistik nur noch in der Statusbar
-- Titel bleibt beim Start vormarkiert, damit er direkt ersetzt werden kann
-- `Tab` springt vom Titel direkt in den Schreibbereich
-- Öffnen von Markdown-Dateien per Menü und Startargument stabilisiert
-- `.md`-Startargumente mit Leerzeichen und Umlauten getestet
-- Schließen prüft aktiv den aktuellen WebView-Inhalt und zeigt bei Änderungen den Speichern-Dialog
-- `Clean`-Theme entfernt; alte `clean`-Settings werden auf `light` normalisiert
-- Kontrast-Tokens für Hell, Dunkel, Sepia und Midnight überarbeitet
-- Über-Dialog neu aufgebaut: flach, clean, theme-adaptiv, ohne generische Cards/Chips
-- PayPal-Spendenlink dezent als Link statt als breiter Button
-- Einstellungen erweitert und dauerhaft gespeichert
-- Export, Quelle bearbeiten, Suche/Ersetzen, Command Palette und Fokusmodus bleiben aktiv
+- **Saved / Unsaved / Saving...** are synchronized between WinUI and WebView
+- Auto-save for files that already have a path
+- Unsaved-change confirmation before replacing or closing a document
+- Drag & drop for `.md`, `.markdown`, and `.txt`
+- Visible drop overlay for a valid single-file drag
+- Window size and window position are persisted
+- Optional reopening of the last opened document
+- Explicit launch paths take precedence over session restore
 
-## Nachtest
+## Settings
+
+- Live preview for theme, editor width, font size, and line height
+- Cancel restores the values that were active when the Settings dialog opened
+- Settings content is scrollable while the footer remains fixed
+- Spellcheck, Focus Mode, auto-save, and word goal remain available
+
+## Editor and status
+
+- Inline-code behavior corrected
+- Selection statistics include selected words and characters
+- Visible status separators use `|`
+- Existing keyboard, shortcut, Smart-Tab execution, and editor `keydown` behavior is intentionally preserved
+
+## Printing
+
+- Printed content always uses a light paper palette, even when the app is in Dark mode
+- Headings are kept with following content where possible
+- Widow/orphan control for paragraphs
+- Break avoidance for code blocks, quotes, tables, and table rows
+- Explicit manual page breaks remain supported
+
+## Build
 
 ```bat
-dotnet build MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj
+build_winui3.bat
 ```
 
-Zusätzlich manuell prüfen:
+Or directly:
 
-- Start ohne Datei
-- Titel direkt überschreiben
-- Schreiben und sofort per `X` schließen
-- Datei per Menü öffnen
-- Datei per Startargument öffnen
-- Hell/Dunkel/Sepia/Midnight
-- Über-Dialog in hellem und dunklem Theme
+```powershell
+dotnet build .\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj -c Debug -r win-x64
+```
+
+## Scope note
+
+This baseline covers the Windows edition. The Windows Editorial Pro / QoL pass does not modify macOS files.
+
+For user-facing release history, see [`../CHANGELOG.md`](../CHANGELOG.md).
