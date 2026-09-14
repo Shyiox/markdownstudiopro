@@ -321,3 +321,9 @@
 - Static review found the native print route canonical (`ShowPrintUI`), WebView browser accelerators disabled, download-flyout suppression non-cancelling and cleaned up, dialog queueing and UI error boundaries in place, and no productive `window.print()` legacy route. The existing non-fatal CS8603 warning at the WebView script-result return site remains unchanged.
 - Native GUI evidence is `USER-MANUAL PASS` for editor/history/Smart Tab, tables/find, palette/shortcuts, theme/persistence, print/PDF/download, file/session, and dialogs/shutdown. Codex native Computer Use remains unavailable and was intentionally not retried in the final audit.
 - Release assessment: GO -- no release-blocking issues found. Deferred: Document Information / Metadata UX for frontmatter. No commit, push, or PR was created.
+
+### 2026-09-14 - v0.1.0 release follow-up
+
+- Updated the README distribution notice to link the published Windows x64 portable ZIP directly and also link the v0.1.0 release notes.
+- Prepared a closing comment for Issue #3 documenting the implemented WinUI 3, WebView2, .NET 8, shared-editor, and native file-handling decisions.
+- Submitted the documentation change through a dedicated review branch and pull request. Issue #3 remains open until the pull request is reviewed and merged.
