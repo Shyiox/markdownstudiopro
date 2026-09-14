@@ -20,7 +20,7 @@
 
 Markdown Studio Pro combines a native desktop shell with a writing-first Markdown editor. The Windows version uses **WinUI 3** for the application chrome and **WebView2** for the document editor, keeping file handling and platform behavior native while preserving a flexible editing surface.
 
-> **Current distribution:** Windows x64 portable release ZIP and source builds. A dedicated installer/MSIX is not published yet.
+> **Current distribution:** [Download Markdown Studio Pro v0.1.0 for Windows x64 (portable ZIP)](https://github.com/Shyiox/markdownstudiopro/releases/download/v0.1.0/MarkdownStudioPro-v0.1.0-win-x64.zip) or view the [v0.1.0 release notes](https://github.com/Shyiox/markdownstudiopro/releases/tag/v0.1.0). A dedicated installer/MSIX is not published yet.
 
 ## Windows highlights
 
