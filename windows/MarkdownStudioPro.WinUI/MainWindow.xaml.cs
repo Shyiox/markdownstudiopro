@@ -54,6 +54,7 @@ public sealed partial class MainWindow : Window
     private readonly JsonSerializerOptions jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
     private readonly List<string> recentFiles = new();
     private readonly DocumentSessionCoordinator documentSession = new();
+    private readonly DocumentAssetManager documentAssetManager = DocumentAssetManager.CreateDefault();
     private readonly SemaphoreSlim saveWriteGate = new(1, 1);
     private readonly AsyncOperationQueue dialogQueue = new();
     private readonly ShutdownLifetime shutdownLifetime = new();
@@ -498,6 +499,7 @@ public sealed partial class MainWindow : Window
                     }
                 }),
                 ("WebView2", EditorWebView.Close),
+                ("DraftAssets", documentAssetManager.ResetDraft),
                 ("TransientSurfaces", () =>
                 {
                     try
@@ -1018,6 +1020,15 @@ public sealed partial class MainWindow : Window
                 case "saveAs":
                     await SaveDocumentAsync(ReadString(root, "markdown") ?? await GetMarkdownFromEditorAsync(), forceSaveAs: true);
                     break;
+                case "importClipboardImage":
+                    await ImportClipboardImageAsync(root);
+                    break;
+                case "resolveImages":
+                    SendResolvedImages(root);
+                    break;
+                case "insertImage":
+                    await PickAndInsertImageAsync();
+                    break;
                 case "copyMarkdown":
                     CopyMarkdown(ReadString(root, "markdown") ?? await GetMarkdownFromEditorAsync());
                     break;
@@ -1026,6 +1037,9 @@ public sealed partial class MainWindow : Window
                     break;
                 case "exportHtml":
                     await ExportHtmlAsync(ReadString(root, "html") ?? string.Empty);
+                    break;
+                case "exportSharePackage":
+                    await ExportSharePackageAsync(ReadString(root, "markdown") ?? await GetMarkdownFromEditorAsync());
                     break;
                 case "printPdf":
                     await PrintPdfAsync();
@@ -1095,6 +1109,7 @@ public sealed partial class MainWindow : Window
             return;
         }
 
+        documentAssetManager.ResetDraft();
         documentSession.ReplaceDocument();
         currentFilePath = null;
         await SetMarkdownAsync(CreateNewDocumentMarkdown(), markClean: true, focusHeading: true, showStartPlaceholder: true);
@@ -1277,6 +1292,7 @@ public sealed partial class MainWindow : Window
         var previousLastSavedMarkdown = lastSavedMarkdown;
         var previousIsDirty = isDirty;
         documentSession.ReplaceDocument();
+        currentFilePath = path;
 
         try
         {
@@ -1298,6 +1314,7 @@ public sealed partial class MainWindow : Window
         currentFilePath = path;
         lastSavedMarkdown = markdown;
         isDirty = false;
+        documentAssetManager.ResetDraft();
         UpdateTitle();
         UpdateStatus();
 
@@ -1314,6 +1331,7 @@ public sealed partial class MainWindow : Window
 
     private async Task SaveDocumentAsync(string markdown, bool forceSaveAs, bool silent = false)
     {
+        var sourceDocumentPath = currentFilePath;
         var targetPath = currentFilePath;
         var markdownToSave = NormalizeLineEndings(markdown);
         if (!string.Equals(currentMarkdown, markdownToSave, StringComparison.Ordinal))
@@ -1364,6 +1382,10 @@ public sealed partial class MainWindow : Window
                 return;
             }
 
+            await documentAssetManager.MaterializeReferencedAssetsAsync(
+                operation.MarkdownSnapshot,
+                sourceDocumentPath,
+                operation.TargetPath);
             await File.WriteAllTextAsync(operation.TargetPath, operation.MarkdownSnapshot, Utf8NoBom);
             var completion = documentSession.CompleteSave(operation);
             operationCompleted = true;
@@ -1381,6 +1403,10 @@ public sealed partial class MainWindow : Window
             {
                 savedPath = completion.TargetPath;
                 AddRecentFile(savedPath);
+                if (sourceDocumentPath is null)
+                {
+                    documentAssetManager.ResetDraft();
+                }
             }
         }
         finally
@@ -1634,6 +1660,148 @@ public sealed partial class MainWindow : Window
         package.SetText(NormalizeLineEndings(markdown));
         Clipboard.SetContent(package);
         _ = NotifyAsync("Markdown kopiert", "Der aktuelle Inhalt liegt in der Zwischenablage.");
+    }
+
+    private async Task ImportClipboardImageAsync(JsonElement root)
+    {
+        var assetId = ReadString(root, "assetId") ?? string.Empty;
+        var dataUrl = ReadString(root, "dataUrl") ?? string.Empty;
+        var mimeType = ReadString(root, "mimeType") ?? string.Empty;
+
+        try
+        {
+            var result = await documentAssetManager.ImportDataUrlAsync(dataUrl, mimeType, currentFilePath);
+            PostEditorMessage(new
+            {
+                type = "imageAssetReady",
+                assetId,
+                markdownSource = result.MarkdownSource,
+                runtimeSource = result.RuntimeSource
+            });
+        }
+        catch (Exception ex)
+        {
+            Diagnostics.LogException("ImageAssets.ClipboardImport", ex);
+            PostEditorMessage(new
+            {
+                type = "imageAssetFailed",
+                assetId,
+                message = ex.Message
+            });
+        }
+    }
+
+    private void SendResolvedImages(JsonElement root)
+    {
+        var items = new List<object>();
+        if (root.TryGetProperty("sources", out var sources) && sources.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var sourceElement in sources.EnumerateArray())
+            {
+                if (sourceElement.ValueKind != JsonValueKind.String)
+                {
+                    continue;
+                }
+
+                var source = sourceElement.GetString();
+                if (string.IsNullOrWhiteSpace(source))
+                {
+                    continue;
+                }
+
+                var runtimeSource = documentAssetManager.ResolveRuntimeSource(source, currentFilePath);
+                if (!string.IsNullOrWhiteSpace(runtimeSource))
+                {
+                    items.Add(new { source, runtimeSource });
+                }
+            }
+        }
+
+        PostEditorMessage(new { type = "resolvedImages", items });
+    }
+
+    private async Task PickAndInsertImageAsync()
+    {
+        var picker = new FileOpenPicker();
+        picker.FileTypeFilter.Add(".png");
+        picker.FileTypeFilter.Add(".jpg");
+        picker.FileTypeFilter.Add(".jpeg");
+        picker.FileTypeFilter.Add(".webp");
+        picker.FileTypeFilter.Add(".gif");
+        picker.FileTypeFilter.Add(".bmp");
+        InitializeWithWindow.Initialize(picker, WindowNative.GetWindowHandle(this));
+
+        var file = await picker.PickSingleFileAsync();
+        if (file is null)
+        {
+            return;
+        }
+
+        try
+        {
+            var result = await documentAssetManager.ImportFileAsync(file.Path, currentFilePath);
+            if (EditorWebView.CoreWebView2 is null)
+            {
+                return;
+            }
+
+            var script =
+                "window.markdownStudio && typeof window.markdownStudio.insertImageFromHost === 'function' && " +
+                "window.markdownStudio.insertImageFromHost(" +
+                JsonSerializer.Serialize(result.MarkdownSource) + "," +
+                JsonSerializer.Serialize(result.RuntimeSource) + "," +
+                JsonSerializer.Serialize(Path.GetFileNameWithoutExtension(file.Name)) + ");";
+            await ExecuteScriptWithTimeoutAsync(script, TimeSpan.FromSeconds(4), "insert image");
+        }
+        catch (Exception ex)
+        {
+            Diagnostics.LogException("ImageAssets.FileImport", ex);
+            await NotifyAsync("Bild konnte nicht eingefügt werden", ex.Message);
+        }
+    }
+
+    private void PostEditorMessage(object message)
+    {
+        if (!editorReady || EditorWebView.CoreWebView2 is null)
+        {
+            return;
+        }
+
+        EditorWebView.CoreWebView2.PostWebMessageAsJson(JsonSerializer.Serialize(message, jsonOptions));
+    }
+
+    private async Task ExportSharePackageAsync(string markdown)
+    {
+        var suggestedMarkdown = BuildSuggestedMarkdownFileName(markdown, currentFilePath);
+        var markdownFileName = Path.ChangeExtension(Path.GetFileName(suggestedMarkdown), ".md");
+        var picker = new FileSavePicker
+        {
+            SuggestedFileName = Path.GetFileNameWithoutExtension(markdownFileName)
+        };
+        picker.FileTypeChoices.Add("Komplettes Markdown-Paket", new[] { ".zip" });
+        picker.DefaultFileExtension = ".zip";
+        InitializeWithWindow.Initialize(picker, WindowNative.GetWindowHandle(this));
+
+        var file = await picker.PickSaveFileAsync();
+        if (file is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await documentAssetManager.CreateSharePackageAsync(
+                NormalizeLineEndings(markdown),
+                currentFilePath,
+                file.Path,
+                markdownFileName);
+            await NotifyAsync("Komplett exportiert", Path.GetFileName(file.Path));
+        }
+        catch (Exception ex)
+        {
+            Diagnostics.LogException("ImageAssets.SharePackage", ex);
+            await NotifyAsync("Kompletter Export fehlgeschlagen", ex.Message);
+        }
     }
 
     private async Task ExportMarkdownFileAsync(string markdown)
@@ -4210,7 +4378,7 @@ public sealed partial class MainWindow : Window
     private async void SaveAsButton_Click(object sender, RoutedEventArgs e) => await RunUiEventAsync("SaveDocumentAs", async () => await SaveDocumentAsync(await GetMarkdownFromEditorAsync(), forceSaveAs: true));
     private async void RecentFilesButton_Click(object sender, RoutedEventArgs e) => await RunUiEventAsync("RecentFiles", OpenRecentAsync);
     private async void CopyMarkdownButton_Click(object sender, RoutedEventArgs e) => await RunUiEventAsync("CopyMarkdown", async () => CopyMarkdown(await GetMarkdownFromEditorAsync()));
-    private async void ExportButton_Click(object sender, RoutedEventArgs e) => await RunUiEventAsync("Export", () => RunEditorCommandAsync("exportHtml"));
+    private async void ExportButton_Click(object sender, RoutedEventArgs e) => await RunUiEventAsync("Export", () => RunEditorCommandAsync("showExport"));
     private async void ExportMarkdownFileButton_Click(object sender, RoutedEventArgs e) => await RunUiEventAsync("ExportMarkdown", async () => await ExportMarkdownFileAsync(await GetMarkdownFromEditorAsync()));
     private async void ExportHtmlButton_Click(object sender, RoutedEventArgs e) => await RunUiEventAsync("ExportHtml", () => RunEditorCommandAsync("exportHtml"));
     private async void PrintPdfButton_Click(object sender, RoutedEventArgs e) => await RunUiEventAsync("PrintPdf", PrintPdfAsync);

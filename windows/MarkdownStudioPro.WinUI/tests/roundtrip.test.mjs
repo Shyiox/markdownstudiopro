@@ -63,6 +63,36 @@ const injectedTestScript = String.raw`
     '\`[a](b)\` plus [link](https://example.com)',
     output => all(has(output, '\`[a](b)\`'), has(output, '[link](https://example.com)')));
 
+  run('relative image renders as img and roundtrips',
+    'Vorher ![Screenshot](./assets/x.png) Nachher',
+    (output, root) => {
+      const image = root.querySelector('img');
+      return all(
+        has(output, '![Screenshot](./assets/x.png)'),
+        image?.getAttribute('alt') === 'Screenshot' || 'image alt missing',
+        image?.getAttribute('data-md-src') === './assets/x.png' || 'persisted image source missing');
+    });
+
+  run('remote image remains remote and roundtrips',
+    '![Logo](https://example.com/logo.png)',
+    (output, root) => all(
+      has(output, '![Logo](https://example.com/logo.png)'),
+      root.querySelector('img')?.getAttribute('data-md-src') === 'https://example.com/logo.png' || 'remote image not rendered as img'));
+
+  run('missing relative image keeps markdown reference',
+    '![Fehlt](./assets/missing.png)',
+    (output, root) => all(
+      has(output, '![Fehlt](./assets/missing.png)'),
+      root.querySelector('img')?.getAttribute('data-md-src') === './assets/missing.png' || 'missing image reference lost'));
+
+  run('normal link next to image remains an anchor',
+    '[OpenAI](https://openai.com) und ![Bild](./assets/a.png)',
+    (output, root) => all(
+      has(output, '[OpenAI](https://openai.com)'),
+      has(output, '![Bild](./assets/a.png)'),
+      root.querySelectorAll('a').length === 1 || 'normal link count changed',
+      root.querySelectorAll('img').length === 1 || 'image was not rendered separately'));
+
   run('task keeps bold italic and code',
     '- [ ] **Fette Aufgabe**\n- [x] *Kursive Aufgabe*\n- [ ] \`Code\`',
     output => all(has(output, '- [ ] **Fette Aufgabe**'), has(output, '- [x] *Kursive Aufgabe*'), has(output, '- [ ] \`Code\`')));

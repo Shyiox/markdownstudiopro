@@ -204,7 +204,7 @@ body.focus-mode .document{
 .document tr:hover td { background: color-mix(in srgb, var(--primary) 5%, transparent); }
 .document td:focus-within, .document th:focus-within { outline: 2px solid var(--primary); outline-offset:-2px; position: relative; z-index: 1; }
 
-.document h1{font-size:2.2rem;line-height:1.1;margin:1.2rem 0 .8rem;letter-spacing:-.04em}.document h2{font-size:1.45rem;margin:1.7rem 0 .7rem;letter-spacing:-.02em}.document h3{font-size:1.15rem;margin:1.3rem 0 .5rem}.document p{margin:.68rem 0}.document a{color:var(--primary)}.document blockquote{margin:1rem 0;padding:.55rem 1rem;border-left:4px solid var(--primary);background:#f5f0e8;border-radius:0 12px 12px 0;color:#3d3d3a}.document code{background:#f5f0e8;border:1px solid #e6dfd8;border-radius:7px;padding:.12rem .34rem;font-family:"Cascadia Code","Cascadia Mono",Consolas,ui-monospace,monospace;font-size:.92em}.document code:not(pre code){position:relative;display:inline;max-width:100%;white-space:break-spaces;overflow-wrap:anywhere;word-break:break-word;-webkit-box-decoration-break:clone;box-decoration-break:clone;color:var(--code-fg);background:var(--code-bg);border-color:var(--code-border);font-weight:600;line-height:1.42;cursor:text;vertical-align:baseline}.document code:not(pre code):hover{background:color-mix(in srgb,var(--code-bg) 82%,var(--primary) 18%);border-color:color-mix(in srgb,var(--code-border) 74%,var(--primary) 26%);color:var(--primary-active)}.document code:not(pre code).copied{background:#edf8f3;border-color:#9ccdbb;color:#245d4a}.document pre{position:relative;background:var(--code-block-bg);color:var(--code-block-fg);border:1px solid var(--code-block-border);border-radius:14px;padding:18px;overflow:auto;max-width:100%;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;cursor:text}.document pre.copied{border-color:rgba(155,209,190,.55);box-shadow:0 0 0 2px rgba(155,209,190,.16)}.document pre code{background:transparent;border:0;color:inherit;padding:0;white-space:inherit;overflow-wrap:inherit;word-break:inherit;cursor:text}.document table{border-collapse:collapse;width:100%;max-width:100%;min-width:0;margin:1rem 0;table-layout:fixed}.document th,.document td{border:1px solid #e6dfd8;padding:8px 10px;min-width:0;overflow-wrap:anywhere;word-break:break-word}.document th{background:#f5f0e8;text-align:left}
+.document h1{font-size:2.2rem;line-height:1.1;margin:1.2rem 0 .8rem;letter-spacing:-.04em}.document h2{font-size:1.45rem;margin:1.7rem 0 .7rem;letter-spacing:-.02em}.document h3{font-size:1.15rem;margin:1.3rem 0 .5rem}.document p{margin:.68rem 0}.document a{color:var(--primary)}.document img{display:inline-block;max-width:100%;height:auto;vertical-align:middle;border-radius:10px;margin:.35rem .15rem;object-fit:contain}.document blockquote{margin:1rem 0;padding:.55rem 1rem;border-left:4px solid var(--primary);background:#f5f0e8;border-radius:0 12px 12px 0;color:#3d3d3a}.document code{background:#f5f0e8;border:1px solid #e6dfd8;border-radius:7px;padding:.12rem .34rem;font-family:"Cascadia Code","Cascadia Mono",Consolas,ui-monospace,monospace;font-size:.92em}.document code:not(pre code){position:relative;display:inline;max-width:100%;white-space:break-spaces;overflow-wrap:anywhere;word-break:break-word;-webkit-box-decoration-break:clone;box-decoration-break:clone;color:var(--code-fg);background:var(--code-bg);border-color:var(--code-border);font-weight:600;line-height:1.42;cursor:text;vertical-align:baseline}.document code:not(pre code):hover{background:color-mix(in srgb,var(--code-bg) 82%,var(--primary) 18%);border-color:color-mix(in srgb,var(--code-border) 74%,var(--primary) 26%);color:var(--primary-active)}.document code:not(pre code).copied{background:#edf8f3;border-color:#9ccdbb;color:#245d4a}.document pre{position:relative;background:var(--code-block-bg);color:var(--code-block-fg);border:1px solid var(--code-block-border);border-radius:14px;padding:18px;overflow:auto;max-width:100%;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;cursor:text}.document pre.copied{border-color:rgba(155,209,190,.55);box-shadow:0 0 0 2px rgba(155,209,190,.16)}.document pre code{background:transparent;border:0;color:inherit;padding:0;white-space:inherit;overflow-wrap:inherit;word-break:inherit;cursor:text}.document table{border-collapse:collapse;width:100%;max-width:100%;min-width:0;margin:1rem 0;table-layout:fixed}.document th,.document td{border:1px solid #e6dfd8;padding:8px 10px;min-width:0;overflow-wrap:anywhere;word-break:break-word}.document th{background:#f5f0e8;text-align:left}
 [data-theme="dark"] .document th {
   background: color-mix(in srgb, var(--primary) 24%, #2a2622);
   color: #faf9f5;
@@ -1808,7 +1808,7 @@ body.windows-native-shell[data-theme="dark"] #tableBackdrop .dialog-button.prima
 <div id="menuBackdrop" class="menu-backdrop" hidden></div>
 <section id="menuSheet" class="menu-sheet" hidden aria-label="Menü"><div class="menu-head"><div><strong id="menuTitle">Menü</strong><div id="menuSubtitle" style="font-size:12px;color:var(--muted);margin-top:2px">Aktionen gebündelt</div></div><button class="icon-button" data-command="closeMenu" aria-label="Schließen"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg></button></div><div class="menu-grid"><section class="menu-section"><h3>Datei</h3><div class="menu-list"><button class="menu-action" data-command="new"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-file"></use></svg><span><strong>Neu</strong><span>Leeres Dokument</span></span></button><button class="menu-action" data-command="open"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-folder"></use></svg><span><strong>Öffnen</strong><span>Textdatei laden</span></span></button><button class="menu-action" data-command="save"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-save"></use></svg><span><strong>Speichern</strong><span>Aktualisieren</span></span></button><button class="menu-action" data-command="saveAs"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-save"></use></svg><span><strong>Speichern unter</strong><span>Neue Datei</span></span></button>
 <button class="menu-action" data-command="openRecent"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-folder"></use></svg><span><strong>Zuletzt verwendet</strong><span>Letzte Dateien</span></span></button></div></section>
-<section class="menu-section"><h3>Zuletzt verwendet</h3><div id="recentList" style="display:grid;gap:4px;max-height:140px;overflow:auto"></div></section><section class="menu-section"><h3>Einfügen</h3><div class="menu-list"><button class="menu-action" data-format="table"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-table"></use></svg><span><strong>Tabelle</strong><span>Direkt editierbar</span></span></button>
+<section class="menu-section"><h3>Zuletzt verwendet</h3><div id="recentList" style="display:grid;gap:4px;max-height:140px;overflow:auto"></div></section><section class="menu-section"><h3>Einfügen</h3><div class="menu-list"><button class="menu-action" data-command="insertImage"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-file"></use></svg><span><strong>Bild…</strong><span>PNG, JPG, WebP, GIF oder BMP</span></span></button><button class="menu-action" data-format="table"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-table"></use></svg><span><strong>Tabelle</strong><span>Direkt editierbar</span></span></button>
 <button class="menu-action" data-command="addTableRow"><span><strong>Zeile +</strong></span></button><button class="menu-action" data-command="addTableCol"><span><strong>Spalte +</strong></span></button><button class="menu-action" data-command="delTableRow"><span><strong>Zeile -</strong></span></button><button class="menu-action" data-command="delTableCol"><span><strong>Spalte -</strong></span></button><button class="menu-action" data-format="task"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-checkbox"></use></svg><span><strong>Aufgaben</strong><span>Checkboxen</span></span></button><button class="menu-action" data-format="quote"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-quote"></use></svg><span><strong>Zitat</strong><span>Blockquote</span></span></button><button class="menu-action" data-format="code"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg><span><strong>Code</strong><span>Codeblock</span></span></button><button class="menu-action" data-command="findReplace"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg><span><strong>Suchen &amp; Ersetzen</strong><span>Strg+F</span></span></button></div></section><section class="menu-section"><h3>Ausgabe</h3><div class="menu-list"><button class="menu-action" data-command="copyMarkdown"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg><span><strong>Markdown kopieren</strong><span>Zwischenablage</span></span></button><button class="menu-action" data-command="exportHtml"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-export"></use></svg><span><strong>HTML exportieren</strong><span>HTML-Datei</span></span></button><button class="menu-action" data-command="showSource"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg><span><strong>Quelle anzeigen</strong><span>Markdown-Text</span></span></button><button class="menu-action" data-command="showTabHelp"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-help"></use></svg><span><strong>Tab-Hilfe</strong><span>Snippets</span></span></button></div></section></div></section>
 <div id="overlayScrollbar" class="overlay-scrollbar" role="scrollbar" aria-label="Dokument scrollen" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" tabindex="0">
   <div id="overlayScrollbarThumb" class="overlay-scrollbar-thumb"></div>
@@ -1864,6 +1864,7 @@ body.windows-native-shell[data-theme="dark"] #tableBackdrop .dialog-button.prima
     <div style="display:grid;gap:8px;padding:4px 0 12px">
       <button class="menu-action" data-export="md" style="width:100%"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span><strong>Markdown (.md)</strong><span>Reiner Text mit Formatierung</span></span></button>
       <button class="menu-action" data-export="html" style="width:100%"><svg class="icon" aria-hidden="true"><use href="#icon-export"></use></svg><span><strong>HTML (.html)</strong><span>Formatierte Webseite</span></span></button>
+      <button class="menu-action" data-export="complete" style="width:100%"><svg class="icon" aria-hidden="true"><use href="#icon-export"></use></svg><span><strong>Komplett / Zum Teilen (.zip)</strong><span>Markdown und alle referenzierten lokalen Bilder</span></span></button>
       <button class="menu-action" data-export="pdf" style="width:100%"><svg class="icon" aria-hidden="true"><use href="#icon-export"></use></svg><span><strong>PDF (Drucken)</strong><span>Über den Druckdialog als PDF speichern</span></span></button>
     </div>
   </section>
@@ -1990,7 +1991,7 @@ function post(type, payload={}){ if(window.chrome?.webview) chrome.webview.postM
 function escapeHtml(v){ return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 const CARET_BOUNDARY='\u200b';
 function cleanCaretBoundaries(value){ return String(value ?? '').replace(/\u200b/g,''); }
-function formatInlineMarkdown(text){ return escapeHtml(text).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>').replace(/~~([^~]+)~~/g,'<s>$1</s>').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>'); }
+function formatInlineMarkdown(text){ return escapeHtml(text).replace(/!\[([^\]]*)\]\(([^)]+)\)/g,'<img src="$2" data-md-src="$2" alt="$1" contenteditable="false">').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>').replace(/~~([^~]+)~~/g,'<s>$1</s>').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>'); }
 function inlineMarkdown(text){ return String(text ?? '').split(/(`[^`\n]*`)/g).map(part=>/^`[^`\n]*`$/.test(part)?`<code>${escapeHtml(part.slice(1,-1))}</code>`:formatInlineMarkdown(part)).join(''); }
 // inlineMarkdownNoCode wurde in V3 nicht mehr verwendet – entfernt in V4 Hygiene
 function parseFrontMatter(lines){ if(lines[0] !== '---') return null; const data={tags:[]}; let i=1, listKey=null; for(;i<lines.length;i++){ const line=lines[i]; if(line.trim()==='---') break; const item=line.match(/^\s*-\s+["']?(.*?)["']?\s*$/); if(item && listKey==='tags'){ data.tags.push(item[1].trim()); continue; } const m=line.match(/^([A-Za-z0-9_-]+):\s*["']?(.*?)["']?\s*$/); if(m){ const key=m[1].toLowerCase(); const value=m[2].trim(); listKey=value ? null : key; if(key==='tags') data.tags=value ? value.split(/[|,]/).map(x=>x.trim()).filter(Boolean) : []; else data[key]=value; } else listKey=null; } return i < lines.length ? {data, rawLines:lines.slice(1,i), end:i+1} : null; }
@@ -2021,7 +2022,7 @@ let p=[]; while(i<lines.length){ let line=lines[i]; const oneLineCode=line.match
  const listInfo=listLineInfo(line); if(listInfo){ closeParagraph(p); const parsed=parseMarkdownList(lines,i,listInfo.indent); out.push(parsed.html); i=parsed.end; continue; }
  if(line.includes('|') && i+1<lines.length && /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(lines[i+1])){ closeParagraph(p); const headers=splitTableRow(line); const alignments=splitTableRow(lines[i+1]).map(tableAlignment); const columnCount=headers.length; i+=2; out.push(`<table data-alignments="${escapeHtml(alignments.join('|'))}"><thead><tr>`+headers.map(h=>`<th>${inlineMarkdown(h)}</th>`).join('')+'</tr></thead><tbody>'); while(i<lines.length && lines[i].includes('|') && lines[i].trim()){ const cells=splitTableRow(lines[i++]); while(cells.length<columnCount) cells.push(''); out.push('<tr>'+cells.slice(0,columnCount).map(c=>`<td>${inlineMarkdown(c)}</td>`).join('')+'</tr>'); } out.push('</tbody></table>'); continue; }
  if(!line.trim()){ closeParagraph(p); i++; continue; } p.push(line.trimStart()); i++; } closeParagraph(p); return out.join('\n') || '<p><br></p>'; } catch(e){ return `<pre><code>${escapeHtml(md)}</code></pre>`; } }
-function childMarkdown(n){ if(n.nodeType===Node.TEXT_NODE) return cleanCaretBoundaries(n.textContent); if(n.nodeType!==Node.ELEMENT_NODE) return ''; const tag=n.tagName.toLowerCase(); const inner=childrenMarkdown(n); if(tag==='strong'||tag==='b') return `**${inner}**`; if(tag==='em'||tag==='i') return `*${inner}*`; if(tag==='s'||tag==='strike') return `~~${inner}~~`; if(tag==='code') return '`'+cleanCaretBoundaries(n.textContent)+'`'; if(tag==='a') return `[${inner}](${n.getAttribute('href')||''})`; if(tag==='br') return n.hasAttribute('data-markdown-hardbreak')?'  \n':''; return inner; }
+function childMarkdown(n){ if(n.nodeType===Node.TEXT_NODE) return cleanCaretBoundaries(n.textContent); if(n.nodeType!==Node.ELEMENT_NODE) return ''; const tag=n.tagName.toLowerCase(); if(tag==='img'){ if(n.hasAttribute('data-pending-asset')) return ''; const alt=cleanCaretBoundaries(n.getAttribute('alt')||'').replace(/]/g,'\\]'); const src=cleanCaretBoundaries(n.getAttribute('data-md-src')||n.getAttribute('src')||''); return `![${alt}](${src})`; } const inner=childrenMarkdown(n); if(tag==='strong'||tag==='b') return `**${inner}**`; if(tag==='em'||tag==='i') return `*${inner}*`; if(tag==='s'||tag==='strike') return `~~${inner}~~`; if(tag==='code') return '`'+cleanCaretBoundaries(n.textContent)+'`'; if(tag==='a') return `[${inner}](${n.getAttribute('href')||''})`; if(tag==='br') return n.hasAttribute('data-markdown-hardbreak')?'  \n':''; return inner; }
 function childrenMarkdown(node){ return Array.from(node.childNodes).map(childMarkdown).join(''); }
 function listItemMarkdown(li){ return Array.from(li.childNodes).filter(n=>!(n.nodeType===Node.ELEMENT_NODE && (n.matches('input[type="checkbox"]') || n.matches('ul,ol')))).map(childMarkdown).join('').trim(); }
 function listMarkdown(node,prefix=''){ const ordered=node.tagName.toLowerCase()==='ol'; const start=ordered?(Number(node.getAttribute('start'))||1):1; const parentIndent=Number(node.dataset.markdownIndent||0); return Array.from(node.children).filter(li=>li.tagName==='LI').map((li,index)=>{ const cb=Array.from(li.children).find(child=>child.matches('input[type="checkbox"]')); const marker=ordered?`${start+index}. `:'- '; const task=cb?`[${cb.checked?'x':' '}] `:''; const lines=[prefix+marker+task+listItemMarkdown(li)]; Array.from(li.children).filter(child=>child.matches('ul,ol')).forEach(child=>{ const childIndent=Number(child.dataset.markdownIndent); const step=Number.isFinite(childIndent)&&childIndent>parentIndent?childIndent-parentIndent:2; lines.push(listMarkdown(child,prefix+' '.repeat(step))); }); return lines.join('\n'); }).join('\n'); }
@@ -2057,6 +2058,7 @@ function setMarkdown(md, options = {}){
     requestAnimationFrame(focusInitialTitle);
   }
   addCodeLabels();
+  requestImageResolution();
   markClean();
   return true;
 }
@@ -2551,6 +2553,9 @@ function runCommand(cmd){
   else if (cmd === c.SAVE_AS)  post('saveAs', {markdown: toMarkdown()});
   else if (cmd === c.COPY_MD)  post('copyMarkdown', {markdown: toMarkdown()});
   else if (cmd === 'exportMarkdownFile') post('exportMarkdownFile', {markdown: toMarkdown()});
+  else if (cmd === 'insertImage') post('insertImage');
+  else if (cmd === 'showExport') showExportDialog();
+  else if (cmd === 'exportSharePackage') post('exportSharePackage', {markdown: toMarkdown()});
   else if (cmd === c.EXPORT_HTML) post('exportHtml', {html: documentHtml()});
   else if (cmd === 'printPdf') post('printPdf');
   else if (cmd === c.SHOW_SOURCE) post('showSource', {markdown: toMarkdown()});
@@ -3153,6 +3158,7 @@ const paletteCommands = [
   { id: 'task', label: 'Aufgabenliste einfügen', desc: 'Checkboxen', action: () => runFormat(CONST.FORMATS.TASK) },
   { id: 'hr', label: 'Trennlinie', desc: 'Horizontale Trennlinie einfügen', action: () => runFormat('hr') },
   { id: 'link', label: 'Link einfügen', desc: 'Hyperlink mit URL', action: () => runFormat('link') },
+  { id: 'image', label: 'Bild einfügen', desc: 'Lokale Bilddatei auswählen', action: () => runCommand('insertImage') },
   { id: 'table', label: 'Tabelle einfügen', desc: 'Spalten und Zeilen abfragen', action: () => runFormat(CONST.FORMATS.TABLE) },
   { id: 'addRow', label: 'Tabelle: Zeile hinzufügen', desc: 'Unter aktueller Zeile', action: () => runCommand('addTableRow') },
   { id: 'addCol', label: 'Tabelle: Spalte hinzufügen', desc: 'Rechts der aktuellen Spalte', action: () => runCommand('addTableCol') },
@@ -3161,6 +3167,7 @@ const paletteCommands = [
   { id: 'copy', label: 'Als Markdown kopieren', desc: 'In die Zwischenablage', action: () => runCommand(CONST.COMMANDS.COPY_MD) },
   { id: 'export-md', label: 'Markdown-Datei exportieren', desc: 'Als Markdown-Datei speichern', action: () => runCommand('exportMarkdownFile') },
   { id: 'export-html', label: 'HTML exportieren', desc: 'Als .html speichern', action: () => runCommand(CONST.COMMANDS.EXPORT_HTML) },
+  { id: 'export-complete', label: 'Komplett / Zum Teilen exportieren', desc: 'Markdown und lokale Bilder als ZIP', action: () => runCommand('exportSharePackage') },
   { id: 'print-pdf', label: 'PDF drucken', desc: 'Druckdialog für PDF öffnen', action: () => runCommand('printPdf') },
   { id: 'theme', label: 'Theme wechseln', desc: 'Hell / Dunkel umschalten', action: () => toggleTheme() },
   { id: 'theme-light', label: 'Theme: Hell', desc: 'Helles Design aktivieren', action: () => requestThemeChange('light') },
@@ -3240,9 +3247,10 @@ function showExportDialog() {
   const backdrop = document.getElementById('exportBackdrop');
   if (!backdrop) {
     // fallback
-    const choice = prompt('Export als: md / html / pdf', 'md');
+    const choice = prompt('Export als: md / html / komplett / pdf', 'md');
     if (choice === 'md') runCommand('exportMarkdownFile');
     else if (choice === 'html') runCommand(CONST.COMMANDS.EXPORT_HTML);
+    else if (choice === 'komplett') runCommand('exportSharePackage');
     else if (choice === 'pdf') runCommand('printPdf');
     return;
   }
@@ -3262,6 +3270,8 @@ function showExportDialog() {
         runCommand('exportMarkdownFile');
       } else if (type === 'html') {
         runCommand(CONST.COMMANDS.EXPORT_HTML);
+      } else if (type === 'complete') {
+        runCommand('exportSharePackage');
       } else if (type === 'pdf') {
         runCommand('printPdf');
       }
@@ -3688,6 +3698,81 @@ function pasteMarkdownBlocks(text){
  emitChange();
  return true;
 }
+function createAssetId(){ return 'asset-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10); }
+function insertImageNode(assetId, alt, markdownSource, runtimeSource, pending=false){
+ const img=document.createElement('img');
+ img.alt=alt||'Bild';
+ img.contentEditable='false';
+ img.dataset.assetId=assetId||'';
+ if(markdownSource) img.dataset.mdSrc=markdownSource;
+ if(runtimeSource) img.src=runtimeSource;
+ if(pending) img.dataset.pendingAsset='true';
+ if(!getSelection().rangeCount) placeCaret(editor.lastElementChild||editor);
+ document.execCommand('insertHTML',false,img.outerHTML);
+ const inserted=assetId ? editor.querySelector('img[data-asset-id="'+CSS.escape(assetId)+'"]') : null;
+ if(inserted) placeCaretAfterNode(inserted,true);
+ ensureTail();
+ return inserted;
+}
+function insertImageFromHost(markdownSource,runtimeSource,alt='Bild'){
+ restoreSelection();
+ const assetId=createAssetId();
+ const img=insertImageNode(assetId,alt,markdownSource,runtimeSource,false);
+ if(!img) return false;
+ emitChange();
+ return true;
+}
+function completeImageAsset(assetId, markdownSource, runtimeSource){
+ const img=editor.querySelector('img[data-asset-id="'+CSS.escape(String(assetId||''))+'"]');
+ if(!img) return false;
+ const preview=img.dataset.previewUrl;
+ img.dataset.mdSrc=String(markdownSource||'');
+ img.src=String(runtimeSource||markdownSource||'');
+ delete img.dataset.pendingAsset;
+ delete img.dataset.previewUrl;
+ if(preview?.startsWith('blob:')) { try{ URL.revokeObjectURL(preview); }catch{} }
+ emitChange();
+ return true;
+}
+function failImageAsset(assetId, message){
+ const img=editor.querySelector('img[data-asset-id="'+CSS.escape(String(assetId||''))+'"]');
+ if(img){
+  const preview=img.dataset.previewUrl;
+  img.remove();
+  if(preview?.startsWith('blob:')) { try{ URL.revokeObjectURL(preview); }catch{} }
+ }
+ notify('Bild konnte nicht eingefügt werden',message||'Das Bild konnte nicht gespeichert werden.');
+ return true;
+}
+function applyResolvedImages(items){
+ const mappings=Array.isArray(items)?items:[];
+ editor.querySelectorAll('img[data-md-src]').forEach(img=>{
+  const match=mappings.find(item=>String(item?.source||'')===img.dataset.mdSrc);
+  if(match?.runtimeSource) img.src=String(match.runtimeSource);
+ });
+}
+function requestImageResolution(){
+ const sources=Array.from(new Set(Array.from(editor.querySelectorAll('img[data-md-src]')).map(img=>img.dataset.mdSrc).filter(Boolean)));
+ if(sources.length) post('resolveImages',{sources});
+}
+function handleImagePaste(e){
+ const items=Array.from(e.clipboardData?.items||[]);
+ const item=items.find(candidate=>candidate?.kind==='file' && /^image\/(png|jpeg|jpg|webp|gif|bmp)$/i.test(candidate.type||''));
+ if(!item) return false;
+ const file=item.getAsFile?.();
+ if(!file) return false;
+ e.preventDefault();
+ e.stopPropagation?.();
+ const assetId=createAssetId();
+ const preview=URL.createObjectURL(file);
+ const img=insertImageNode(assetId,'Bild','',preview,true);
+ if(img) img.dataset.previewUrl=preview;
+ const reader=new FileReader();
+ reader.onload=()=>post('importClipboardImage',{assetId,mimeType:file.type||'image/png',dataUrl:String(reader.result||'')});
+ reader.onerror=()=>failImageAsset(assetId,'Die Bilddaten konnten nicht aus der Zwischenablage gelesen werden.');
+ reader.readAsDataURL(file);
+ return true;
+}
 function handlePlainPaste(e){
  const text=e.clipboardData?.getData('text/plain');
  if(text == null) return false;
@@ -3946,7 +4031,7 @@ editor.addEventListener('mousedown',suppressCodeMultiClickSelection,true);
 editor.addEventListener('pointerdown',e=>{ copyCodeTargetFromEvent(e,true); }, true);
 editor.addEventListener('mousedown',e=>{ copyCodeTargetFromEvent(e,true); }, true);
 editor.addEventListener('contextmenu',e=>{ copyCodeTargetFromEvent(e,false); }, true);
-editor.addEventListener('paste',e=>{ if(handleCodePaste(e)) return; handlePlainPaste(e); });
+editor.addEventListener('paste',e=>{ if(handleImagePaste(e)) return; if(handleCodePaste(e)) return; handlePlainPaste(e); });
 editor.addEventListener('keyup',()=>{ rememberSelection(); updateAssist(); typewriterScroll(); });
 editor.addEventListener('pointerdown',e=>{ focusTitleForDirectEdit(e); }, true);
 editor.addEventListener('click',e=>{ focusTitleForDirectEdit(e); if(e.target?.tagName==='HR'){ const p=insertParagraphAfter(e.target); placeCaret(p); rememberSelection(); return; } rememberSelection(); updateAssist(); });
@@ -3991,14 +4076,14 @@ tableRowsInput.addEventListener('input',()=>validateTableSize(false));
 outline.addEventListener('click',e=>{ const b=e.target.closest('button[data-index]'); if(!b) return; const h=editor.querySelectorAll('h1,h2,h3')[Number(b.dataset.index)]; h?.scrollIntoView({block:'center'}); });
 themeInput.addEventListener('change',toggleTheme);
 document.body.classList.add('windows-native-shell');
-if(window.chrome?.webview){ chrome.webview.addEventListener('message',ev=>{ const msg=ev.data||{}; if(msg.type==='setMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='setMarkdownBase64') setMarkdownBase64(msg.base64||'', msg); if(msg.type==='setSourceMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='notify') notify(msg.title||'',msg.message||''); if(msg.type==='applySettings') applySettings(msg); if(msg.type==='saveState') applySaveState(msg.state); }); }
+if(window.chrome?.webview){ chrome.webview.addEventListener('message',ev=>{ const msg=ev.data||{}; if(msg.type==='setMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='setMarkdownBase64') setMarkdownBase64(msg.base64||'', msg); if(msg.type==='setSourceMarkdown') setMarkdown(msg.markdown||'', msg); if(msg.type==='notify') notify(msg.title||'',msg.message||''); if(msg.type==='applySettings') applySettings(msg); if(msg.type==='saveState') applySaveState(msg.state); if(msg.type==='imageAssetReady') completeImageAsset(msg.assetId,msg.markdownSource,msg.runtimeSource); if(msg.type==='imageAssetFailed') failImageAsset(msg.assetId,msg.message); if(msg.type==='resolvedImages') applyResolvedImages(msg.items); }); }
 // Native settings are authoritative on Windows V2. Start from V2 defaults and
 // wait for the host settings message instead of replaying stale localStorage.
 applyTheme('light', false);
 applyTools(false, false);
 applyFocusMode(false, false);
 ensureTail(); hydrateTasks(); hydrateCopyTargets(); updateAll(); updateOverlayScrollbar();
-window.markdownStudio={setMarkdown,setMarkdownBase64,notify,toMarkdown,documentStats,applySettings,applySaveState,focusInitialTitle,focusBodyStart,getStatisticsSnapshot,scrollToStatisticsHeading};
+window.markdownStudio={setMarkdown,setMarkdownBase64,notify,toMarkdown,documentStats,applySettings,applySaveState,focusInitialTitle,focusBodyStart,getStatisticsSnapshot,scrollToStatisticsHeading,insertImageFromHost,completeImageAsset,failImageAsset,applyResolvedImages};
 post('ready');
 </script>
 </body>

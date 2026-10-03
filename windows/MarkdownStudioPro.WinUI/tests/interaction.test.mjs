@@ -758,6 +758,53 @@ const injectedTestScript = String.raw`
     );
   });
 
+  run('image clipboard paste takes precedence over text and inserts one pending image', () => {
+    setMarkdown('Start', { focusWritingArea: true });
+    const paragraph = editor.querySelector('p');
+    placeCaret(paragraph);
+    rememberSelection();
+    const file = new File([new Uint8Array([137,80,78,71])], 'clipboard.png', { type: 'image/png' });
+    let prevented = false;
+    const event = {
+      clipboardData: {
+        items: [{ kind: 'file', type: 'image/png', getAsFile: () => file }],
+        getData: type => type === 'text/plain' ? 'SHOULD-NOT-PASTE' : ''
+      },
+      preventDefault: () => { prevented = true; },
+      stopPropagation: () => {}
+    };
+    const handled = handleImagePaste(event);
+    return all(
+      equal(handled, true, 'image paste handled'),
+      equal(prevented, true, 'default paste prevented'),
+      editor.querySelectorAll('img[data-asset-id]').length === 1 || 'pending image missing',
+      !toMarkdown().includes('blob:') || 'temporary preview leaked into markdown',
+      !editor.textContent.includes('SHOULD-NOT-PASTE') || 'text pasted despite image precedence');
+  });
+
+  run('plain text paste stays unchanged when clipboard has no image', () => {
+    setMarkdown('Start ', { focusWritingArea: true });
+    const paragraph = editor.querySelector('p');
+    placeCaret(paragraph);
+    rememberSelection();
+    let prevented = false;
+    const event = {
+      clipboardData: {
+        items: [],
+        getData: type => type === 'text/plain' ? 'plain-paste-marker' : ''
+      },
+      preventDefault: () => { prevented = true; },
+      stopPropagation: () => {}
+    };
+    const imageHandled = handleImagePaste(event);
+    const textHandled = imageHandled ? false : handlePlainPaste(event);
+    return all(
+      equal(imageHandled, false, 'image handler'),
+      equal(textHandled, true, 'text handler'),
+      equal(prevented, true, 'plain paste default prevention'),
+      snapshot().includes('plain-paste-marker') || 'plain paste content missing');
+  });
+
   run('table dialog accepts only complete decimal integers in range', () => {
     const originalColsType = tableColsInput.type;
     const originalRowsType = tableRowsInput.type;
