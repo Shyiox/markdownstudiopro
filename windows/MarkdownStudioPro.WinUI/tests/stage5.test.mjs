@@ -179,6 +179,20 @@ const injectedTestScript = String.raw`
     );
   }));
 
+  run('complete export lives in export dialog and posts portable package request', () => withBridgeCapture(messages => {
+    setMarkdown('# SHARE PACKAGE TEST\n\n![Bild](./assets/test.png)');
+    showExportDialog();
+    const button = document.querySelector('[data-export="complete"]');
+    if (!button) return 'complete export button missing';
+    button.click();
+    const exportMessages = messages.filter(message => message.type === 'exportSharePackage');
+    return all(
+      equal(exportMessages.length, 1, 'message count'),
+      equal(exportMessages[0]?.type, 'exportSharePackage', 'message type'),
+      exportMessages[0]?.markdown?.includes('./assets/test.png') || 'markdown payload lacks image reference'
+    );
+  }));
+
   run('Copy Markdown remains a separate clipboard command', () => withBridgeCapture(messages => {
     setMarkdown('COPY MARKDOWN TEST');
     runCommand(CONST.COMMANDS.COPY_MD);

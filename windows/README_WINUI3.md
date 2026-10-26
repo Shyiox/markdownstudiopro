@@ -29,7 +29,7 @@ The existing keyboard, shortcut, Smart-Tab execution, and editor `keydown` behav
 
 - Windows 10 build 19041 or newer
 - x64
-- .NET 8 SDK for development and builds
+- .NET 10 SDK for development and builds
 - Microsoft Edge WebView2 Runtime
 - Optional: Visual Studio with Windows App SDK / WinUI tooling
 
@@ -45,16 +45,25 @@ build_winui3.bat
 
 The script:
 
-1. cleans `bin` and `obj`,
-2. restores dependencies for `win-x64`,
-3. builds the Debug configuration,
-4. verifies the executable, `App/editor.html`, and `WebView2Loader.dll`.
+1. restores dependencies for `win-x64`,
+2. builds the Debug configuration without deleting prior outputs,
+3. verifies the executable, `App/editor.html`, and `WebView2Loader.dll`.
 
 Direct build with `dotnet`:
 
 ```powershell
 dotnet build .\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj -c Debug -r win-x64
 ```
+
+## Automated verification
+
+Run all browser-based tests, C# regression tests and the Windows Debug build:
+
+```powershell
+powershell -NoProfile -File .\test_all.ps1
+```
+
+Extended Markdown rendering uses bundled local KaTeX (MathML) and Mermaid assets, with dependency details in `MarkdownStudioPro.WinUI/App/vendor/THIRD_PARTY_NOTICES.md`. Windows GUI and release-signing checks are separate and must be recorded before publication.
 
 ## Run
 
@@ -67,13 +76,13 @@ start_winui3.bat
 Direct path to the Debug executable:
 
 ```text
-MarkdownStudioPro.WinUI\bin\Debug\net8.0-windows10.0.19041.0\win-x64\Markdown Studio Pro.exe
+MarkdownStudioPro.WinUI\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Markdown Studio Pro.exe
 ```
 
 Open a file directly at launch:
 
 ```bat
-"MarkdownStudioPro.WinUI\bin\Debug\net8.0-windows10.0.19041.0\win-x64\Markdown Studio Pro.exe" "C:\Path\Document.md"
+"MarkdownStudioPro.WinUI\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Markdown Studio Pro.exe" "C:\Path\Document.md"
 ```
 
 An explicitly supplied launch path always takes precedence over optional last-document restore.
