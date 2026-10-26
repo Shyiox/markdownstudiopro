@@ -23,6 +23,13 @@
 - New 4-case standalone branding test validates exact approved SHA-256 assets, PNG/ICO dimensions and platform references. The original source ZIP is archived once in the project-specific design Vault (outside the public repository), not kept in Downloads.
 - Historical Git commits, earlier delivery ZIPs and the user's currently installed application are intentionally not rewritten or deleted. No app installation or public release has been performed.
 
+## Installed Windows portable candidate and packaging correction
+
+- Following approval of the A1 x A3 icon, the complete self-contained `.NET 10 win-x64` Windows release output was placed under `%LOCALAPPDATA%\Programs\Markdown Studio Pro`, with user Desktop and Start Menu shortcuts. The folder is portable: there is no MSI/MSIX, signing, updater or public release.
+- An initial `dotnet publish -o` payload omitted `App.xbf`, `MainWindow.xbf` and `Markdown Studio Pro.pri` (504 files total). The missing resources produced a `MainWindow.InitializeComponent` XAML parse failure and a startup crash. The three files were obtained from the hash-identical Release build with generated resources; all **507 build files** now match the installed package SHA-256-for-SHA-256. The installed program starts with WebView2 and the editor ready. Extra WebView2 cache files generated during runtime are not part of the 507 packaged files.
+- Future portable builds use `windows/build_portable_winui3.ps1`, which compiles the Release output and validates the XBF/PRI, executable, editor, loader and icon resources. `windows/portable_package.tests.ps1` checks five resource scenarios and is included in `windows/test_all.ps1`.
+- The old .NET 8 project output remains as an intentional fallback until a separately approved cleanup. Settings and recent-file data hashes were unchanged by the smoke launch. The owned isolated QA clone and profile were removed; GitHub `main` and local checkout `main` remain untouched.
+
 ## Scope and release boundaries
 
 For current **personal use**, extended GUI, accessibility, Smart-Tab, export and print acceptance are deferred according to owner decision. Confirmed data-loss defects are never considered low priority. Before publishing the source branch, the bundled `fastdom@1.0.12` MIT notice was completed from the upstream package's license information and the existing `khroma@2.1.0` MIT license was checked against the upstream repository (whose npm metadata does not declare a license field). Full packaged-public-release review remains separate. This integration is not an installed app or a public product release.

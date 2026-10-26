@@ -55,6 +55,24 @@ Direct build with `dotnet`:
 dotnet build .\MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj -c Debug -r win-x64
 ```
 
+## Portable Release output (Windows x64)
+
+For a self-contained **Release** directory suitable for private portable use:
+
+```powershell
+powershell -NoProfile -File .\build_portable_winui3.ps1
+```
+
+Use the emitted `PORTABLE_SOURCE` directory as the portable payload. The script builds with `dotnet build -c Release -r win-x64` and validates the complete WinUI application resources. **Do not assume `dotnet publish -o` is a complete WinUI payload**: it was observed to omit the generated `App.xbf`, `MainWindow.xbf`, and `Markdown Studio Pro.pri` files. Without those files, `MainWindow.InitializeComponent` fails at runtime despite a successful build.
+
+Validate an already staged directory without rebuilding:
+
+```powershell
+powershell -NoProfile -File .\build_portable_winui3.ps1 -VerifyOnly -Directory "C:\Path\To\Portable"
+```
+
+The portable output does not install a registered Windows package or configure automatic updates. Release packaging and signing remain independent decisions.
+
 ## Automated verification
 
 Run all browser-based tests, C# regression tests and the Windows Debug build:

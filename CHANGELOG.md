@@ -30,6 +30,7 @@ This section describes a **private integration candidate** combining GitHub `137
 
 ### Fixed
 
+- Portable Windows Release packaging: an unverified `dotnet publish -o` excluded required generated XAML resources (`App.xbf`, `MainWindow.xbf` and `Markdown Studio Pro.pri`), causing a WinUI XAML parsing crash. Added a complete `dotnet build -c Release` portable workflow with mandatory resource checks and a five-case regression test. The installed private package was repaired from the matching Release build and started successfully.
 - Preserve `+` and `3)` style list markers through editing and saving.
 - Keep footnote references correctly resolved after nested blockquotes.
 - Prevent managed image assets from being copied when the target Markdown file has an external-change conflict.
