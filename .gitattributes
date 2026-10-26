@@ -1,0 +1,2 @@
+# Keep editable brand SVG masters byte-identical on all systems.
+branding/*.svg text eol=lf

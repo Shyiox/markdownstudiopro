@@ -63,6 +63,36 @@ const injectedTestScript = String.raw`
     '\`[a](b)\` plus [link](https://example.com)',
     output => all(has(output, '\`[a](b)\`'), has(output, '[link](https://example.com)')));
 
+  run('relative image renders as img and roundtrips',
+    'Vorher ![Screenshot](./assets/x.png) Nachher',
+    (output, root) => {
+      const image = root.querySelector('img');
+      return all(
+        has(output, '![Screenshot](./assets/x.png)'),
+        image?.getAttribute('alt') === 'Screenshot' || 'image alt missing',
+        image?.getAttribute('data-md-src') === './assets/x.png' || 'persisted image source missing');
+    });
+
+  run('remote image remains remote and roundtrips',
+    '![Logo](https://example.com/logo.png)',
+    (output, root) => all(
+      has(output, '![Logo](https://example.com/logo.png)'),
+      root.querySelector('img')?.getAttribute('data-md-src') === 'https://example.com/logo.png' || 'remote image not rendered as img'));
+
+  run('missing relative image keeps markdown reference',
+    '![Fehlt](./assets/missing.png)',
+    (output, root) => all(
+      has(output, '![Fehlt](./assets/missing.png)'),
+      root.querySelector('img')?.getAttribute('data-md-src') === './assets/missing.png' || 'missing image reference lost'));
+
+  run('normal link next to image remains an anchor',
+    '[OpenAI](https://openai.com) und ![Bild](./assets/a.png)',
+    (output, root) => all(
+      has(output, '[OpenAI](https://openai.com)'),
+      has(output, '![Bild](./assets/a.png)'),
+      root.querySelectorAll('a').length === 1 || 'normal link count changed',
+      root.querySelectorAll('img').length === 1 || 'image was not rendered separately'));
+
   run('task keeps bold italic and code',
     '- [ ] **Fette Aufgabe**\n- [x] *Kursive Aufgabe*\n- [ ] \`Code\`',
     output => all(has(output, '- [ ] **Fette Aufgabe**'), has(output, '- [x] *Kursive Aufgabe*'), has(output, '- [ ] \`Code\`')));
@@ -104,6 +134,107 @@ const injectedTestScript = String.raw`
     output => all(has(output, 'custom: bleibt'), has(output, '3. Drei\n   - Unterpunkt'), has(output, '> Absatz 1\n>\n> Absatz 2'),
       has(output, '|  | \`**x**\` |  |'), has(output, '| :--- | :---: | ---: |'),
       has(output, '- [x] **Fertig** mit [Link](https://example.com)'), has(output, 'const a = 1;\n\n\nconst b = 2;')));
+
+  run('javascript link URL stays text, not executable anchor',
+    '[Bad](javascript:alert(1))',
+    (output, root) => all(
+      has(output, '[Bad](javascript:alert(1))'),
+      !root.querySelector('a[href^="javascript:"]') || 'unsafe anchor created'));
+
+  run('data image URL stays text, not executable image',
+    '![Bad](data:text/html,evil)',
+    (output, root) => all(
+      has(output, '![Bad](data:text/html,evil)'),
+      !root.querySelector('img[src^="data:"]') || 'unsafe image created'));
+
+  run('setext heading renders and keeps semantic heading',
+    'Titel\n=====\n\nAbschnitt\n---------',
+    (output,root)=>all(root.querySelector('h1')?.textContent==='Titel' || 'setext H1 not rendered',
+      root.querySelector('h2')?.textContent==='Abschnitt' || 'setext H2 not rendered'));
+
+  run('tilde fenced code roundtrips and keeps its language',
+    '~~~js\nconst x = 1;\n~~~',
+    (output,root)=>all(root.querySelector('pre[data-lang="js"] code')?.textContent==='const x = 1;' || 'tilde fence not parsed',
+      has(output,'~~~js\nconst x = 1;\n~~~')));
+
+  run('nested blockquotes preserve two levels',
+    '> Outer\n> > Inner',
+    (output,root)=>all(root.querySelector('blockquote blockquote')?.textContent?.includes('Inner') || 'nested quote not rendered',
+      has(output,'> > Inner')));
+
+  run('escaped punctuation stays literal after save',
+    '\\*literal* and \\[not-link]',
+    (output,root)=>all(has(output,'\\*literal*'), !root.querySelector('em') || 'escaped star became italic'));
+
+  run('autolink renders a real link and retains source form',
+    '<https://example.org/path>',
+    (output,root)=>all(Boolean(root.querySelector('a[href="https://example.org/path"]')) || 'autolink not rendered',
+      has(output,'<https://example.org/path>')));
+
+  run('URL nested parentheses are not truncated',
+    '[a](https://example.org/path_(one))',
+    (output,root)=>all(root.querySelector('a')?.getAttribute('href')==='https://example.org/path_(one)' || 'link URL truncated',
+      has(output,'[a](https://example.org/path_(one))')));
+
+  run('reference-style links preserve definitions',
+    '[A link][ref]\n\n[ref]: https://example.org/page',
+    (output,root)=>all(Boolean(root.querySelector('a[href="https://example.org/page"]')) || 'reference link not resolved',
+      has(output,'[A link][ref]'), has(output,'[ref]: https://example.org/page')));
+
+  run('escaped table pipes do not create extra columns',
+    '| A \\| B | C |\n| --- | --- |\n| x | y |',
+    (output,root)=>all(root.querySelector('thead tr')?.children.length===2 || 'escaped pipe split column',
+      has(output,'A \\| B')));
+
+  run('plus bullets parse as list',
+    '+ Alpha\n+ Beta',
+    (output,root)=>root.querySelector('ul li')?.textContent==='Alpha' || 'plus bullet not parsed');
+
+  run('underscore emphasis renders as emphasis',
+    '__bold__ and _italic_',
+    (output,root)=>all(root.querySelector('strong')?.textContent==='bold' || 'double underscore missing',
+      root.querySelector('em')?.textContent==='italic' || 'underscore missing'));
+
+  run('footnote references and definitions roundtrip without losing content',
+    'Note[^one]\n\n[^one]: Dies ist die Erklärung.',
+    (output,root)=>all(
+      Boolean(root.querySelector('sup.md-footnote-reference')) || 'footnote reference not rendered',
+      Boolean(root.querySelector('.md-footnote-definition')) || 'footnote definition missing',
+      has(output,'Note[^one]'),has(output,'[^one]: Dies ist die Erklärung.')));
+
+  run('inline math persists LaTeX while providing a rendered block',
+    '$x^2+1$',
+    (output,root)=>all(Boolean(root.querySelector('.md-inline-math')) || 'inline math missing',
+      has(output,'$x^2+1$')));
+
+  run('block math persists LaTeX while rendering a math region',
+    '$$\n\\frac{a}{b}\n$$',
+    (output,root)=>all(Boolean(root.querySelector('.md-math-block')) || 'block math missing',
+      has(output,'$$\n\\frac{a}{b}\n$$')));
+
+  run('mermaid keeps editable source with separate preview',
+    String.fromCharCode(96).repeat(3)+'mermaid\nflowchart LR\n A-->B\n'+String.fromCharCode(96).repeat(3),
+    (output,root)=>all(Boolean(root.querySelector('pre[data-lang="mermaid"]')) || 'Mermaid code lost',
+      Boolean(root.querySelector('.md-mermaid-preview')) || 'Mermaid preview missing',
+      has(output,'flowchart LR\n A-->B')));
+
+  run('plus list marker survives serialization',
+    '+ Erster\n+ Zweiter',
+    output => all(has(output, '+ Erster\n+ Zweiter'), !output.includes('- Erster') || 'plus marker lost'));
+
+  run('ordered parentheses marker survives serialization',
+    '3) Dritter\n4) Vierter',
+    output => has(output, '3) Dritter\n4) Vierter'));
+
+  run('footnote after nested quote retains its definition and hover description',
+    '> > Ein Zitat\n\nText[^ref]\n\n[^ref]: Eine Erklärung',
+    (output,root) => all(has(output, 'Text[^ref]'),
+      root.querySelector('.md-footnote-reference')?.getAttribute('title')==='Eine Erklärung' || 'definition not resolved'));
+
+  run('file protocol link stays inactive',
+    '[lokal](file:///C:/Windows/system.ini)',
+    (output,root) => all(has(output, '[lokal](file:///C:/Windows/system.ini)'),
+      !root.querySelector('a[href^="file:"]') || 'unsafe file link created'));
 
   run('baseline markdown sanity',
     '# H1\n## H2\n### H3\n#### H4\n##### H5\n###### H6\n\nText äöü 😀 with **bold**, *italic*, ~~strike~~, \`code\` and [link](https://example.com).\n\n- Bullet\n\n1. Numbered\n\n| A | B |\n| --- | --- |\n| C | D |\n\n---\n\n\`\`\`javascript\nconsole.log("ok");\n\`\`\`',

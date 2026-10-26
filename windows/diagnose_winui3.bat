@@ -4,7 +4,7 @@ cd /d "%~dp0"
 
 set "PROJECT=MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj"
 set "WINUI_DIR=MarkdownStudioPro.WinUI"
-set "TFM=net8.0-windows10.0.19041.0"
+set "TFM=net10.0-windows10.0.19041.0"
 set "RID=win-x64"
 set "OUT=%WINUI_DIR%\bin\Debug\%TFM%\%RID%"
 set "EXE=%OUT%\Markdown Studio Pro.exe"

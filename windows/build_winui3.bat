@@ -4,7 +4,7 @@ cd /d "%~dp0"
 
 set "PROJECT=MarkdownStudioPro.WinUI\MarkdownStudioPro.WinUI.csproj"
 set "WINUI_DIR=MarkdownStudioPro.WinUI"
-set "TFM=net8.0-windows10.0.19041.0"
+set "TFM=net10.0-windows10.0.19041.0"
 set "RID=win-x64"
 set "OUT=%WINUI_DIR%\bin\Debug\%TFM%\%RID%"
 set "EXE=%OUT%\Markdown Studio Pro.exe"
@@ -36,15 +36,6 @@ if not exist "%WINUI_DIR%\App\editor.html" (
 if not exist "%WEBVIEW2_ROOT%" echo Hinweis: Microsoft Edge WebView2 Runtime wurde unter "%WEBVIEW2_ROOT%" nicht gefunden.
 if not exist "%WEBVIEW2_ROOT%" echo Falls die App beim Start WebView2 meldet, Runtime installieren oder reparieren.
 if not exist "%WEBVIEW2_ROOT%" echo.
-
-if exist "%WINUI_DIR%\Program.cs" (
-  echo Entferne alten Program.cs-Einstiegspunkt...
-  del /f /q "%WINUI_DIR%\Program.cs"
-)
-
-echo Bereinige WinUI bin/obj...
-if exist "%WINUI_DIR%\obj" rmdir /s /q "%WINUI_DIR%\obj"
-if exist "%WINUI_DIR%\bin" rmdir /s /q "%WINUI_DIR%\bin"
 
 echo.
 echo Restore...

@@ -6,6 +6,42 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+This section describes a **private integration candidate** combining GitHub `1374454`, local `8af7647` and the verified October modernization ZIP. It has not been merged into `main`, installed or publicly released.
+
+### Added
+
+- Guarded atomic Markdown saves with detection of external file modifications; detect conflicts before copying referenced image assets.
+- Trusted-editor navigation and WebView2 message checks.
+- CommonMark/GFM compatibility for reference links, escaped punctuation, Setext headings, tilde code fences, nested blockquotes, balanced URL parentheses, autolinks, alternate list markers, underscore emphasis and escaped table pipes.
+- Footnotes, local/offline LaTeX preview using KaTeX MathML, Mermaid diagrams and syntax highlighting for common code-block languages.
+- Regression tests for file integrity, WebView2 security, editor roundtrips, preview rendering and large documents.
+- Windows `test_all.ps1` verification entrypoint and third-party notices.
+
+### Changed
+
+- Replaced the previous colorful app branding with the approved A1 x A3 geometric icon: Windows ICO/PNG, seven macOS AppIcon sizes, and five editable SVG masters for light, dark and monochrome use. The Windows About dialog and app-window icon now reference the new assets; no additional legacy icon copies were introduced.
+- Windows project target updated to .NET 10.
+- Windows build helper no longer removes generated output directories or a legacy source file.
+
+### Security
+
+- Executable URL schemes do not create active rendered Markdown links or images.
+- Navigation is restricted to the packaged editor document and untrusted bridge messages are rejected.
+
+### Fixed
+
+- Portable Windows Release packaging: an unverified `dotnet publish -o` excluded required generated XAML resources (`App.xbf`, `MainWindow.xbf` and `Markdown Studio Pro.pri`), causing a WinUI XAML parsing crash. Added a complete `dotnet build -c Release` portable workflow with mandatory resource checks and a five-case regression test. The installed private package was repaired from the matching Release build and started successfully.
+- Preserve `+` and `3)` style list markers through editing and saving.
+- Keep footnote references correctly resolved after nested blockquotes.
+- Prevent managed image assets from being copied when the target Markdown file has an external-change conflict.
+
+### Remaining release gates
+
+- Basic native WinUI editing, undo/redo, saving, close confirmation and document reopen passed in an isolated profile; complete export, Smart-Tab and accessibility verification remains deferred for private use.
+- Full CommonMark/GFM specification compliance remains unverified.
+- Third-party license review, signing and installer distribution remain separate decisions.
+
+
 ## [0.1.0] - 2026-09-13
 
 ### Added
