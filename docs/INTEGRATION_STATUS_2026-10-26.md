@@ -1,5 +1,12 @@
 # Private GitHub integration status — 2026-10-26
 
+## Canonical local state after consolidation (2026-10-26)
+
+- The private Windows portable `.NET 10` application with the approved A1 x A3 logo is the single intended everyday Windows app, located under `%LOCALAPPDATA%\Programs\Markdown Studio Pro` and reachable through Desktop and Start Menu shortcuts. Native launch, WebView2/editor readiness and normal clean close were confirmed earlier.
+- The previously outdated **local** `main` was advanced by a clean Git fast-forward to the feature source. The five editable branding SVGs now have enforced LF working-tree line endings through `.gitattributes`, fixing exact asset-hash checks under Windows `core.autocrlf=true`. Verified on the local project after integration: 147 editor regressions, five portable package checks, four branding tests and successful Windows Debug build.
+- The tested source remains on GitHub's separate **Draft PR #9**; GitHub public `main` has not been merged, tagged or released. Historic snapshots below describe earlier states, not the current local status.
+- Generated old development builds, old delivery ZIPs and one redundant integration clone were inventoried for **explicit deletion approval**, including an old `.NET 8` WebView2 profile that may hold personal state. Never equate generated output with user documents or blindly wipe profiles, backups or unowned worktrees.
+
 ## Provenance
 
 - GitHub public `main` at `13744540511f7d4f403149eceddaa149270a6ea8` (README v0.1.0 release link).
