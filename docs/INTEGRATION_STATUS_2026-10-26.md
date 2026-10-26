@@ -18,6 +18,6 @@
 
 ## Scope and release boundaries
 
-For current **personal use**, extended GUI, accessibility, Smart-Tab, export and print acceptance are deferred according to owner decision. Confirmed data-loss defects are never considered low priority. The public-release licensing inventory is **not cleared**: bundled `fastdom@1.0.12` is missing its complete license text and `khroma@2.1.0` needs authoritative license verification. This integration is suitable as a private candidate, **not automatically as a public release or as consent to publish on a public repository**.
+For current **personal use**, extended GUI, accessibility, Smart-Tab, export and print acceptance are deferred according to owner decision. Confirmed data-loss defects are never considered low priority. Before publishing the source branch, the bundled `fastdom@1.0.12` MIT notice was completed from the upstream package's license information and the existing `khroma@2.1.0` MIT license was checked against the upstream repository (whose npm metadata does not declare a license field). Full packaged-public-release review remains separate. This integration is not an installed app or a public product release.
 
 GitHub issue #8 tracks the deferred work. No installed application, personal Markdown documents, the existing local checkout's `main`, or the existing Revision 2 ZIP are changed by this isolated integration.

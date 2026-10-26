@@ -32,7 +32,7 @@
 - [ ] Check zoom/text scaling, accessible names, keyboard-only navigation, theme contrast and screen-reader navigation.
 - [ ] Use several larger representative documents to check input latency, caret continuity, undo/redo and responsiveness.
 - [ ] Test crash/restart recovery in a disposable profile; confirm no truncated or empty Markdown file and no leaked temporary save files.
-- [ ] Review the third-party license inventory, including the missing bundled `fastdom@1.0.12` license text; verify vendor sources and notices before any redistribution.
+- [ ] Complete a comprehensive third-party and packaged-release review before shipping a public app. The previously missing `fastdom@1.0.12` MIT notice and `khroma@2.1.0` upstream license were checked and annotated before the source branch was shared.
 - [ ] Decide installer, signatures, release version, release channel and rollback procedure explicitly.
 - [ ] Record final reviewer, environment, date, exact artifact hash and outstanding findings.
 
