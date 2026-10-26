@@ -19,6 +19,7 @@ This section describes a **private integration candidate** combining GitHub `137
 
 ### Changed
 
+- Replaced the previous colorful app branding with the approved A1 x A3 geometric icon: Windows ICO/PNG, seven macOS AppIcon sizes, and five editable SVG masters for light, dark and monochrome use. The Windows About dialog and app-window icon now reference the new assets; no additional legacy icon copies were introduced.
 - Windows project target updated to .NET 10.
 - Windows build helper no longer removes generated output directories or a legacy source file.
 

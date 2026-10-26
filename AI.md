@@ -19,6 +19,13 @@
 - After completing a verified stage, update `AI.md` in the deliverable structure ZIP and record the actual stage status in the relevant Vault notes. Do not mistake a prepared ZIP for an installed or released build.
 - No extra Obsidian plugins are required for this workflow; do not install community plugins without explicit approval.
 
+## Branding update - 2026-10-26 (approved A1 x A3, private use)
+
+- Replaced existing Windows `Assets/markdown_studio_icon.ico` and `.png` and all seven `macos/MarkdownStudioProMac/Assets.xcassets/AppIcon.appiconset/appicon_*.png` with the approved A1 x A3 icon package. The filenames stay stable and no old branded copies are kept in the current candidate tree; Git history and previously created archives still retain their own earlier content.
+- Added five editable SVG masters to `branding/`. The existing Windows executable icon, window icon and About-dialog PNG use the new source assets; macOS AppIcon assets are ready but no macOS build has been tested.
+- The A1 x A3 branding source archive has been moved out of Downloads to the dedicated project Vault design area after SHA-256 verification. The installed Windows application and original `main` checkout have not been changed.
+- Branding regression: `python windows/MarkdownStudioPro.WinUI/tests/branding_assets.test.py`. Full native icon visual acceptance was performed in a separate disposable QA profile. GitHub PR #9 remains a Draft until explicitly merged.
+
 ## Modernization candidate - 2026-10-26 (private integration branch; not merged, installed or released)
 
 The owner approved stages 1-5. The tested source baseline is `8af764744856868797036c70b3f80ab01b94a543`; this private integration branch combines that local commit, GitHub `13744540511f7d4f403149eceddaa149270a6ea8`, and the verified revision-2 structure ZIP. Neither the installed app nor GitHub `main` has been replaced.

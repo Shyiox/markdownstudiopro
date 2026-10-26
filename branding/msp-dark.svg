@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Markdown Studio Pro app icon">
+<rect x="34" y="34" width="956" height="956" rx="220" fill="#1E2A30" stroke="#39464A" stroke-width="8"/>
+<g transform="translate(-143.36 -143.36) scale(1.28)">
+<path d="M 270 348 C 266 343 261 344 261 357 L 261 709 C 261 730 279 741 296 728 L 405 647 C 413 641 418 633 418 624 L 418 463 Z" fill="#F2F0EA"/>
+<path d="M 509 474 L 696 291 C 713 274 731 277 731 297 L 731 374 C 731 387 726 397 715 406 L 527 563 C 519 570 511 567 509 557 Z" fill="#F2F0EA"/>
+<path d="M 287 285 C 270 269 261 280 261 298 L 261 374 C 261 385 265 394 276 403 L 497 568 C 509 577 519 570 527 563 L 527 481 L 306 296 C 299 290 293 288 287 285 Z" fill="#F2F0EA"/>
+<path d="M 509 471 L 527 482 L 527 562 Q 518 572 509 566 Z" fill="#D8DBD5"/>
+<path d="M 722 454 C 729 451 736 455 736 467 L 736 708 C 736 727 722 736 707 726 L 581 635 C 568 625 566 613 581 598 L 709 463 C 713 459 718 456 722 454 Z" fill="#A5B79A"/>
+</g>
+</svg>

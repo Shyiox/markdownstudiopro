@@ -16,6 +16,13 @@
 - Windows `win-x64` .NET 10 Debug build succeeded with zero errors; pre-existing nullable warning CS8603 remains.
 - In earlier isolated native GUI QA, core editing, undo/redo, save, Find & Replace, close confirmation and reopen passed. This combined integration source was **not** separately subjected to the extended interactive GUI acceptance.
 
+## Cross-platform logo update (A1 x A3)
+
+- Replaced the two existing Windows application icon resources and all seven macOS AppIcon PNG sizes using the user-approved geometric A1 x A3 set. The five SVG source masters live in `branding/`; there are no retained old-logo duplicate files in the current candidate tree.
+- Confirmed Windows ICO/PNG references in the .NET project, native AppWindow and About dialog. The icon was displayed in a real Windows test application with isolated user profile and an opened temporary test document; macOS icon assets were validated structurally but not compiled on macOS.
+- New 4-case standalone branding test validates exact approved SHA-256 assets, PNG/ICO dimensions and platform references. The original source ZIP is archived once in the project-specific design Vault (outside the public repository), not kept in Downloads.
+- Historical Git commits, earlier delivery ZIPs and the user's currently installed application are intentionally not rewritten or deleted. No app installation or public release has been performed.
+
 ## Scope and release boundaries
 
 For current **personal use**, extended GUI, accessibility, Smart-Tab, export and print acceptance are deferred according to owner decision. Confirmed data-loss defects are never considered low priority. Before publishing the source branch, the bundled `fastdom@1.0.12` MIT notice was completed from the upstream package's license information and the existing `khroma@2.1.0` MIT license was checked against the upstream repository (whose npm metadata does not declare a license field). Full packaged-public-release review remains separate. This integration is not an installed app or a public product release.
